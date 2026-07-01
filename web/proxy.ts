@@ -3,6 +3,10 @@
 import { auth } from "@/auth";
 
 export const proxy = auth((req) => {
+  // Công tắc CHỈ dùng khi chạy local để xem trước giao diện mà không cần đăng nhập.
+  // KHÔNG đặt biến này trên Vercel — production luôn được bảo vệ.
+  if (process.env.AUTH_DISABLED === "true") return;
+
   const { pathname } = req.nextUrl;
   const isPublic = pathname === "/login" || pathname.startsWith("/api/auth");
 
