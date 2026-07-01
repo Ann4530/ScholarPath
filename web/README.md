@@ -5,7 +5,10 @@ Bản demo minh họa luồng nghiệp vụ tìm học bổng du học (xem tài
 > ⚠️ Dữ liệu học bổng, trường và giáo sư trong demo là **mẫu minh họa**, không dùng để nộp hồ sơ thật.
 
 ## Công nghệ
-Next.js 16 (App Router) · React 19 · TypeScript · Tailwind CSS v4. State lưu ở `localStorage` (không cần backend cho demo).
+Next.js 16 (App Router) · React 19 · TypeScript · Tailwind CSS v4 · Auth.js (đăng nhập Google). State lưu ở `localStorage` (không cần backend cho demo).
+
+## Bảo vệ truy cập
+Toàn site bị chặn bởi `proxy.ts` (Next 16 gọi middleware là *proxy*): chưa đăng nhập → chuyển về `/login`. Chỉ email trong `ALLOWED_EMAILS` mới vào được. Cần các biến môi trường: `AUTH_SECRET`, `ALLOWED_EMAILS`, `AUTH_GOOGLE_ID`, `AUTH_GOOGLE_SECRET` (xem `.env.local`). Hướng dẫn deploy + tạo Google OAuth: [../docs/04-Huong-dan-Deploy-Vercel.md](../docs/04-Huong-dan-Deploy-Vercel.md).
 
 ## Chạy demo
 ```bash
