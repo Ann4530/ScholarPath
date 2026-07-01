@@ -1,0 +1,59 @@
+import { signIn } from "@/auth";
+
+export default async function LoginPage({
+  searchParams,
+}: {
+  searchParams: Promise<{ error?: string; callbackUrl?: string }>;
+}) {
+  const { error, callbackUrl } = await searchParams;
+
+  return (
+    <div className="flex min-h-[70vh] items-center justify-center px-4">
+      <div className="w-full max-w-md rounded-2xl border border-slate-200 bg-white p-8 shadow-sm">
+        <div className="flex items-center gap-2">
+          <span className="grid h-9 w-9 place-items-center rounded-lg bg-indigo-600 text-lg font-black text-white">S</span>
+          <span className="text-xl font-bold text-slate-900">
+            Scholar<span className="text-indigo-600">Finder</span>
+          </span>
+        </div>
+
+        <h1 className="mt-6 text-lg font-semibold text-slate-900">Đăng nhập để tiếp tục</h1>
+        <p className="mt-1 text-sm text-slate-500">
+          Trang này chỉ dành cho người dùng được cấp quyền. Vui lòng đăng nhập bằng email đã được duyệt.
+        </p>
+
+        {error && (
+          <div className="mt-4 rounded-lg border border-rose-200 bg-rose-50 p-3 text-sm text-rose-700">
+            Tài khoản của bạn <b>không nằm trong danh sách được phép</b> truy cập. Vui lòng dùng email đã được cấp quyền
+            hoặc liên hệ quản trị viên.
+          </div>
+        )}
+
+        <form
+          action={async () => {
+            "use server";
+            await signIn("google", { redirectTo: callbackUrl || "/" });
+          }}
+          className="mt-6"
+        >
+          <button
+            type="submit"
+            className="flex w-full items-center justify-center gap-3 rounded-lg border border-slate-300 bg-white px-4 py-3 font-medium text-slate-700 transition hover:bg-slate-50"
+          >
+            <svg width="20" height="20" viewBox="0 0 48 48" aria-hidden="true">
+              <path fill="#FFC107" d="M43.6 20.5H42V20H24v8h11.3c-1.6 4.7-6.1 8-11.3 8-6.6 0-12-5.4-12-12s5.4-12 12-12c3.1 0 5.9 1.2 8 3.1l5.7-5.7C34.6 4.1 29.6 2 24 2 11.8 2 2 11.8 2 24s9.8 22 22 22 22-9.8 22-22c0-1.3-.1-2.3-.4-3.5z" />
+              <path fill="#FF3D00" d="M6.3 14.7l6.6 4.8C14.7 15.1 19 12 24 12c3.1 0 5.9 1.2 8 3.1l5.7-5.7C34.6 4.1 29.6 2 24 2 15.6 2 8.3 6.9 6.3 14.7z" />
+              <path fill="#4CAF50" d="M24 46c5.5 0 10.5-2.1 14.3-5.6l-6.6-5.6C29.6 36.5 26.9 37.5 24 37.5c-5.2 0-9.6-3.3-11.2-8l-6.5 5C8.2 41.1 15.5 46 24 46z" />
+              <path fill="#1976D2" d="M43.6 20.5H42V20H24v8h11.3c-.8 2.2-2.2 4.1-4.1 5.4l6.6 5.6C41.9 35.4 46 30.3 46 24c0-1.3-.1-2.3-.4-3.5z" />
+            </svg>
+            Đăng nhập với Google
+          </button>
+        </form>
+
+        <p className="mt-6 text-center text-xs text-slate-400">
+          Được bảo vệ bằng đăng nhập. Chỉ email trong danh sách cho phép mới truy cập được.
+        </p>
+      </div>
+    </div>
+  );
+}
