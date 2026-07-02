@@ -22,12 +22,14 @@ import {
 } from "@/lib/data";
 import { useTrack, STAGES, StageId, stageColor } from "@/lib/store";
 import { flagEmoji, matchColor, deadlineColor, deadlineText } from "@/lib/ui";
+import { downloadIcs, gcalUrl, type CalEvent } from "@/lib/ics";
+import i18n from "@/lib/i18n";
 
 const LEVELS: Level[] = ["Bachelor", "Master", "PhD"];
 const FUNDINGS: FundingLevel[] = ["Full", "Partial", "TuitionOnly"];
 const PROVIDER_TYPES: ProviderType[] = ["Government", "University", "Org", "Corporate"];
 
-type Tab = "overview" | "academic" | "list" | "support";
+type Tab = "overview" | "academic" | "list" | "calendar" | "support";
 type ListSort = "deadline" | "match" | "stage";
 
 function toggle<T>(arr: T[], v: T): T[] {
@@ -157,7 +159,7 @@ export default function ProfileClient({ email }: { email: string | null }) {
 
       {/* Tabs */}
       <div className="mt-5 flex flex-wrap gap-1 border-b border-slate-200">
-        {(["overview", "academic", "list", "support"] as Tab[]).map((tb) => (
+        {(["overview", "academic", "list", "calendar", "support"] as Tab[]).map((tb) => (
           <button
             key={tb}
             onClick={() => setTab(tb)}
@@ -496,7 +498,13 @@ export default function ProfileClient({ email }: { email: string | null }) {
                                 return (
                                   <li key={i} className="flex items-center justify-between gap-2">
                                     <span className="text-slate-600">{d.type}</span>
-                                    <span className="shrink-0"><span className="text-slate-500">{d.date}</span> <span className={deadlineColor(dl2)}>({deadlineText(dl2, t)})</span></span>
+                                    <span className="flex shrink-0 items-center gap-1.5">
+                                      <span className="text-slate-500">{d.date}</span>
+                                      <span className={deadlineColor(dl2)}>({deadlineText(dl2, t)})</span>
+                                      <a href={gcalUrl({ title: `[${d.type}] ${r.s.title}`, date: d.date, url: r.s.officialUrl })}
+                                        target="_blank" rel="noopener noreferrer" title={t("calendar.addOne")}
+                                        className="text-slate-400 hover:text-indigo-600">📅</a>
+                                    </span>
                                   </li>
                                 );
                               })}
@@ -519,6 +527,11 @@ export default function ProfileClient({ email }: { email: string | null }) {
             </div>
           </div>
         )
+      )}
+
+      {/* ===== TAB: LỊCH DEADLINE ===== */}
+      {tab === "calendar" && (
+        stats.total === 0 ? <EmptyState t={t} /> : <CalendarTab rows={rows} />
       )}
 
       {/* ===== TAB: HỖ TRỢ ===== */}
@@ -667,6 +680,185 @@ function Field({ label, children }: { label: string; children: React.ReactNode }
       <span className="mb-1 block font-medium text-slate-600">{label}</span>
       {children}
     </label>
+  );
+}
+
+// ===== Tab Lịch: lịch tháng + xuất Google Calendar / .ics =====
+interface CalRowScholarship {
+  id: string;
+  title: string;
+  countryCode: string;
+  officialUrl: string;
+  deadlines: { type: string; date: string }[];
+}
+
+function CalendarTab({ rows }: { rows: { s: CalRowScholarship }[] }) {
+  const { t } = useTranslation();
+  const locale = i18n.language === "vi" ? "vi-VN" : "en-GB";
+
+  const [month, setMonth] = useState(() => {
+    const d = new Date();
+    return new Date(d.getFullYear(), d.getMonth(), 1);
+  });
+  const [selected, setSelected] = useState<string | null>(null);
+
+  // Toàn bộ mốc của các học bổng đang theo dõi
+  const events = useMemo(() => {
+    const list: (CalEvent & { sId: string; type: string; countryCode: string })[] = [];
+    rows.forEach(({ s }) => {
+      s.deadlines.forEach((d) => {
+        list.push({
+          date: d.date,
+          type: d.type,
+          sId: s.id,
+          countryCode: s.countryCode,
+          title: `[${d.type}] ${s.title}`,
+          description: `ScholarFinder · ${s.title}`,
+          url: s.officialUrl,
+        });
+      });
+    });
+    return list.sort((a, b) => a.date.localeCompare(b.date));
+  }, [rows]);
+
+  const byDate = useMemo(() => {
+    const m = new Map<string, typeof events>();
+    events.forEach((e) => {
+      const arr = m.get(e.date) ?? [];
+      arr.push(e);
+      m.set(e.date, arr);
+    });
+    return m;
+  }, [events]);
+
+  const pad2 = (n: number) => String(n).padStart(2, "0");
+  const todayStr = (() => {
+    const d = new Date();
+    return `${d.getFullYear()}-${pad2(d.getMonth() + 1)}-${pad2(d.getDate())}`;
+  })();
+
+  const y = month.getFullYear();
+  const m0 = month.getMonth();
+  const firstOffset = (new Date(y, m0, 1).getDay() + 6) % 7; // tuần bắt đầu Thứ 2
+  const daysInMonth = new Date(y, m0 + 1, 0).getDate();
+  const monthLabel = new Intl.DateTimeFormat(locale, { month: "long", year: "numeric" }).format(month);
+  // Nhãn thứ trong tuần (Mon→Sun)
+  const weekdays = Array.from({ length: 7 }, (_, i) =>
+    new Intl.DateTimeFormat(locale, { weekday: "short" }).format(new Date(2024, 0, 1 + i)) // 2024-01-01 là Thứ 2
+  );
+
+  const monthPrefix = `${y}-${pad2(m0 + 1)}`;
+  const monthEvents = events.filter((e) => e.date.startsWith(monthPrefix));
+  const shown = selected ? (byDate.get(selected) ?? []) : monthEvents;
+
+  const dotColor = (dateStr: string) => {
+    if (dateStr < todayStr) return "bg-slate-300";
+    const days = daysLeft(dateStr);
+    return days <= 7 ? "bg-rose-500" : "bg-amber-400";
+  };
+
+  return (
+    <div className="mt-6 space-y-4">
+      <div className="flex flex-wrap items-center justify-between gap-2">
+        <div>
+          <h2 className="text-lg font-semibold text-slate-900">📅 {t("calendar.title")}</h2>
+          <p className="text-xs text-slate-500">{t("calendar.subtitle")}</p>
+        </div>
+        <button
+          onClick={() => downloadIcs("scholarfinder-deadlines", events)}
+          className="rounded-lg bg-slate-900 px-3.5 py-2 text-xs font-semibold text-white hover:bg-slate-700"
+          title={t("calendar.exportHint")}
+        >
+          ⬇ {t("calendar.exportAll")}
+        </button>
+      </div>
+
+      <div className="grid gap-4 lg:grid-cols-[1fr_360px]">
+        {/* Lưới tháng */}
+        <div className="rounded-2xl border border-slate-200 bg-white p-4 shadow-sm">
+          <div className="mb-3 flex items-center justify-between">
+            <button onClick={() => { setMonth(new Date(y, m0 - 1, 1)); setSelected(null); }}
+              className="grid h-8 w-8 place-items-center rounded-lg border border-slate-300 text-slate-600 hover:border-indigo-400">‹</button>
+            <div className="flex items-center gap-2">
+              <p className="font-bold capitalize text-slate-900">{monthLabel}</p>
+              <button onClick={() => { const d = new Date(); setMonth(new Date(d.getFullYear(), d.getMonth(), 1)); setSelected(todayStr); }}
+                className="rounded-full border border-slate-300 px-2 py-0.5 text-[11px] font-medium text-slate-500 hover:border-indigo-400 hover:text-indigo-600">
+                {t("calendar.today")}
+              </button>
+            </div>
+            <button onClick={() => { setMonth(new Date(y, m0 + 1, 1)); setSelected(null); }}
+              className="grid h-8 w-8 place-items-center rounded-lg border border-slate-300 text-slate-600 hover:border-indigo-400">›</button>
+          </div>
+
+          <div className="grid grid-cols-7 gap-1 text-center text-[11px] font-semibold uppercase text-slate-400">
+            {weekdays.map((w) => <span key={w} className="py-1">{w}</span>)}
+          </div>
+          <div className="grid grid-cols-7 gap-1">
+            {Array.from({ length: firstOffset }).map((_, i) => <span key={`b${i}`} />)}
+            {Array.from({ length: daysInMonth }, (_, i) => {
+              const day = i + 1;
+              const dateStr = `${monthPrefix}-${pad2(day)}`;
+              const evs = byDate.get(dateStr) ?? [];
+              const isToday = dateStr === todayStr;
+              const isSel = dateStr === selected;
+              return (
+                <button
+                  key={day}
+                  onClick={() => setSelected(isSel ? null : dateStr)}
+                  className={`relative flex h-14 flex-col items-center rounded-lg pt-1.5 text-sm transition ${
+                    isSel ? "bg-indigo-600 text-white" : isToday ? "bg-indigo-50 font-bold text-indigo-700 ring-1 ring-indigo-300" : "text-slate-700 hover:bg-slate-50"
+                  }`}
+                >
+                  {day}
+                  {evs.length > 0 && (
+                    <span className="mt-1 flex gap-0.5">
+                      {evs.slice(0, 3).map((e, j) => (
+                        <span key={j} className={`h-1.5 w-1.5 rounded-full ${isSel ? "bg-white" : dotColor(dateStr)}`} />
+                      ))}
+                      {evs.length > 3 && <span className={`text-[9px] leading-none ${isSel ? "text-white" : "text-slate-400"}`}>+</span>}
+                    </span>
+                  )}
+                </button>
+              );
+            })}
+          </div>
+          <p className="mt-3 text-[11px] text-slate-400">ℹ️ {t("calendar.timeNote")}</p>
+        </div>
+
+        {/* Danh sách mốc */}
+        <div className="rounded-2xl border border-slate-200 bg-white p-4 shadow-sm">
+          <p className="mb-2 text-sm font-bold text-slate-800">
+            {selected ? t("calendar.eventsOn", { d: selected }) : t("calendar.monthEvents")}
+            <span className="ml-1.5 rounded-full bg-indigo-100 px-1.5 text-xs font-bold text-indigo-700">{shown.length}</span>
+          </p>
+          {shown.length === 0 ? (
+            <p className="py-6 text-center text-sm text-slate-400">{t("calendar.empty")}</p>
+          ) : (
+            <ul className="thin-scroll max-h-96 space-y-2 overflow-y-auto pr-1">
+              {shown.map((e, i) => {
+                const days = daysLeft(e.date);
+                return (
+                  <li key={i} className="rounded-xl border border-slate-100 p-2.5">
+                    <div className="flex items-center justify-between gap-2 text-xs">
+                      <span className="font-semibold text-slate-700">{e.date}</span>
+                      <span className={deadlineColor(days)}>{deadlineText(days, t)}</span>
+                    </div>
+                    <p className="mt-0.5 text-xs font-medium text-indigo-700">{e.type}</p>
+                    <Link href={`/scholarships/${e.sId}`} className="mt-0.5 block truncate text-sm font-medium text-slate-800 hover:text-indigo-600">
+                      {flagEmoji(e.countryCode)} {rows.find((r) => r.s.id === e.sId)?.s.title}
+                    </Link>
+                    <a href={gcalUrl(e)} target="_blank" rel="noopener noreferrer"
+                      className="mt-1.5 inline-block rounded-md border border-slate-300 px-2 py-1 text-[11px] font-medium text-slate-600 hover:border-indigo-400 hover:text-indigo-600">
+                      📅 {t("calendar.addOne")} · Google
+                    </a>
+                  </li>
+                );
+              })}
+            </ul>
+          )}
+        </div>
+      </div>
+    </div>
   );
 }
 

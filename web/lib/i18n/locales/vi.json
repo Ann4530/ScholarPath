@@ -498,6 +498,7 @@
       "overview": "Tổng quan",
       "academic": "Hồ sơ học tập",
       "list": "Danh sách của tôi",
+      "calendar": "Lịch",
       "support": "Hỗ trợ"
     },
     "stat": {
@@ -562,6 +563,29 @@
     "channelFaq": "Câu hỏi thường gặp",
     "channelFaqDesc": "Giải đáp thuật ngữ & quy trình nộp.",
     "supportDisclaimer": "Cố vấn & kênh hỗ trợ là minh họa trong demo."
+  },
+  "calendar": {
+    "tab": "Lịch",
+    "title": "Lịch deadline",
+    "subtitle": "Mọi mốc thời gian của học bổng bạn đang theo dõi.",
+    "exportAll": "Tải .ics (toàn bộ)",
+    "exportHint": "Nhập file .ics vào Google/Apple/Outlook Calendar — mỗi mốc có nhắc trước 7 ngày.",
+    "gcal": "Google Calendar",
+    "addOne": "Thêm vào lịch",
+    "monthEvents": "Mốc trong tháng",
+    "empty": "Tháng này không có mốc nào.",
+    "today": "Hôm nay",
+    "eventsOn": "Mốc ngày {{d}}",
+    "timeNote": "Sự kiện tạo theo ngày (cả ngày) — luôn kiểm tra giờ chính xác & múi giờ tại nguồn chính thức."
+  },
+  "notif": {
+    "title": "Thông báo",
+    "aria": "Thông báo",
+    "empty": "Không có gì cần chú ý 🎉",
+    "deadline": "{{type}} · {{left}}",
+    "docsLow": "Hồ sơ mới xong {{p}}% — hạn {{left}}",
+    "overdueTag": "Quá hạn",
+    "viewProfile": "Mở trang cá nhân →"
   },
   "advisorRole": {
     "government": "Cố vấn học bổng chính phủ",

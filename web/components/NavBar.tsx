@@ -5,6 +5,7 @@ import { usePathname } from "next/navigation";
 import { useTranslation } from "react-i18next";
 import { useTrack } from "@/lib/store";
 import LanguagePicker from "@/components/LanguagePicker";
+import NotificationBell from "@/components/NotificationBell";
 
 export default function NavBar({ children }: { children?: React.ReactNode }) {
   const pathname = usePathname();
@@ -58,6 +59,7 @@ export default function NavBar({ children }: { children?: React.ReactNode }) {
               ✨ {t("nav.start")}
             </Link>
           </nav>
+          <NotificationBell />
           <LanguagePicker />
           {children}
         </div>

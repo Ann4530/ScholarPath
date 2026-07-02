@@ -498,6 +498,7 @@
       "overview": "Overview",
       "academic": "Academic profile",
       "list": "My list",
+      "calendar": "Calendar",
       "support": "Support"
     },
     "stat": {
@@ -562,6 +563,29 @@
     "channelFaq": "Frequently asked questions",
     "channelFaqDesc": "Terminology & application process explained.",
     "supportDisclaimer": "Advisors & support channels are illustrative in this demo."
+  },
+  "calendar": {
+    "tab": "Calendar",
+    "title": "Deadline calendar",
+    "subtitle": "Every milestone of the scholarships you're tracking.",
+    "exportAll": "Download .ics (all)",
+    "exportHint": "Import the .ics file into Google/Apple/Outlook Calendar — each milestone has a 7-day reminder.",
+    "gcal": "Google Calendar",
+    "addOne": "Add to calendar",
+    "monthEvents": "Milestones this month",
+    "empty": "No milestones this month.",
+    "today": "Today",
+    "eventsOn": "Milestones on {{d}}",
+    "timeNote": "Events are all-day by date — always verify exact time & timezone at the official source."
+  },
+  "notif": {
+    "title": "Notifications",
+    "aria": "Notifications",
+    "empty": "Nothing needs attention 🎉",
+    "deadline": "{{type}} · {{left}}",
+    "docsLow": "Docs only {{p}}% done — due {{left}}",
+    "overdueTag": "Overdue",
+    "viewProfile": "Open my profile →"
   },
   "advisorRole": {
     "government": "Government scholarship advisor",
