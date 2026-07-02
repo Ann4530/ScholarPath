@@ -18,12 +18,14 @@ import {
   INTAKES,
   Level,
   FundingLevel,
+  ProviderType,
 } from "@/lib/data";
 import { useTrack, STAGES, StageId, stageColor } from "@/lib/store";
 import { flagEmoji, matchColor, deadlineColor, deadlineText } from "@/lib/ui";
 
 const LEVELS: Level[] = ["Bachelor", "Master", "PhD"];
 const FUNDINGS: FundingLevel[] = ["Full", "Partial", "TuitionOnly"];
+const PROVIDER_TYPES: ProviderType[] = ["Government", "University", "Org", "Corporate"];
 
 type Tab = "overview" | "academic" | "list" | "support";
 type ListSort = "deadline" | "match" | "stage";
@@ -68,28 +70,42 @@ export default function ProfileClient({ email }: { email: string | null }) {
     const byStage: Record<string, number> = {};
     STAGES.forEach((s) => (byStage[s.id] = 0));
     const byFunding: Record<string, number> = { Full: 0, Partial: 0, TuitionOnly: 0 };
+    const byProvider: Record<string, number> = { Government: 0, University: 0, Org: 0, Corporate: 0 };
     const byRegion: Record<string, number> = {};
     REGIONS.forEach((r) => (byRegion[r] = 0));
-    let soon = 0, matchSum = 0, docSum = 0;
+    const byTier: Record<string, number> = { excellent: 0, good: 0, consider: 0, ineligible: 0 };
+    let soon = 0, overdue = 0, matchSum = 0, docSum = 0, docsDone = 0, docsTotal = 0;
     rows.forEach((r) => {
       byStage[r.item.stage] = (byStage[r.item.stage] ?? 0) + 1;
       byFunding[r.s.fundingLevel]++;
+      byProvider[r.s.providerType]++;
       byRegion[r.s.region]++;
+      byTier[r.match.tier]++;
       if (r.days >= 0 && r.days <= 7) soon++;
+      if (r.days < 0) overdue++;
       matchSum += r.match.score;
       docSum += r.prog;
+      docsTotal += r.s.documents.length;
+      docsDone += r.s.documents.filter((d) => r.item.checklist[d]).length;
     });
     const n = rows.length || 1;
     return {
       total: rows.length,
-      byStage, byFunding, byRegion,
-      soon,
+      byStage, byFunding, byProvider, byRegion, byTier,
+      soon, overdue,
       submitted: byStage["da_nop"] + byStage["phong_van"] + byStage["ket_qua"],
       inProgress: byStage["chuan_bi"] + byStage["lien_he_gs"] + byStage["nghien_cuu"],
       avgMatch: Math.round(matchSum / n),
       avgDocs: Math.round(docSum / n),
+      docsDone, docsTotal,
     };
   }, [rows]);
+
+  // Việc cần xử lý gấp: deadline ≤30 ngày (kể cả quá hạn) & hồ sơ chưa xong
+  const urgent = useMemo(
+    () => rows.filter((r) => r.days <= 30 && r.prog < 100).sort((a, b) => a.days - b.days).slice(0, 6),
+    [rows]
+  );
 
   // ---- Danh sách đã sắp xếp cho bảng quản lý tiến độ ----
   const stageOrder: Record<string, number> = {};
@@ -161,19 +177,32 @@ export default function ProfileClient({ email }: { email: string | null }) {
       {tab === "overview" && (
         stats.total === 0 ? <EmptyState t={t} /> : (
           <div className="mt-6 space-y-6">
+            {/* KPI */}
             <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-6">
-              <StatCard label={t("account.stat.tracking")} value={stats.total} tone="indigo" />
-              <StatCard label={t("account.stat.inProgress")} value={stats.inProgress} tone="amber" />
-              <StatCard label={t("account.stat.submitted")} value={stats.submitted} tone="emerald" />
-              <StatCard label={t("account.stat.soon")} value={stats.soon} tone="rose" />
-              <StatCard label={t("account.stat.avgMatch")} value={`${stats.avgMatch}%`} tone="violet" />
-              <StatCard label={t("account.stat.avgDocs")} value={`${stats.avgDocs}%`} tone="sky" />
+              <StatCard icon="📌" label={t("account.stat.tracking")} value={stats.total} tone="indigo" />
+              <StatCard icon="✏️" label={t("account.stat.inProgress")} value={stats.inProgress} tone="amber" />
+              <StatCard icon="📮" label={t("account.stat.submitted")} value={stats.submitted} tone="emerald" />
+              <StatCard icon="⏰" label={t("account.stat.soon")} value={stats.soon} tone="rose" />
+              <StatCard icon="🎯" label={t("account.stat.avgMatch")} value={`${stats.avgMatch}%`} tone="violet" />
+              <StatCard icon="📄" label={t("account.stat.avgDocs")} value={`${stats.avgDocs}%`} tone="sky" />
             </div>
 
+            {/* Tổng giấy tờ đã hoàn thành */}
+            <div className="rounded-2xl border border-slate-200 bg-white p-4 shadow-sm">
+              <div className="mb-2 flex items-center justify-between text-sm">
+                <span className="font-medium text-slate-600">📎 {t("account.overallDocs")}</span>
+                <span className="font-semibold text-slate-900">{stats.docsDone}/{stats.docsTotal}</span>
+              </div>
+              <div className="h-2.5 w-full overflow-hidden rounded-full bg-slate-100">
+                <div className="h-full rounded-full bg-gradient-to-r from-indigo-500 to-violet-500 transition-all"
+                  style={{ width: `${stats.docsTotal ? Math.round((stats.docsDone / stats.docsTotal) * 100) : 0}%` }} />
+              </div>
+            </div>
+
+            {/* Hàng 1: phễu giai đoạn + phân bố match */}
             <div className="grid gap-6 lg:grid-cols-2">
-              {/* Funnel theo giai đoạn */}
               <Panel title={t("account.funnelTitle")}>
-                <div className="space-y-2">
+                <div className="space-y-2.5">
                   {STAGES.map((st) => {
                     const c = stats.byStage[st.id];
                     const pct = stats.total ? Math.round((c / stats.total) * 100) : 0;
@@ -190,51 +219,83 @@ export default function ProfileClient({ email }: { email: string | null }) {
                 </div>
               </Panel>
 
-              <div className="space-y-6">
-                {/* Theo mức tài trợ */}
-                <Panel title={t("account.byFundingTitle")}>
-                  <div className="flex flex-wrap gap-2">
-                    {FUNDINGS.map((f) => (
-                      <span key={f} className="rounded-lg bg-slate-50 px-3 py-2 text-sm ring-1 ring-slate-200">
-                        {t(`funding.${f}`)}: <b className="text-slate-900">{stats.byFunding[f]}</b>
-                      </span>
-                    ))}
-                  </div>
-                </Panel>
-                {/* Theo khu vực */}
-                <Panel title={t("account.byRegionTitle")}>
-                  <div className="flex flex-wrap gap-2">
-                    {REGIONS.filter((r) => stats.byRegion[r] > 0).map((r) => (
-                      <span key={r} className="rounded-lg bg-slate-50 px-3 py-2 text-sm ring-1 ring-slate-200">
-                        {t(`region.${REGION_KEY[r]}`)}: <b className="text-slate-900">{stats.byRegion[r]}</b>
-                      </span>
-                    ))}
-                  </div>
-                </Panel>
-              </div>
+              <Panel title={t("account.matchDistTitle")}>
+                <BarChart rows={[
+                  { label: t("match.tier.excellent"), value: stats.byTier.excellent, color: "bg-emerald-500" },
+                  { label: t("match.tier.good"), value: stats.byTier.good, color: "bg-indigo-500" },
+                  { label: t("match.tier.consider"), value: stats.byTier.consider, color: "bg-amber-500" },
+                  { label: t("match.tier.ineligible"), value: stats.byTier.ineligible, color: "bg-rose-500" },
+                ]} />
+              </Panel>
             </div>
 
-            {/* Deadline sắp tới */}
-            <Panel title={t("account.deadlinesTitle")}>
-              {upcoming.length === 0 ? (
-                <p className="text-sm text-slate-400">{t("account.deadlinesEmpty")}</p>
-              ) : (
-                <ul className="divide-y divide-slate-100">
-                  {upcoming.map((r) => (
-                    <li key={r.s.id} className="flex items-center justify-between gap-3 py-2.5">
-                      <div className="min-w-0">
-                        <Link href={`/scholarships/${r.s.id}`} className="block truncate font-medium text-slate-800 hover:text-indigo-600">{r.s.title}</Link>
-                        <span className="text-xs text-slate-500">{flagEmoji(r.s.countryCode)} {t(`country.${r.s.countryCode}`)} · {r.dl?.type}</span>
-                      </div>
-                      <div className="shrink-0 text-right">
-                        <p className="text-sm text-slate-700">{r.dl?.date}</p>
-                        <p className={`text-xs ${deadlineColor(r.days)}`}>{deadlineText(r.days, t)}</p>
-                      </div>
-                    </li>
-                  ))}
-                </ul>
-              )}
-            </Panel>
+            {/* Hàng 2: mức tài trợ + khu vực + loại học bổng */}
+            <div className="grid gap-6 md:grid-cols-3">
+              <Panel title={t("account.byFundingTitle")}>
+                <BarChart rows={FUNDINGS.map((f, i) => ({
+                  label: t(`funding.${f}`), value: stats.byFunding[f],
+                  color: ["bg-emerald-500", "bg-amber-500", "bg-slate-400"][i],
+                }))} />
+              </Panel>
+              <Panel title={t("account.byRegionTitle")}>
+                <BarChart rows={REGIONS.filter((r) => stats.byRegion[r] > 0).map((r, i) => ({
+                  label: t(`region.${REGION_KEY[r]}`), value: stats.byRegion[r],
+                  color: ["bg-indigo-500", "bg-sky-500", "bg-teal-500", "bg-fuchsia-500"][i % 4],
+                }))} />
+              </Panel>
+              <Panel title={t("account.byProviderTitle")}>
+                <BarChart rows={PROVIDER_TYPES.map((p, i) => ({
+                  label: t(`providerType.${p}`), value: stats.byProvider[p],
+                  color: ["bg-indigo-500", "bg-sky-500", "bg-violet-500", "bg-amber-500"][i],
+                }))} />
+              </Panel>
+            </div>
+
+            {/* Hàng 3: cần xử lý gấp + deadline sắp tới */}
+            <div className="grid gap-6 lg:grid-cols-2">
+              <Panel title={`⚠️ ${t("account.urgentTitle")}`}>
+                <p className="-mt-2 mb-2 text-xs text-slate-400">{t("account.urgentDesc")}</p>
+                {urgent.length === 0 ? (
+                  <p className="rounded-lg bg-emerald-50 p-3 text-sm text-emerald-700">{t("account.urgentEmpty")}</p>
+                ) : (
+                  <ul className="space-y-2">
+                    {urgent.map((r) => (
+                      <li key={r.s.id}>
+                        <Link href={`/scholarships/${r.s.id}/documents`}
+                          className="flex items-center justify-between gap-3 rounded-lg border border-slate-100 p-2.5 hover:border-indigo-300 hover:bg-indigo-50/40">
+                          <div className="min-w-0">
+                            <span className="block truncate text-sm font-medium text-slate-800">{r.s.title}</span>
+                            <span className="text-xs text-slate-500">{flagEmoji(r.s.countryCode)} {t(`country.${r.s.countryCode}`)} · {t("account.itemProgress")} {r.prog}%</span>
+                          </div>
+                          <span className={`shrink-0 text-xs font-semibold ${deadlineColor(r.days)}`}>{deadlineText(r.days, t)}</span>
+                        </Link>
+                      </li>
+                    ))}
+                  </ul>
+                )}
+              </Panel>
+
+              <Panel title={t("account.deadlinesTitle")}>
+                {upcoming.length === 0 ? (
+                  <p className="text-sm text-slate-400">{t("account.deadlinesEmpty")}</p>
+                ) : (
+                  <ul className="divide-y divide-slate-100">
+                    {upcoming.map((r) => (
+                      <li key={r.s.id} className="flex items-center justify-between gap-3 py-2.5">
+                        <div className="min-w-0">
+                          <Link href={`/scholarships/${r.s.id}`} className="block truncate font-medium text-slate-800 hover:text-indigo-600">{r.s.title}</Link>
+                          <span className="text-xs text-slate-500">{flagEmoji(r.s.countryCode)} {t(`country.${r.s.countryCode}`)} · {r.dl?.type}</span>
+                        </div>
+                        <div className="shrink-0 text-right">
+                          <p className="text-sm text-slate-700">{r.dl?.date}</p>
+                          <p className={`text-xs ${deadlineColor(r.days)}`}>{deadlineText(r.days, t)}</p>
+                        </div>
+                      </li>
+                    ))}
+                  </ul>
+                )}
+              </Panel>
+            </div>
           </div>
         )
       )}
@@ -551,19 +612,42 @@ function EmptyState({ t }: { t: (k: string) => string }) {
   );
 }
 
-function StatCard({ label, value, tone }: { label: string; value: string | number; tone: string }) {
-  const tones: Record<string, string> = {
-    indigo: "bg-indigo-50 text-indigo-700 border-indigo-200",
-    amber: "bg-amber-50 text-amber-700 border-amber-200",
-    emerald: "bg-emerald-50 text-emerald-700 border-emerald-200",
-    rose: "bg-rose-50 text-rose-700 border-rose-200",
-    violet: "bg-violet-50 text-violet-700 border-violet-200",
-    sky: "bg-sky-50 text-sky-700 border-sky-200",
+function StatCard({ icon, label, value, tone }: { icon: string; label: string; value: string | number; tone: string }) {
+  const chip: Record<string, string> = {
+    indigo: "bg-indigo-100 text-indigo-700",
+    amber: "bg-amber-100 text-amber-700",
+    emerald: "bg-emerald-100 text-emerald-700",
+    rose: "bg-rose-100 text-rose-700",
+    violet: "bg-violet-100 text-violet-700",
+    sky: "bg-sky-100 text-sky-700",
   };
   return (
-    <div className={`rounded-xl border p-3 ${tones[tone]}`}>
-      <p className="text-2xl font-bold">{value}</p>
-      <p className="text-[11px] leading-tight opacity-80">{label}</p>
+    <div className="rounded-2xl border border-slate-200 bg-white p-4 shadow-sm transition hover:shadow-md">
+      <div className="flex items-center gap-2.5">
+        <span className={`grid h-9 w-9 shrink-0 place-items-center rounded-xl text-lg ${chip[tone]}`}>{icon}</span>
+        <p className="text-2xl font-bold leading-none text-slate-900">{value}</p>
+      </div>
+      <p className="mt-2 text-xs leading-tight text-slate-500">{label}</p>
+    </div>
+  );
+}
+
+// Biểu đồ thanh ngang gọn cho các phân bố (match/tài trợ/khu vực/loại)
+function BarChart({ rows }: { rows: { label: string; value: number; color: string }[] }) {
+  const max = Math.max(1, ...rows.map((r) => r.value));
+  const total = rows.reduce((s, r) => s + r.value, 0);
+  return (
+    <div className="space-y-2.5">
+      {rows.map((r, i) => (
+        <div key={i} className="flex items-center gap-3">
+          <span className="w-28 shrink-0 truncate text-xs text-slate-600" title={r.label}>{r.label}</span>
+          <div className="h-2.5 flex-1 overflow-hidden rounded-full bg-slate-100">
+            <div className={`h-full rounded-full transition-all ${r.color}`} style={{ width: `${Math.round((r.value / max) * 100)}%` }} />
+          </div>
+          <span className="w-6 text-right text-sm font-semibold text-slate-700">{r.value}</span>
+        </div>
+      ))}
+      {total === 0 && <p className="text-xs text-slate-400">—</p>}
     </div>
   );
 }
