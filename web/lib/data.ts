@@ -7,6 +7,8 @@
 export type FundingLevel = "Full" | "Partial" | "TuitionOnly";
 export type ProviderType = "Government" | "University" | "Org" | "Corporate";
 export type Level = "Bachelor" | "Master" | "PhD";
+// Học hàm/bậc của người hướng dẫn (ai đủ tư cách hướng dẫn NCS đều liệt kê)
+export type Rank = "professor" | "associate" | "assistant" | "dr";
 
 export const FIELDS = [
   "Data Science/AI",
@@ -120,7 +122,7 @@ export interface Publication {
 export interface Professor {
   id: string;
   name: string;
-  title: string;
+  rank: Rank;
   university: string;
   universityId: string;
   department: string;
@@ -169,7 +171,7 @@ export const professors: Professor[] = [
   {
     id: "prof-sato",
     name: "Prof. Kenji Sato",
-    title: "Giáo sư (Professor)",
+    rank: "professor",
     university: "University of Tokyo",
     universityId: "utokyo",
     department: "Graduate School of Information Science and Technology",
@@ -195,7 +197,7 @@ export const professors: Professor[] = [
   {
     id: "prof-muller",
     name: "Prof. Anna Müller",
-    title: "Giáo sư (Professor)",
+    rank: "professor",
     university: "Technical University of Munich",
     universityId: "tum",
     department: "Department of Informatics",
@@ -220,7 +222,7 @@ export const professors: Professor[] = [
   {
     id: "prof-chen",
     name: "Prof. Wei Chen",
-    title: "Giáo sư (Professor)",
+    rank: "professor",
     university: "Tsinghua University",
     universityId: "tsinghua",
     department: "School of Materials Science and Engineering",
@@ -245,7 +247,7 @@ export const professors: Professor[] = [
   {
     id: "prof-lim",
     name: "Prof. Sarah Lim",
-    title: "Phó Giáo sư (Associate Professor)",
+    rank: "associate",
     university: "National University of Singapore",
     universityId: "nus",
     department: "School of Computing",
@@ -270,7 +272,7 @@ export const professors: Professor[] = [
   {
     id: "prof-dubois",
     name: "Prof. Pierre Dubois",
-    title: "Giáo sư (Professor)",
+    rank: "professor",
     university: "Sorbonne University",
     universityId: "sorbonne",
     department: "Institute of Earth Sciences",
@@ -295,7 +297,7 @@ export const professors: Professor[] = [
   {
     id: "prof-smith",
     name: "Prof. Emily Smith",
-    title: "Giáo sư (Professor)",
+    rank: "professor",
     university: "University of Cambridge",
     universityId: "cambridge",
     department: "Department of Genetics",
@@ -316,6 +318,131 @@ export const professors: Professor[] = [
     recruiting: "recruiting",
     scholarshipIds: ["gates-cambridge"],
     summary: "Tin sinh học và genomics tính toán; hướng dẫn NCS qua học bổng Gates Cambridge.",
+  },
+  {
+    id: "prof-kumar",
+    name: "Assoc. Prof. Rajesh Kumar",
+    rank: "associate",
+    university: "National University of Singapore",
+    universityId: "nus",
+    department: "School of Computing",
+    lab: "Data Systems & ML Group",
+    country: "Singapore",
+    countryCode: "SG",
+    fields: ["Data Science/AI", "Computer Science"],
+    keywords: ["data systems", "large-scale machine learning", "MLOps"],
+    email: "rajesh@nus.example.sg",
+    website: "https://dsml.nus.example.sg",
+    scholar: "https://scholar.google.com/citations?user=demoKumar",
+    orcid: "0000-0002-7788-1122",
+    metrics: { publications: 74, citations: 5200, hIndex: 33 },
+    publications: [
+      { title: "Efficient Training Pipelines for Large-Scale ML", year: 2025, venue: "VLDB" },
+      { title: "Cost-Aware Model Serving at Scale", year: 2024, venue: "SIGMOD" },
+    ],
+    recruiting: "recruiting",
+    scholarshipIds: ["nus-rs"],
+    summary: "Phó Giáo sư về hệ thống dữ liệu và ML quy mô lớn; nhận NCS Thạc sĩ/Tiến sĩ theo học bổng NUS.",
+  },
+  {
+    id: "prof-tanaka",
+    name: "Asst. Prof. Yuki Tanaka",
+    rank: "assistant",
+    university: "University of Tokyo",
+    universityId: "utokyo",
+    department: "Graduate School of Information Science and Technology",
+    lab: "Language & Learning Lab",
+    country: "Nhật Bản",
+    countryCode: "JP",
+    fields: ["Data Science/AI", "Computer Science"],
+    keywords: ["natural language processing", "multilingual models", "low-resource learning"],
+    email: "tanaka@is.u-tokyo.example.ac.jp",
+    website: "https://lll.is.u-tokyo.example.ac.jp",
+    scholar: "https://scholar.google.com/citations?user=demoTanaka",
+    orcid: "0000-0003-9911-2233",
+    metrics: { publications: 34, citations: 1650, hIndex: 19 },
+    publications: [
+      { title: "Multilingual Pretraining for Low-Resource Languages", year: 2025, venue: "ACL" },
+      { title: "Data-Efficient Adaptation of Language Models", year: 2024, venue: "EMNLP" },
+    ],
+    recruiting: "recruiting",
+    scholarshipIds: ["mext-univ"],
+    summary: "Trợ lý Giáo sư về NLP đa ngôn ngữ; nhóm trẻ, tích cực nhận NCS cho học bổng MEXT.",
+  },
+  {
+    id: "prof-rossi",
+    name: "Dr. Elena Rossi",
+    rank: "dr",
+    university: "KTH Royal Institute of Technology",
+    universityId: "kth",
+    department: "Department of Sustainable Development",
+    lab: "Clean Energy Systems Lab",
+    country: "Thụy Điển",
+    countryCode: "SE",
+    fields: ["Environment", "Engineering"],
+    keywords: ["renewable energy", "energy systems modeling", "sustainability"],
+    email: "elena.rossi@kth.example.se",
+    website: "https://ces.kth.example.se",
+    scholar: "https://scholar.google.com/citations?user=demoRossi",
+    orcid: "0000-0001-4455-6677",
+    metrics: { publications: 22, citations: 980, hIndex: 15 },
+    publications: [
+      { title: "Optimizing Grid Integration of Renewables", year: 2025, venue: "Applied Energy" },
+      { title: "Techno-Economic Models for Solar Deployment", year: 2023, venue: "Renewable Energy" },
+    ],
+    recruiting: "recruiting",
+    scholarshipIds: ["si-sweden"],
+    summary: "Nghiên cứu viên (Research Fellow) về hệ thống năng lượng sạch; đồng hướng dẫn NCS cho ứng viên học bổng SI.",
+  },
+  {
+    id: "prof-brown",
+    name: "Assoc. Prof. Michael Brown",
+    rank: "associate",
+    university: "University of Melbourne",
+    universityId: "melbourne",
+    department: "School of Population and Global Health",
+    lab: "Global Health & Climate Group",
+    country: "Úc",
+    countryCode: "AU",
+    fields: ["Medicine/Health", "Environment"],
+    keywords: ["public health", "climate & health", "epidemiology"],
+    email: "m.brown@unimelb.example.edu.au",
+    website: "https://ghc.unimelb.example.edu.au",
+    scholar: "https://scholar.google.com/citations?user=demoBrown",
+    orcid: "0000-0002-3344-5566",
+    metrics: { publications: 88, citations: 6100, hIndex: 36 },
+    publications: [
+      { title: "Climate Change and Population Health Outcomes", year: 2025, venue: "The Lancet Planetary Health" },
+      { title: "Heat Exposure and Public Health Systems", year: 2024, venue: "Environmental Health" },
+    ],
+    recruiting: "unknown",
+    scholarshipIds: ["australia-awards"],
+    summary: "Phó Giáo sư về y tế công cộng và khí hậu; phù hợp ứng viên Australia Awards ngành sức khỏe/môi trường.",
+  },
+  {
+    id: "prof-hassan",
+    name: "Dr. Ahmed Hassan",
+    rank: "dr",
+    university: "University of Toronto",
+    universityId: "toronto",
+    department: "Department of Mechanical & Industrial Engineering",
+    lab: "Robotics & Automation Lab",
+    country: "Canada",
+    countryCode: "CA",
+    fields: ["Engineering", "Data Science/AI"],
+    keywords: ["robotics", "control systems", "industrial automation"],
+    email: "ahmed.hassan@utoronto.example.ca",
+    website: "https://ral.utoronto.example.ca",
+    scholar: "https://scholar.google.com/citations?user=demoHassan",
+    orcid: "0000-0003-7766-8899",
+    metrics: { publications: 26, citations: 1120, hIndex: 16 },
+    publications: [
+      { title: "Learning-Based Control for Industrial Robots", year: 2025, venue: "IEEE T-RO" },
+      { title: "Robust Automation under Uncertainty", year: 2024, venue: "ICRA" },
+    ],
+    recruiting: "recruiting",
+    scholarshipIds: ["vanier"],
+    summary: "Nghiên cứu viên sau tiến sĩ, đồng hướng dẫn NCS ngành robot/kỹ thuật; hỗ trợ hồ sơ Vanier (PhD).",
   },
 ];
 
@@ -413,7 +540,7 @@ export const scholarships: Scholarship[] = [
     trustScore: 96,
     qsRank: 32,
     tags: ["#toàn-phần", "#chính-phủ", "#cần-giáo-sư", "#research"],
-    professorIds: ["prof-sato"],
+    professorIds: ["prof-sato", "prof-tanaka"],
     summary: "Học bổng toàn phần của chính phủ Nhật. Đường Đại học tiến cử yêu cầu liên hệ và có thư đồng ý của giáo sư hướng dẫn trước khi nộp.",
   },
   {
@@ -583,7 +710,7 @@ export const scholarships: Scholarship[] = [
     trustScore: 94,
     qsRank: 25,
     tags: ["#toàn-phần", "#chính-phủ", "#cần-giáo-sư", "#research", "#PhD"],
-    professorIds: [],
+    professorIds: ["prof-hassan"],
     summary: "Học bổng Tiến sĩ hàng đầu của Canada; cần được một giáo sư/khoa đề cử, yêu cầu thành tích nghiên cứu xuất sắc.",
   },
   {
@@ -719,7 +846,7 @@ export const scholarships: Scholarship[] = [
     trustScore: 91,
     qsRank: 8,
     tags: ["#toàn-phần", "#trường", "#cần-giáo-sư", "#research"],
-    professorIds: ["prof-lim"],
+    professorIds: ["prof-lim", "prof-kumar"],
     summary: "Học bổng nghiên cứu của NUS; nên liên hệ giáo sư phù hợp trước khi nộp để tăng cơ hội.",
   },
   {

@@ -29,6 +29,12 @@
     "Master": "Thạc sĩ",
     "PhD": "Tiến sĩ"
   },
+  "rank": {
+    "professor": "Giáo sư",
+    "associate": "Phó Giáo sư",
+    "assistant": "Trợ lý Giáo sư",
+    "dr": "Tiến sĩ (Người hướng dẫn)"
+  },
   "funding": {
     "Full": "Toàn phần",
     "Partial": "Bán phần",
@@ -386,6 +392,7 @@
     "desc": "Học bổng nghiên cứu (MEXT, CSC, NUS RS, Gates Cambridge…) thường cần thư đồng ý của giáo sư trước khi nộp. Tìm theo hướng nghiên cứu, xem công bố & dùng trợ lý soạn email liên hệ.",
     "searchPh": "Tên, trường, từ khóa nghiên cứu (vd: computer vision, batteries)…",
     "fField": "Hướng nghiên cứu",
+    "fRank": "Học hàm",
     "fCountry": "Quốc gia",
     "fRecruiting": "Tình trạng tuyển",
     "clearFilters": "Xóa bộ lọc ({{n}})",
@@ -509,7 +516,10 @@
     "emptyTitle": "Chưa theo dõi học bổng nào",
     "emptyDesc": "Thêm học bổng vào danh sách theo dõi để xem thống kê và quản lý tiến trình.",
     "goFind": "Tìm học bổng →",
-    "listTitle": "Học bổng tôi đang theo dõi",
+    "listTitle": "Quản lý tiến độ ứng tuyển",
+    "expandHint": "Bấm vào một hàng để xem hồ sơ cần nộp, link đăng ký & các mốc thời gian.",
+    "linksSection": "Link đăng ký & nguồn",
+    "viewFull": "Xem trang học bổng",
     "groupBy": "Nhóm theo",
     "group": {
       "stage": "Giai đoạn",

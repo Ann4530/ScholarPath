@@ -29,6 +29,12 @@
     "Master": "Master",
     "PhD": "PhD"
   },
+  "rank": {
+    "professor": "Professor",
+    "associate": "Associate Professor",
+    "assistant": "Assistant Professor",
+    "dr": "Dr. / Research Fellow"
+  },
   "funding": {
     "Full": "Fully funded",
     "Partial": "Partial",
@@ -386,6 +392,7 @@
     "desc": "Research scholarships (MEXT, CSC, NUS RS, Gates Cambridge…) usually need a professor's acceptance before applying. Search by research direction, review publications & use the outreach email assistant.",
     "searchPh": "Name, university, research keywords (e.g. computer vision, batteries)…",
     "fField": "Research area",
+    "fRank": "Academic rank",
     "fCountry": "Country",
     "fRecruiting": "Recruiting status",
     "clearFilters": "Clear filters ({{n}})",
@@ -509,7 +516,10 @@
     "emptyTitle": "No scholarships tracked yet",
     "emptyDesc": "Add scholarships to your tracked list to see statistics and manage progress.",
     "goFind": "Find scholarships →",
-    "listTitle": "Scholarships I'm tracking",
+    "listTitle": "Application progress tracker",
+    "expandHint": "Click a row to see required documents, registration link & key dates.",
+    "linksSection": "Registration & source",
+    "viewFull": "Open scholarship page",
     "groupBy": "Group by",
     "group": {
       "stage": "Stage",

@@ -11,6 +11,13 @@ import FilterDropdown from "@/components/FilterDropdown";
 
 const PROF_FIELDS = Array.from(new Set(professors.flatMap((p) => p.fields))).sort();
 const PROF_COUNTRIES = Array.from(new Set(professors.map((p) => p.countryCode)));
+const RANKS = ["professor", "associate", "assistant", "dr"] as const;
+const RANK_CLS: Record<string, string> = {
+  professor: "bg-indigo-50 text-indigo-700 ring-indigo-200",
+  associate: "bg-sky-50 text-sky-700 ring-sky-200",
+  assistant: "bg-teal-50 text-teal-700 ring-teal-200",
+  dr: "bg-slate-100 text-slate-600 ring-slate-200",
+};
 
 const RECRUITING_CLS: Record<string, string> = {
   recruiting: "bg-emerald-100 text-emerald-700 ring-emerald-200",
@@ -31,6 +38,7 @@ export default function ProfessorsPage() {
   const { t } = useTranslation();
   const [q, setQ] = useState("");
   const [fields, setFields] = useState<string[]>([]);
+  const [ranks, setRanks] = useState<string[]>([]);
   const [countries, setCountries] = useState<string[]>([]);
   const [recruiting, setRecruiting] = useState<string[]>([]);
 
@@ -48,15 +56,16 @@ export default function ProfessorsPage() {
       );
     }
     if (fields.length) list = list.filter((p) => p.fields.some((f) => fields.includes(f)));
+    if (ranks.length) list = list.filter((p) => ranks.includes(p.rank));
     if (countries.length) list = list.filter((p) => countries.includes(p.countryCode));
     if (recruiting.length) list = list.filter((p) => recruiting.includes(p.recruiting));
-    // Ưu tiên giáo sư đang tuyển
+    // Ưu tiên người đang tuyển, rồi theo chỉ số
     const order = { recruiting: 0, unknown: 1, not_recruiting: 2 } as const;
     list.sort((a, b) => order[a.recruiting] - order[b.recruiting] || b.metrics.hIndex - a.metrics.hIndex);
     return list;
-  }, [q, fields, countries, recruiting]);
+  }, [q, fields, ranks, countries, recruiting]);
 
-  const active = fields.length + countries.length + recruiting.length;
+  const active = fields.length + ranks.length + countries.length + recruiting.length;
 
   return (
     <div className="mx-auto max-w-7xl px-4 py-6">
@@ -86,6 +95,13 @@ export default function ProfessorsPage() {
           onClear={() => setFields([])}
         />
         <FilterDropdown
+          label={t("professors.fRank")} icon="🎖️"
+          options={RANKS.map((r) => ({ value: r, label: t(`rank.${r}`) }))}
+          selected={ranks}
+          onToggle={(v) => setRanks(toggle(ranks, v))}
+          onClear={() => setRanks([])}
+        />
+        <FilterDropdown
           label={t("professors.fCountry")} icon="🚩"
           options={PROF_COUNTRIES.map((c) => ({ value: c, label: `${flagEmoji(c)} ${t(`country.${c}`)}` }))}
           selected={countries}
@@ -101,7 +117,7 @@ export default function ProfessorsPage() {
         />
         {active > 0 && (
           <button
-            onClick={() => { setFields([]); setCountries([]); setRecruiting([]); }}
+            onClick={() => { setFields([]); setRanks([]); setCountries([]); setRecruiting([]); }}
             className="text-xs font-medium text-slate-400 hover:text-rose-600"
           >
             {t("professors.clearFilters", { n: active })}
@@ -128,7 +144,9 @@ export default function ProfessorsPage() {
                     <Link href={`/professors/${p.id}`} className="font-bold text-slate-900 hover:text-violet-600">
                       {p.name}
                     </Link>
-                    <p className="mt-0.5 text-xs text-slate-500">{p.title}</p>
+                    <p className="mt-1">
+                      <span className={`rounded-md px-1.5 py-0.5 text-[11px] font-medium ring-1 ${RANK_CLS[p.rank]}`}>{t(`rank.${p.rank}`)}</span>
+                    </p>
                     <p className="mt-1 text-xs text-slate-500">{flagEmoji(p.countryCode)} {p.university}</p>
                   </div>
                   <span className={`shrink-0 rounded-full px-2.5 py-1 text-[11px] font-medium ring-1 ${RECRUITING_CLS[p.recruiting]}`}>
