@@ -18,17 +18,15 @@ import {
   INTAKES,
   Level,
   FundingLevel,
-  ProviderType,
 } from "@/lib/data";
 import { useTrack, STAGES, StageId, stageColor } from "@/lib/store";
 import { flagEmoji, matchColor, deadlineColor, deadlineText } from "@/lib/ui";
 
 const LEVELS: Level[] = ["Bachelor", "Master", "PhD"];
 const FUNDINGS: FundingLevel[] = ["Full", "Partial", "TuitionOnly"];
-const PROVIDER_TYPES: ProviderType[] = ["Government", "University", "Org", "Corporate"];
 
 type Tab = "overview" | "academic" | "list" | "support";
-type GroupBy = "stage" | "funding" | "region" | "type";
+type ListSort = "deadline" | "match" | "stage";
 
 function toggle<T>(arr: T[], v: T): T[] {
   return arr.includes(v) ? arr.filter((x) => x !== v) : [...arr, v];
@@ -36,9 +34,10 @@ function toggle<T>(arr: T[], v: T): T[] {
 
 export default function ProfileClient({ email }: { email: string | null }) {
   const { t } = useTranslation();
-  const { profile, setProfile, tracked, setStage, progress } = useTrack();
+  const { profile, setProfile, tracked, setStage, setNote, toggleChecklist, progress } = useTrack();
   const [tab, setTab] = useState<Tab>("overview");
-  const [groupBy, setGroupBy] = useState<GroupBy>("stage");
+  const [listSort, setListSort] = useState<ListSort>("deadline");
+  const [expandedId, setExpandedId] = useState<string | null>(null);
 
   const completion = profileCompletion(profile);
   const displayName = profile.name.trim() || email || t("account.guest");
@@ -92,32 +91,17 @@ export default function ProfileClient({ email }: { email: string | null }) {
     };
   }, [rows]);
 
-  // ---- Nhóm danh sách theo tiêu chí ----
-  const groups = useMemo(() => {
-    const out: { key: string; label: string; color?: string; rows: typeof rows }[] = [];
-    if (groupBy === "stage") {
-      STAGES.forEach((st) => {
-        const gr = rows.filter((r) => r.item.stage === st.id);
-        if (gr.length) out.push({ key: st.id, label: t(`stage.${st.id}`), color: st.color, rows: gr });
-      });
-    } else if (groupBy === "funding") {
-      FUNDINGS.forEach((f) => {
-        const gr = rows.filter((r) => r.s.fundingLevel === f);
-        if (gr.length) out.push({ key: f, label: t(`funding.${f}`), rows: gr });
-      });
-    } else if (groupBy === "region") {
-      REGIONS.forEach((r) => {
-        const gr = rows.filter((x) => x.s.region === r);
-        if (gr.length) out.push({ key: r, label: t(`region.${REGION_KEY[r]}`), rows: gr });
-      });
-    } else {
-      PROVIDER_TYPES.forEach((p) => {
-        const gr = rows.filter((r) => r.s.providerType === p);
-        if (gr.length) out.push({ key: p, label: t(`providerType.${p}`), rows: gr });
-      });
-    }
-    return out;
-  }, [rows, groupBy, t]);
+  // ---- Danh sách đã sắp xếp cho bảng quản lý tiến độ ----
+  const stageOrder: Record<string, number> = {};
+  STAGES.forEach((st, i) => (stageOrder[st.id] = i));
+  const sortedRows = useMemo(() => {
+    const copy = [...rows];
+    if (listSort === "match") copy.sort((a, b) => b.match.score - a.match.score);
+    else if (listSort === "stage") copy.sort((a, b) => stageOrder[b.item.stage] - stageOrder[a.item.stage]);
+    else copy.sort((a, b) => a.days - b.days);
+    return copy;
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [rows, listSort]);
 
   const upcoming = rows.filter((r) => r.days >= 0).slice(0, 6);
 
@@ -338,65 +322,139 @@ export default function ProfileClient({ email }: { email: string | null }) {
         </div>
       )}
 
-      {/* ===== TAB: DANH SÁCH CỦA TÔI ===== */}
+      {/* ===== TAB: DANH SÁCH CỦA TÔI — bảng quản lý tiến độ ===== */}
       {tab === "list" && (
         stats.total === 0 ? <EmptyState t={t} /> : (
           <div className="mt-6">
-            <div className="mb-4 flex flex-wrap items-center justify-between gap-2">
-              <h2 className="text-lg font-semibold text-slate-900">{t("account.listTitle")}</h2>
+            <div className="mb-3 flex flex-wrap items-center justify-between gap-2">
+              <div>
+                <h2 className="text-lg font-semibold text-slate-900">{t("account.listTitle")}</h2>
+                <p className="text-xs text-slate-500">{t("account.expandHint")}</p>
+              </div>
               <div className="flex items-center gap-2 text-sm">
-                <label className="text-slate-500">{t("account.groupBy")}</label>
-                <select value={groupBy} onChange={(e) => setGroupBy(e.target.value as GroupBy)}
+                <label className="text-slate-500">{t("filter.sortLabel")}</label>
+                <select value={listSort} onChange={(e) => setListSort(e.target.value as ListSort)}
                   className="rounded-lg border border-slate-300 bg-white px-2.5 py-1.5 font-medium text-slate-700">
+                  <option value="deadline">{t("filter.sortDeadline")}</option>
+                  <option value="match">{t("filter.sortMatch")}</option>
                   <option value="stage">{t("account.group.stage")}</option>
-                  <option value="funding">{t("account.group.funding")}</option>
-                  <option value="region">{t("account.group.region")}</option>
-                  <option value="type">{t("account.group.type")}</option>
                 </select>
                 <Link href="/board" className="rounded-lg bg-slate-900 px-3 py-1.5 text-xs font-semibold text-white hover:bg-slate-700">{t("account.openBoard")}</Link>
               </div>
             </div>
 
-            <div className="space-y-5">
-              {groups.map((g) => (
-                <div key={g.key}>
-                  <div className="mb-2 flex items-center gap-2">
-                    <span className={`rounded-md border px-2 py-0.5 text-xs font-semibold ${g.color ?? "border-slate-200 bg-slate-100 text-slate-700"}`}>{g.label}</span>
-                    <span className="text-xs text-slate-400">{g.rows.length}</span>
-                  </div>
-                  <div className="grid gap-2.5 sm:grid-cols-2">
-                    {g.rows.map((r) => (
-                      <div key={r.s.id} className="rounded-xl border border-slate-200 bg-white p-3 shadow-sm">
-                        <div className="flex items-start justify-between gap-2">
-                          <Link href={`/scholarships/${r.s.id}`} className="text-sm font-semibold text-slate-800 hover:text-indigo-600">{r.s.title}</Link>
-                          <span className={`shrink-0 rounded-md border px-1.5 py-0.5 text-xs font-bold ${matchColor(r.match.score)}`}>{r.match.score}%</span>
+            <div className="overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm">
+              {/* Đầu bảng (ẩn trên mobile) */}
+              <div className="hidden grid-cols-[1fr_150px_130px_120px_28px] gap-3 border-b border-slate-200 bg-slate-50 px-4 py-2.5 text-xs font-semibold uppercase tracking-wide text-slate-500 sm:grid">
+                <span>{t("board.thScholarship")}</span>
+                <span>{t("board.thStatus")}</span>
+                <span>{t("board.thDeadline")}</span>
+                <span>{t("board.thDocs")}</span>
+                <span></span>
+              </div>
+
+              {sortedRows.map((r) => {
+                const open = expandedId === r.s.id;
+                return (
+                  <div key={r.s.id} className="border-b border-slate-100 last:border-0">
+                    {/* Hàng chính — bấm để bung chi tiết */}
+                    <div
+                      onClick={() => setExpandedId(open ? null : r.s.id)}
+                      className={`grid cursor-pointer grid-cols-1 gap-2 px-4 py-3 transition hover:bg-slate-50/70 sm:grid-cols-[1fr_150px_130px_120px_28px] sm:items-center sm:gap-3 ${open ? "bg-indigo-50/40" : ""}`}
+                    >
+                      <div className="min-w-0">
+                        <p className="truncate font-medium text-slate-800">{r.s.title}</p>
+                        <p className="text-xs text-slate-500">
+                          {flagEmoji(r.s.countryCode)} {t(`country.${r.s.countryCode}`)}
+                          <span className={`ml-2 rounded border px-1 py-0.5 text-[10px] font-bold ${matchColor(r.match.score)}`}>{r.match.score}%</span>
+                          {r.item.note && <span className="ml-2 text-amber-600">📝</span>}
+                        </p>
+                      </div>
+                      {/* Đổi trạng thái — chặn nổi bọt để không bung/thu khi chọn */}
+                      <div onClick={(e) => e.stopPropagation()}>
+                        <select value={r.item.stage} onChange={(e) => setStage(r.s.id, e.target.value as StageId)}
+                          className={`w-full rounded-md border px-2 py-1 text-xs font-medium ${stageColor(r.item.stage)}`}>
+                          {STAGES.map((st) => <option key={st.id} value={st.id}>{t(`stage.${st.id}`)}</option>)}
+                        </select>
+                      </div>
+                      <div className="text-xs">
+                        {r.dl ? (
+                          <>
+                            <span className="text-slate-600">{r.dl.date}</span>{" "}
+                            <span className={deadlineColor(r.days)}>({deadlineText(r.days, t)})</span>
+                          </>
+                        ) : <span className="text-slate-300">—</span>}
+                      </div>
+                      <div className="flex items-center gap-2">
+                        <div className="h-1.5 flex-1 overflow-hidden rounded-full bg-slate-100">
+                          <div className="h-full bg-indigo-500" style={{ width: `${r.prog}%` }} />
                         </div>
-                        <div className="mt-1 flex items-center gap-2 text-xs text-slate-500">
-                          <span>{flagEmoji(r.s.countryCode)} {t(`country.${r.s.countryCode}`)}</span>
-                          {r.dl && <><span>·</span><span className={deadlineColor(r.days)}>{deadlineText(r.days, t)}</span></>}
-                          {r.item.note && <><span>·</span><span className="text-amber-600">📝 {t("account.hasNote")}</span></>}
+                        <span className="text-xs text-slate-500">{r.prog}%</span>
+                      </div>
+                      <span className={`hidden text-slate-400 transition-transform sm:inline ${open ? "rotate-180" : ""}`}>▾</span>
+                    </div>
+
+                    {/* Panel chi tiết */}
+                    {open && (
+                      <div className="animate-drop grid gap-4 border-t border-indigo-100 bg-indigo-50/30 px-4 py-4 lg:grid-cols-2">
+                        {/* Hồ sơ cần nộp (tick tiến độ) */}
+                        <div className="rounded-xl border border-slate-200 bg-white p-3">
+                          <p className="mb-2 text-sm font-semibold text-slate-800">📋 {t("detail.checklist")} <span className="font-normal text-slate-400">({r.prog}%)</span></p>
+                          <ul className="space-y-1">
+                            {r.s.documents.map((d) => (
+                              <li key={d}>
+                                <label className="flex cursor-pointer items-start gap-2 rounded p-1 text-sm hover:bg-slate-50">
+                                  <input type="checkbox" checked={!!r.item.checklist[d]} onChange={() => toggleChecklist(r.s.id, d)} className="mt-0.5 h-4 w-4 accent-indigo-600" />
+                                  <span className={r.item.checklist[d] ? "text-slate-400 line-through" : "text-slate-700"}>{d}</span>
+                                </label>
+                              </li>
+                            ))}
+                          </ul>
                         </div>
-                        <div className="mt-2 flex items-center gap-2">
-                          <div className="h-1.5 flex-1 overflow-hidden rounded-full bg-slate-100">
-                            <div className="h-full bg-indigo-500" style={{ width: `${r.prog}%` }} />
+
+                        <div className="space-y-3">
+                          {/* Link đăng ký / nguồn + trợ lý viết hồ sơ */}
+                          <div className="rounded-xl border border-slate-200 bg-white p-3">
+                            <p className="mb-2 text-sm font-semibold text-slate-800">🔗 {t("account.linksSection")}</p>
+                            <div className="flex flex-wrap gap-2">
+                              <a href={r.s.officialUrl} target="_blank" rel="noopener noreferrer"
+                                className="rounded-lg border border-slate-300 px-3 py-1.5 text-xs font-medium text-slate-700 hover:bg-slate-50">🌐 {t("detail.official")}</a>
+                              <Link href={`/scholarships/${r.s.id}/documents`}
+                                className="rounded-lg bg-indigo-600 px-3 py-1.5 text-xs font-semibold text-white hover:bg-indigo-700">{t("docs.openCta")}</Link>
+                              <Link href={`/scholarships/${r.s.id}`}
+                                className="rounded-lg border border-slate-300 px-3 py-1.5 text-xs font-medium text-slate-700 hover:bg-slate-50">{t("account.viewFull")} →</Link>
+                            </div>
                           </div>
-                          <span className="text-xs text-slate-500">{t("account.itemProgress")} {r.prog}%</span>
-                        </div>
-                        <div className="mt-2 flex items-center gap-1.5">
-                          <select value={r.item.stage} onChange={(e) => setStage(r.s.id, e.target.value as StageId)}
-                            className={`w-full rounded-md border px-2 py-1 text-xs font-medium ${stageColor(r.item.stage)}`}>
-                            {STAGES.map((st) => <option key={st.id} value={st.id}>{t(`stage.${st.id}`)}</option>)}
-                          </select>
-                          <Link href={`/scholarships/${r.s.id}/documents`} title={t("docs.title")}
-                            className="shrink-0 rounded-md border border-slate-300 px-2 py-1 text-xs font-medium text-slate-600 hover:border-indigo-400 hover:text-indigo-600">
-                            ✍️
-                          </Link>
+
+                          {/* Các mốc thời gian */}
+                          <div className="rounded-xl border border-slate-200 bg-white p-3">
+                            <p className="mb-2 text-sm font-semibold text-slate-800">🗓️ {t("detail.timeline")}</p>
+                            <ul className="space-y-1 text-xs">
+                              {r.s.deadlines.map((d, i) => {
+                                const dl2 = daysLeft(d.date);
+                                return (
+                                  <li key={i} className="flex items-center justify-between gap-2">
+                                    <span className="text-slate-600">{d.type}</span>
+                                    <span className="shrink-0"><span className="text-slate-500">{d.date}</span> <span className={deadlineColor(dl2)}>({deadlineText(dl2, t)})</span></span>
+                                  </li>
+                                );
+                              })}
+                            </ul>
+                          </div>
+
+                          {/* Ghi chú */}
+                          <div className="rounded-xl border border-slate-200 bg-white p-3">
+                            <p className="mb-1.5 text-sm font-semibold text-slate-800">📝 {t("detail.note")}</p>
+                            <textarea value={r.item.note} onChange={(e) => setNote(r.s.id, e.target.value)}
+                              placeholder={t("detail.notePh")} rows={2}
+                              className="w-full rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm outline-none focus:border-indigo-400" />
+                          </div>
                         </div>
                       </div>
-                    ))}
+                    )}
                   </div>
-                </div>
-              ))}
+                );
+              })}
             </div>
           </div>
         )
