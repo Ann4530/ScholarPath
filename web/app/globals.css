@@ -27,3 +27,39 @@ body {
   background: #cbd5e1;
   border-radius: 9999px;
 }
+
+/* Animation dùng chung: panel dropdown xổ xuống & khối trồi lên */
+@keyframes dropIn {
+  from {
+    opacity: 0;
+    transform: translateY(-6px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+@keyframes riseIn {
+  from {
+    opacity: 0;
+    transform: translateY(12px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+.animate-drop {
+  animation: dropIn 0.16s ease-out both;
+}
+.animate-rise {
+  animation: riseIn 0.28s ease-out both;
+}
+
+/* Giới hạn 2 dòng (mô tả trên card) */
+.line-clamp-2 {
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}

@@ -30,8 +30,9 @@ export function deadlineColor(days: number): string {
   return "text-slate-600";
 }
 
-export function deadlineText(days: number): string {
-  if (days < 0) return "đã đóng";
-  if (days === 0) return "hết hạn hôm nay";
-  return `còn ${days} ngày`;
+// Chuỗi "còn N ngày" theo ngôn ngữ hiện tại — component truyền t (i18next) vào.
+export function deadlineText(days: number, t: (key: string, opts?: Record<string, unknown>) => string): string {
+  if (days < 0) return t("deadline.closed");
+  if (days === 0) return t("deadline.today");
+  return t("deadline.left", { n: days });
 }

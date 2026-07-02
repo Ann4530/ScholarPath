@@ -3,19 +3,18 @@
 import React, { createContext, useContext, useEffect, useState } from "react";
 import { defaultProfile, Profile, scholarshipById } from "./data";
 
-// Các trạng thái trong pipeline theo dõi (E17)
+// Các trạng thái trong pipeline theo dõi (E17) — nhãn hiển thị dịch qua t(`stage.${id}`)
 export const STAGES = [
-  { id: "quan_tam", label: "Quan tâm", color: "bg-slate-100 text-slate-700 border-slate-300" },
-  { id: "nghien_cuu", label: "Đang nghiên cứu", color: "bg-sky-100 text-sky-700 border-sky-300" },
-  { id: "lien_he_gs", label: "Liên hệ giáo sư", color: "bg-violet-100 text-violet-700 border-violet-300" },
-  { id: "chuan_bi", label: "Chuẩn bị hồ sơ", color: "bg-amber-100 text-amber-700 border-amber-300" },
-  { id: "da_nop", label: "Đã nộp", color: "bg-blue-100 text-blue-700 border-blue-300" },
-  { id: "phong_van", label: "Phỏng vấn", color: "bg-orange-100 text-orange-700 border-orange-300" },
-  { id: "ket_qua", label: "Kết quả", color: "bg-emerald-100 text-emerald-700 border-emerald-300" },
+  { id: "quan_tam", color: "bg-slate-100 text-slate-700 border-slate-300" },
+  { id: "nghien_cuu", color: "bg-sky-100 text-sky-700 border-sky-300" },
+  { id: "lien_he_gs", color: "bg-violet-100 text-violet-700 border-violet-300" },
+  { id: "chuan_bi", color: "bg-amber-100 text-amber-700 border-amber-300" },
+  { id: "da_nop", color: "bg-blue-100 text-blue-700 border-blue-300" },
+  { id: "phong_van", color: "bg-orange-100 text-orange-700 border-orange-300" },
+  { id: "ket_qua", color: "bg-emerald-100 text-emerald-700 border-emerald-300" },
 ] as const;
 
 export type StageId = (typeof STAGES)[number]["id"];
-export const stageLabel = (id: string) => STAGES.find((s) => s.id === id)?.label ?? id;
 export const stageColor = (id: string) => STAGES.find((s) => s.id === id)?.color ?? "";
 
 export interface TrackItem {
@@ -29,7 +28,10 @@ export interface TrackItem {
 interface TrackState {
   tracked: Record<string, TrackItem>;
   profile: Profile;
+  compare: string[]; // danh sách id học bổng đang chọn so sánh (tối đa 4)
 }
+
+export const MAX_COMPARE = 4;
 
 interface TrackContextType extends TrackState {
   isTracked: (id: string) => boolean;
@@ -41,13 +43,16 @@ interface TrackContextType extends TrackState {
   setProfile: (p: Profile) => void;
   progress: (id: string) => number;
   count: number;
+  isCompared: (id: string) => boolean;
+  toggleCompare: (id: string) => void;
+  clearCompare: () => void;
 }
 
 const KEY = "scholarfinder_v1";
 const TrackContext = createContext<TrackContextType | null>(null);
 
 export function TrackProvider({ children }: { children: React.ReactNode }) {
-  const [state, setState] = useState<TrackState>({ tracked: {}, profile: defaultProfile });
+  const [state, setState] = useState<TrackState>({ tracked: {}, profile: defaultProfile, compare: [] });
   const [loaded, setLoaded] = useState(false);
 
   // Load từ localStorage sau khi mount (tránh hydration mismatch)
@@ -56,9 +61,11 @@ export function TrackProvider({ children }: { children: React.ReactNode }) {
       const raw = localStorage.getItem(KEY);
       if (raw) {
         const parsed = JSON.parse(raw);
+        // eslint-disable-next-line react-hooks/set-state-in-effect -- nạp localStorage sau mount, tránh hydration mismatch
         setState({
           tracked: parsed.tracked ?? {},
           profile: { ...defaultProfile, ...(parsed.profile ?? {}) },
+          compare: Array.isArray(parsed.compare) ? parsed.compare.slice(0, MAX_COMPARE) : [],
         });
       }
     } catch {
@@ -114,6 +121,17 @@ export function TrackProvider({ children }: { children: React.ReactNode }) {
 
   const setProfile = (p: Profile) => setState((s) => ({ ...s, profile: p }));
 
+  const isCompared = (id: string) => state.compare.includes(id);
+
+  const toggleCompare = (id: string) =>
+    setState((s) => {
+      if (s.compare.includes(id)) return { ...s, compare: s.compare.filter((x) => x !== id) };
+      if (s.compare.length >= MAX_COMPARE) return s; // tối đa 4
+      return { ...s, compare: [...s.compare, id] };
+    });
+
+  const clearCompare = () => setState((s) => ({ ...s, compare: [] }));
+
   const progress = (id: string) => {
     const item = state.tracked[id];
     const sch = scholarshipById(id);
@@ -133,6 +151,9 @@ export function TrackProvider({ children }: { children: React.ReactNode }) {
     setProfile,
     progress,
     count: Object.keys(state.tracked).length,
+    isCompared,
+    toggleCompare,
+    clearCompare,
   };
 
   return <TrackContext.Provider value={value}>{children}</TrackContext.Provider>;

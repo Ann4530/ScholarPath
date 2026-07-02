@@ -2,11 +2,14 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import { useTranslation } from "react-i18next";
 import { useTrack } from "@/lib/store";
+import LanguagePicker from "@/components/LanguagePicker";
 
 export default function NavBar({ children }: { children?: React.ReactNode }) {
   const pathname = usePathname();
   const { count } = useTrack();
+  const { t } = useTranslation();
 
   const link = (href: string, label: string, badge?: number) => {
     const active = href === "/" ? pathname === "/" : pathname.startsWith(href);
@@ -44,9 +47,18 @@ export default function NavBar({ children }: { children?: React.ReactNode }) {
         </Link>
         <div className="flex items-center gap-3">
           <nav className="flex items-center gap-1">
-            {link("/", "Tìm học bổng")}
-            {link("/board", "Bảng theo dõi", count)}
+            {link("/", t("nav.search"))}
+            {link("/professors", t("nav.professors"))}
+            {link("/board", t("nav.board"), count)}
+            {link("/profile", t("account.navTitle"))}
+            <Link
+              href="/start"
+              className="ml-1 hidden rounded-lg bg-gradient-to-r from-indigo-600 to-violet-600 px-3 py-2 text-sm font-semibold text-white shadow-sm transition hover:from-indigo-500 hover:to-violet-500 sm:block"
+            >
+              ✨ {t("nav.start")}
+            </Link>
           </nav>
+          <LanguagePicker />
           {children}
         </div>
       </div>

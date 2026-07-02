@@ -1,0 +1,541 @@
+"use client";
+
+// Trang cá nhân (account hub): Tổng quan (thống kê) · Hồ sơ học tập · Danh sách của tôi · Hỗ trợ.
+import { useMemo, useState } from "react";
+import Link from "next/link";
+import { useTranslation } from "react-i18next";
+import {
+  scholarshipById,
+  matchScore,
+  nextDeadline,
+  daysLeft,
+  profileCompletion,
+  advisors,
+  REGIONS,
+  REGION_KEY,
+  COUNTRIES,
+  FIELDS,
+  INTAKES,
+  Level,
+  FundingLevel,
+  ProviderType,
+} from "@/lib/data";
+import { useTrack, STAGES, StageId, stageColor } from "@/lib/store";
+import { flagEmoji, matchColor, deadlineColor, deadlineText } from "@/lib/ui";
+
+const LEVELS: Level[] = ["Bachelor", "Master", "PhD"];
+const FUNDINGS: FundingLevel[] = ["Full", "Partial", "TuitionOnly"];
+const PROVIDER_TYPES: ProviderType[] = ["Government", "University", "Org", "Corporate"];
+
+type Tab = "overview" | "academic" | "list" | "support";
+type GroupBy = "stage" | "funding" | "region" | "type";
+
+function toggle<T>(arr: T[], v: T): T[] {
+  return arr.includes(v) ? arr.filter((x) => x !== v) : [...arr, v];
+}
+
+export default function ProfileClient({ email }: { email: string | null }) {
+  const { t } = useTranslation();
+  const { profile, setProfile, tracked, setStage, progress } = useTrack();
+  const [tab, setTab] = useState<Tab>("overview");
+  const [groupBy, setGroupBy] = useState<GroupBy>("stage");
+
+  const completion = profileCompletion(profile);
+  const displayName = profile.name.trim() || email || t("account.guest");
+
+  // ---- Gom dữ liệu học bổng đang theo dõi ----
+  const rows = useMemo(() => {
+    return Object.values(tracked)
+      .map((item) => {
+        const s = scholarshipById(item.scholarshipId);
+        if (!s) return null;
+        const dl = nextDeadline(s);
+        const days = dl ? daysLeft(dl.date) : 9999;
+        return { item, s, dl, days, match: matchScore(profile, s, t), prog: progress(s.id) };
+      })
+      .filter(Boolean)
+      .sort((a, b) => a!.days - b!.days) as {
+      item: (typeof tracked)[string];
+      s: NonNullable<ReturnType<typeof scholarshipById>>;
+      dl: ReturnType<typeof nextDeadline>;
+      days: number;
+      match: ReturnType<typeof matchScore>;
+      prog: number;
+    }[];
+  }, [tracked, profile, progress, t]);
+
+  // ---- Thống kê ----
+  const stats = useMemo(() => {
+    const byStage: Record<string, number> = {};
+    STAGES.forEach((s) => (byStage[s.id] = 0));
+    const byFunding: Record<string, number> = { Full: 0, Partial: 0, TuitionOnly: 0 };
+    const byRegion: Record<string, number> = {};
+    REGIONS.forEach((r) => (byRegion[r] = 0));
+    let soon = 0, matchSum = 0, docSum = 0;
+    rows.forEach((r) => {
+      byStage[r.item.stage] = (byStage[r.item.stage] ?? 0) + 1;
+      byFunding[r.s.fundingLevel]++;
+      byRegion[r.s.region]++;
+      if (r.days >= 0 && r.days <= 7) soon++;
+      matchSum += r.match.score;
+      docSum += r.prog;
+    });
+    const n = rows.length || 1;
+    return {
+      total: rows.length,
+      byStage, byFunding, byRegion,
+      soon,
+      submitted: byStage["da_nop"] + byStage["phong_van"] + byStage["ket_qua"],
+      inProgress: byStage["chuan_bi"] + byStage["lien_he_gs"] + byStage["nghien_cuu"],
+      avgMatch: Math.round(matchSum / n),
+      avgDocs: Math.round(docSum / n),
+    };
+  }, [rows]);
+
+  // ---- Nhóm danh sách theo tiêu chí ----
+  const groups = useMemo(() => {
+    const out: { key: string; label: string; color?: string; rows: typeof rows }[] = [];
+    if (groupBy === "stage") {
+      STAGES.forEach((st) => {
+        const gr = rows.filter((r) => r.item.stage === st.id);
+        if (gr.length) out.push({ key: st.id, label: t(`stage.${st.id}`), color: st.color, rows: gr });
+      });
+    } else if (groupBy === "funding") {
+      FUNDINGS.forEach((f) => {
+        const gr = rows.filter((r) => r.s.fundingLevel === f);
+        if (gr.length) out.push({ key: f, label: t(`funding.${f}`), rows: gr });
+      });
+    } else if (groupBy === "region") {
+      REGIONS.forEach((r) => {
+        const gr = rows.filter((x) => x.s.region === r);
+        if (gr.length) out.push({ key: r, label: t(`region.${REGION_KEY[r]}`), rows: gr });
+      });
+    } else {
+      PROVIDER_TYPES.forEach((p) => {
+        const gr = rows.filter((r) => r.s.providerType === p);
+        if (gr.length) out.push({ key: p, label: t(`providerType.${p}`), rows: gr });
+      });
+    }
+    return out;
+  }, [rows, groupBy, t]);
+
+  const upcoming = rows.filter((r) => r.days >= 0).slice(0, 6);
+
+  return (
+    <div className="mx-auto max-w-6xl px-4 py-6">
+      {/* Header cá nhân */}
+      <section className="relative overflow-hidden rounded-3xl bg-gradient-to-br from-indigo-700 via-violet-700 to-fuchsia-700 p-6 text-white sm:p-8">
+        <div className="pointer-events-none absolute -right-16 -top-20 h-64 w-64 rounded-full bg-white/10 blur-2xl" />
+        <div className="relative flex flex-wrap items-center gap-5">
+          <div className="grid h-16 w-16 shrink-0 place-items-center rounded-2xl bg-white/15 text-3xl font-black ring-1 ring-white/30">
+            {(profile.name.trim() || email || "U").charAt(0).toUpperCase()}
+          </div>
+          <div className="min-w-0 flex-1">
+            <p className="text-xs font-semibold uppercase tracking-widest text-indigo-200">{t("account.title")}</p>
+            <h1 className="mt-0.5 truncate text-2xl font-bold">{displayName}</h1>
+            <p className="mt-0.5 text-sm text-indigo-200">
+              {email ? `${t("account.email")}: ${email}` : t("account.guestHint")}
+            </p>
+          </div>
+          {/* Vòng % hoàn thiện */}
+          <div className="flex items-center gap-3">
+            <div className="relative h-16 w-16">
+              <svg viewBox="0 0 36 36" className="h-16 w-16 -rotate-90">
+                <circle cx="18" cy="18" r="15.9155" fill="none" stroke="rgba(255,255,255,0.2)" strokeWidth="3" />
+                <circle cx="18" cy="18" r="15.9155" fill="none" stroke="#fcd34d" strokeWidth="3" strokeLinecap="round"
+                  strokeDasharray={`${completion} ${100 - completion}`} />
+              </svg>
+              <span className="absolute inset-0 grid place-items-center text-sm font-bold">{completion}%</span>
+            </div>
+            <div className="hidden max-w-[140px] text-xs text-indigo-200 sm:block">
+              <p className="font-semibold text-white">{t("account.completion")}</p>
+              <p>{t("account.completionHint")}</p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Tabs */}
+      <div className="mt-5 flex flex-wrap gap-1 border-b border-slate-200">
+        {(["overview", "academic", "list", "support"] as Tab[]).map((tb) => (
+          <button
+            key={tb}
+            onClick={() => setTab(tb)}
+            className={`rounded-t-lg px-4 py-2.5 text-sm font-medium transition ${
+              tab === tb ? "border-b-2 border-indigo-600 text-indigo-700" : "text-slate-500 hover:text-slate-800"
+            }`}
+          >
+            {t(`account.tabs.${tb}`)}
+            {tb === "list" && stats.total > 0 && (
+              <span className="ml-1.5 rounded-full bg-indigo-100 px-1.5 text-xs font-bold text-indigo-700">{stats.total}</span>
+            )}
+          </button>
+        ))}
+      </div>
+
+      {/* ===== TAB: TỔNG QUAN ===== */}
+      {tab === "overview" && (
+        stats.total === 0 ? <EmptyState t={t} /> : (
+          <div className="mt-6 space-y-6">
+            <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-6">
+              <StatCard label={t("account.stat.tracking")} value={stats.total} tone="indigo" />
+              <StatCard label={t("account.stat.inProgress")} value={stats.inProgress} tone="amber" />
+              <StatCard label={t("account.stat.submitted")} value={stats.submitted} tone="emerald" />
+              <StatCard label={t("account.stat.soon")} value={stats.soon} tone="rose" />
+              <StatCard label={t("account.stat.avgMatch")} value={`${stats.avgMatch}%`} tone="violet" />
+              <StatCard label={t("account.stat.avgDocs")} value={`${stats.avgDocs}%`} tone="sky" />
+            </div>
+
+            <div className="grid gap-6 lg:grid-cols-2">
+              {/* Funnel theo giai đoạn */}
+              <Panel title={t("account.funnelTitle")}>
+                <div className="space-y-2">
+                  {STAGES.map((st) => {
+                    const c = stats.byStage[st.id];
+                    const pct = stats.total ? Math.round((c / stats.total) * 100) : 0;
+                    return (
+                      <div key={st.id} className="flex items-center gap-3">
+                        <span className={`w-32 shrink-0 rounded-md border px-2 py-0.5 text-xs font-medium ${st.color}`}>{t(`stage.${st.id}`)}</span>
+                        <div className="h-2.5 flex-1 overflow-hidden rounded-full bg-slate-100">
+                          <div className="h-full rounded-full bg-indigo-500 transition-all" style={{ width: `${pct}%` }} />
+                        </div>
+                        <span className="w-6 text-right text-sm font-semibold text-slate-700">{c}</span>
+                      </div>
+                    );
+                  })}
+                </div>
+              </Panel>
+
+              <div className="space-y-6">
+                {/* Theo mức tài trợ */}
+                <Panel title={t("account.byFundingTitle")}>
+                  <div className="flex flex-wrap gap-2">
+                    {FUNDINGS.map((f) => (
+                      <span key={f} className="rounded-lg bg-slate-50 px-3 py-2 text-sm ring-1 ring-slate-200">
+                        {t(`funding.${f}`)}: <b className="text-slate-900">{stats.byFunding[f]}</b>
+                      </span>
+                    ))}
+                  </div>
+                </Panel>
+                {/* Theo khu vực */}
+                <Panel title={t("account.byRegionTitle")}>
+                  <div className="flex flex-wrap gap-2">
+                    {REGIONS.filter((r) => stats.byRegion[r] > 0).map((r) => (
+                      <span key={r} className="rounded-lg bg-slate-50 px-3 py-2 text-sm ring-1 ring-slate-200">
+                        {t(`region.${REGION_KEY[r]}`)}: <b className="text-slate-900">{stats.byRegion[r]}</b>
+                      </span>
+                    ))}
+                  </div>
+                </Panel>
+              </div>
+            </div>
+
+            {/* Deadline sắp tới */}
+            <Panel title={t("account.deadlinesTitle")}>
+              {upcoming.length === 0 ? (
+                <p className="text-sm text-slate-400">{t("account.deadlinesEmpty")}</p>
+              ) : (
+                <ul className="divide-y divide-slate-100">
+                  {upcoming.map((r) => (
+                    <li key={r.s.id} className="flex items-center justify-between gap-3 py-2.5">
+                      <div className="min-w-0">
+                        <Link href={`/scholarships/${r.s.id}`} className="block truncate font-medium text-slate-800 hover:text-indigo-600">{r.s.title}</Link>
+                        <span className="text-xs text-slate-500">{flagEmoji(r.s.countryCode)} {t(`country.${r.s.countryCode}`)} · {r.dl?.type}</span>
+                      </div>
+                      <div className="shrink-0 text-right">
+                        <p className="text-sm text-slate-700">{r.dl?.date}</p>
+                        <p className={`text-xs ${deadlineColor(r.days)}`}>{deadlineText(r.days, t)}</p>
+                      </div>
+                    </li>
+                  ))}
+                </ul>
+              )}
+            </Panel>
+          </div>
+        )
+      )}
+
+      {/* ===== TAB: HỒ SƠ HỌC TẬP ===== */}
+      {tab === "academic" && (
+        <div className="mt-6 rounded-2xl border border-slate-200 bg-white p-5 shadow-sm sm:p-6">
+          <div className="mb-4 flex items-center justify-between">
+            <div>
+              <h2 className="text-lg font-semibold text-slate-900">{t("account.academicTitle")}</h2>
+              <p className="text-sm text-slate-500">{t("account.academicHint")}</p>
+            </div>
+            <span className="hidden items-center gap-1 rounded-full bg-emerald-50 px-3 py-1 text-xs font-medium text-emerald-700 sm:flex">✓ {t("account.saved")}</span>
+          </div>
+
+          <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+            <Field label={t("account.name")}>
+              <input value={profile.name} onChange={(e) => setProfile({ ...profile, name: e.target.value })}
+                placeholder={t("account.namePh")} className="inp" />
+            </Field>
+            <Field label={t("account.nationality")}>
+              <select value={profile.nationality} onChange={(e) => setProfile({ ...profile, nationality: e.target.value })} className="inp">
+                <option value="VN">{t("account.natVN")}</option>
+                <option value="Other">{t("account.natOther")}</option>
+              </select>
+            </Field>
+            <Field label={t("profilePanel.level")}>
+              <select value={profile.level} onChange={(e) => setProfile({ ...profile, level: e.target.value as Level })} className="inp">
+                {LEVELS.map((l) => <option key={l} value={l}>{t(`level.${l}`)}</option>)}
+              </select>
+            </Field>
+            <Field label={t("profilePanel.gpa")}>
+              <input type="number" step="0.1" min="0" max="4" value={profile.gpa}
+                onChange={(e) => setProfile({ ...profile, gpa: parseFloat(e.target.value) || 0 })} className="inp" />
+            </Field>
+            <Field label={t("profilePanel.ielts")}>
+              <input type="number" step="0.5" min="0" max="9" value={profile.ielts}
+                onChange={(e) => setProfile({ ...profile, ielts: parseFloat(e.target.value) || 0 })} className="inp" />
+            </Field>
+            <Field label={t("account.workYears")}>
+              <input type="number" step="1" min="0" max="40" value={profile.workYears}
+                onChange={(e) => setProfile({ ...profile, workYears: parseInt(e.target.value) || 0 })} className="inp" />
+            </Field>
+            <Field label={t("profilePanel.fundingNeed")}>
+              <select value={profile.fundingNeed} onChange={(e) => setProfile({ ...profile, fundingNeed: e.target.value as "Full" | "Partial" | "Any" })} className="inp">
+                <option value="Full">{t("profilePanel.needFull")}</option>
+                <option value="Partial">{t("profilePanel.needPartial")}</option>
+                <option value="Any">{t("profilePanel.needAny")}</option>
+              </select>
+            </Field>
+            <Field label={t("account.intakeField")}>
+              <select value={profile.intake} onChange={(e) => setProfile({ ...profile, intake: e.target.value })} className="inp">
+                <option value="">{t("account.intakeAny")}</option>
+                {INTAKES.map((i) => <option key={i} value={i}>{i}</option>)}
+              </select>
+            </Field>
+            <Field label={t("profilePanel.hasGre")}>
+              <label className="flex h-[42px] cursor-pointer items-center gap-2 rounded-lg border border-slate-300 bg-white px-3">
+                <input type="checkbox" checked={profile.hasGre} onChange={() => setProfile({ ...profile, hasGre: !profile.hasGre })} className="h-4 w-4 accent-indigo-600" />
+                <span className="text-sm text-slate-700">GRE/GMAT</span>
+              </label>
+            </Field>
+          </div>
+
+          <div className="mt-5 grid gap-5 lg:grid-cols-2">
+            <div>
+              <p className="mb-2 text-sm font-medium text-slate-600">{t("profilePanel.fields")}</p>
+              <div className="flex flex-wrap gap-1.5">
+                {FIELDS.map((f) => (
+                  <button key={f} onClick={() => setProfile({ ...profile, fields: toggle(profile.fields, f) })}
+                    className={`rounded-full px-3 py-1 text-xs ring-1 transition ${profile.fields.includes(f) ? "bg-indigo-600 text-white ring-indigo-600" : "bg-white text-slate-600 ring-slate-300 hover:ring-indigo-400"}`}>{f}</button>
+                ))}
+              </div>
+            </div>
+            <div>
+              <p className="mb-2 text-sm font-medium text-slate-600">{t("profilePanel.countries")}</p>
+              <div className="flex flex-wrap gap-1.5">
+                {COUNTRIES.map((c) => (
+                  <button key={c.code} onClick={() => setProfile({ ...profile, countries: toggle(profile.countries, c.code) })}
+                    className={`rounded-full px-3 py-1 text-xs ring-1 transition ${profile.countries.includes(c.code) ? "bg-indigo-600 text-white ring-indigo-600" : "bg-white text-slate-600 ring-slate-300 hover:ring-indigo-400"}`}>{flagEmoji(c.code)} {t(`country.${c.code}`)}</button>
+                ))}
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* ===== TAB: DANH SÁCH CỦA TÔI ===== */}
+      {tab === "list" && (
+        stats.total === 0 ? <EmptyState t={t} /> : (
+          <div className="mt-6">
+            <div className="mb-4 flex flex-wrap items-center justify-between gap-2">
+              <h2 className="text-lg font-semibold text-slate-900">{t("account.listTitle")}</h2>
+              <div className="flex items-center gap-2 text-sm">
+                <label className="text-slate-500">{t("account.groupBy")}</label>
+                <select value={groupBy} onChange={(e) => setGroupBy(e.target.value as GroupBy)}
+                  className="rounded-lg border border-slate-300 bg-white px-2.5 py-1.5 font-medium text-slate-700">
+                  <option value="stage">{t("account.group.stage")}</option>
+                  <option value="funding">{t("account.group.funding")}</option>
+                  <option value="region">{t("account.group.region")}</option>
+                  <option value="type">{t("account.group.type")}</option>
+                </select>
+                <Link href="/board" className="rounded-lg bg-slate-900 px-3 py-1.5 text-xs font-semibold text-white hover:bg-slate-700">{t("account.openBoard")}</Link>
+              </div>
+            </div>
+
+            <div className="space-y-5">
+              {groups.map((g) => (
+                <div key={g.key}>
+                  <div className="mb-2 flex items-center gap-2">
+                    <span className={`rounded-md border px-2 py-0.5 text-xs font-semibold ${g.color ?? "border-slate-200 bg-slate-100 text-slate-700"}`}>{g.label}</span>
+                    <span className="text-xs text-slate-400">{g.rows.length}</span>
+                  </div>
+                  <div className="grid gap-2.5 sm:grid-cols-2">
+                    {g.rows.map((r) => (
+                      <div key={r.s.id} className="rounded-xl border border-slate-200 bg-white p-3 shadow-sm">
+                        <div className="flex items-start justify-between gap-2">
+                          <Link href={`/scholarships/${r.s.id}`} className="text-sm font-semibold text-slate-800 hover:text-indigo-600">{r.s.title}</Link>
+                          <span className={`shrink-0 rounded-md border px-1.5 py-0.5 text-xs font-bold ${matchColor(r.match.score)}`}>{r.match.score}%</span>
+                        </div>
+                        <div className="mt-1 flex items-center gap-2 text-xs text-slate-500">
+                          <span>{flagEmoji(r.s.countryCode)} {t(`country.${r.s.countryCode}`)}</span>
+                          {r.dl && <><span>·</span><span className={deadlineColor(r.days)}>{deadlineText(r.days, t)}</span></>}
+                          {r.item.note && <><span>·</span><span className="text-amber-600">📝 {t("account.hasNote")}</span></>}
+                        </div>
+                        <div className="mt-2 flex items-center gap-2">
+                          <div className="h-1.5 flex-1 overflow-hidden rounded-full bg-slate-100">
+                            <div className="h-full bg-indigo-500" style={{ width: `${r.prog}%` }} />
+                          </div>
+                          <span className="text-xs text-slate-500">{t("account.itemProgress")} {r.prog}%</span>
+                        </div>
+                        <div className="mt-2 flex items-center gap-1.5">
+                          <select value={r.item.stage} onChange={(e) => setStage(r.s.id, e.target.value as StageId)}
+                            className={`w-full rounded-md border px-2 py-1 text-xs font-medium ${stageColor(r.item.stage)}`}>
+                            {STAGES.map((st) => <option key={st.id} value={st.id}>{t(`stage.${st.id}`)}</option>)}
+                          </select>
+                          <Link href={`/scholarships/${r.s.id}/documents`} title={t("docs.title")}
+                            className="shrink-0 rounded-md border border-slate-300 px-2 py-1 text-xs font-medium text-slate-600 hover:border-indigo-400 hover:text-indigo-600">
+                            ✍️
+                          </Link>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        )
+      )}
+
+      {/* ===== TAB: HỖ TRỢ ===== */}
+      {tab === "support" && (
+        <div className="mt-6 space-y-6">
+          <div>
+            <h2 className="text-lg font-semibold text-slate-900">{t("account.supportTitle")}</h2>
+            <p className="text-sm text-slate-500">{t("account.supportDesc")}</p>
+          </div>
+
+          <div className="grid gap-4 sm:grid-cols-2">
+            {advisors.map((a) => {
+              const fits = a.regions.some((r) => profile.countries.includes(r));
+              return (
+                <div key={a.id} className={`rounded-2xl border bg-white p-4 shadow-sm transition hover:shadow-md ${fits ? "border-indigo-300 ring-1 ring-indigo-100" : "border-slate-200"}`}>
+                  <div className="flex items-start gap-3">
+                    <div className="grid h-12 w-12 shrink-0 place-items-center rounded-xl bg-slate-100 text-2xl">{a.avatar}</div>
+                    <div className="min-w-0 flex-1">
+                      <div className="flex items-center gap-2">
+                        <p className="font-bold text-slate-900">{a.name}</p>
+                        {fits && <span className="rounded-full bg-indigo-100 px-2 py-0.5 text-[10px] font-semibold text-indigo-700">★ {t("account.advisorMatch")}</span>}
+                      </div>
+                      <p className="text-xs text-slate-500">{t(`advisorRole.${a.roleKey}`)}</p>
+                      <div className="mt-1 flex items-center gap-2 text-xs text-slate-500">
+                        <span className="text-amber-500">⭐ {a.rating.toFixed(1)}</span>
+                        <span>·</span>
+                        <span>{t("account.sessions", { n: a.sessions })}</span>
+                      </div>
+                    </div>
+                  </div>
+                  <div className="mt-3 flex flex-wrap items-center gap-1.5 text-xs">
+                    {a.regions.map((r) => <span key={r} title={t(`country.${r}`)}>{flagEmoji(r)}</span>)}
+                    <span className="ml-1 text-slate-400">{t("account.speaks")}</span>
+                    {a.langs.map((l) => <span key={l} className="rounded bg-slate-100 px-1.5 py-0.5 text-slate-600">{t(`teachLang.${l}`)}</span>)}
+                  </div>
+                  <div className="mt-3 flex gap-2">
+                    <a href={`mailto:${a.email}?subject=${encodeURIComponent("[ScholarFinder] " + t("account.book"))}`}
+                      className="flex-1 rounded-lg bg-indigo-600 px-3 py-2 text-center text-xs font-semibold text-white hover:bg-indigo-700">
+                      {t("account.book")}
+                    </a>
+                    <a href={`mailto:${a.email}`}
+                      className="rounded-lg border border-slate-300 px-3 py-2 text-center text-xs font-medium text-slate-600 hover:bg-slate-50">
+                      {t("account.contactAdvisor")}
+                    </a>
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+
+          {/* Kênh hỗ trợ khác */}
+          <div>
+            <h3 className="mb-2 text-sm font-bold uppercase tracking-wide text-slate-500">{t("account.channelsTitle")}</h3>
+            <div className="grid gap-3 sm:grid-cols-3">
+              <Channel icon="✉️" title={t("account.channelEmail")} desc={t("account.channelEmailDesc")} href="mailto:support@scholarfinder.example" />
+              <Channel icon="💬" title={t("account.channelCommunity")} desc={t("account.channelCommunityDesc")} href="#" />
+              <Channel icon="❓" title={t("account.channelFaq")} desc={t("account.channelFaqDesc")} href="#" />
+            </div>
+          </div>
+
+          <p className="rounded-xl bg-amber-50 p-3 text-xs text-amber-700">⚠️ {t("account.supportDisclaimer")}</p>
+        </div>
+      )}
+
+      <style jsx>{`
+        .inp {
+          width: 100%;
+          border-radius: 0.5rem;
+          border: 1px solid rgb(203 213 225);
+          background: white;
+          padding: 0.6rem 0.75rem;
+          font-size: 0.875rem;
+          outline: none;
+        }
+        .inp:focus {
+          border-color: rgb(129 140 248);
+        }
+      `}</style>
+    </div>
+  );
+}
+
+function EmptyState({ t }: { t: (k: string) => string }) {
+  return (
+    <div className="mt-6 rounded-2xl border border-dashed border-slate-300 bg-white p-12 text-center">
+      <div className="text-5xl">🗂️</div>
+      <h2 className="mt-3 text-lg font-bold text-slate-800">{t("account.emptyTitle")}</h2>
+      <p className="mt-1 text-sm text-slate-500">{t("account.emptyDesc")}</p>
+      <Link href="/" className="mt-5 inline-block rounded-xl bg-indigo-600 px-5 py-2.5 font-medium text-white hover:bg-indigo-700">{t("account.goFind")}</Link>
+    </div>
+  );
+}
+
+function StatCard({ label, value, tone }: { label: string; value: string | number; tone: string }) {
+  const tones: Record<string, string> = {
+    indigo: "bg-indigo-50 text-indigo-700 border-indigo-200",
+    amber: "bg-amber-50 text-amber-700 border-amber-200",
+    emerald: "bg-emerald-50 text-emerald-700 border-emerald-200",
+    rose: "bg-rose-50 text-rose-700 border-rose-200",
+    violet: "bg-violet-50 text-violet-700 border-violet-200",
+    sky: "bg-sky-50 text-sky-700 border-sky-200",
+  };
+  return (
+    <div className={`rounded-xl border p-3 ${tones[tone]}`}>
+      <p className="text-2xl font-bold">{value}</p>
+      <p className="text-[11px] leading-tight opacity-80">{label}</p>
+    </div>
+  );
+}
+
+function Panel({ title, children }: { title: string; children: React.ReactNode }) {
+  return (
+    <section className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
+      <h3 className="mb-3 font-semibold text-slate-900">{title}</h3>
+      {children}
+    </section>
+  );
+}
+
+function Field({ label, children }: { label: string; children: React.ReactNode }) {
+  return (
+    <label className="block text-sm">
+      <span className="mb-1 block font-medium text-slate-600">{label}</span>
+      {children}
+    </label>
+  );
+}
+
+function Channel({ icon, title, desc, href }: { icon: string; title: string; desc: string; href: string }) {
+  return (
+    <a href={href} className="flex items-start gap-3 rounded-xl border border-slate-200 bg-white p-3 shadow-sm transition hover:border-indigo-300 hover:shadow-md">
+      <span className="text-xl">{icon}</span>
+      <span>
+        <span className="block text-sm font-semibold text-slate-800">{title}</span>
+        <span className="block text-xs text-slate-500">{desc}</span>
+      </span>
+    </a>
+  );
+}

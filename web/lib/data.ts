@@ -25,24 +25,36 @@ export const FIELDS = [
 
 export const REGIONS = ["Châu Âu", "Bắc Mỹ", "Châu Á", "Châu Đại Dương"] as const;
 
-export const PROVIDER_TYPE_VI: Record<ProviderType, string> = {
-  Government: "Chính phủ",
-  University: "Trường đại học",
-  Org: "Tổ chức / Quỹ",
-  Corporate: "Doanh nghiệp",
+// Giá trị region trong dữ liệu là tiếng Việt (khóa dữ liệu) → key dịch cho UI.
+export const REGION_KEY: Record<(typeof REGIONS)[number], string> = {
+  "Châu Âu": "europe",
+  "Bắc Mỹ": "northAmerica",
+  "Châu Á": "asia",
+  "Châu Đại Dương": "oceania",
 };
 
-export const FUNDING_VI: Record<FundingLevel, string> = {
-  Full: "Toàn phần",
-  Partial: "Bán phần",
-  TuitionOnly: "Chỉ học phí",
+// Hàm dịch (i18next t) — dùng kiểu lỏng để data.ts không phụ thuộc react-i18next.
+export type Translator = (key: string, opts?: Record<string, unknown>) => string;
+
+// Ngôn ngữ giảng dạy trong dữ liệu (tiếng Việt) → key dịch cho UI.
+const TEACH_LANG_KEY: Record<string, string> = {
+  "Tiếng Anh": "en",
+  "Tiếng Nhật": "ja",
+  "Tiếng Pháp": "fr",
+  "Tiếng Trung": "zh",
+  "Tiếng Hàn": "ko",
 };
 
-export const LEVEL_VI: Record<Level, string> = {
-  Bachelor: "Cử nhân",
-  Master: "Thạc sĩ",
-  PhD: "Tiến sĩ",
-};
+/** Dịch chuỗi ngôn ngữ giảng dạy của học bổng (vd "Tiếng Anh / Tiếng Nhật"). */
+export function teachLanguages(raw: string, t: Translator): string {
+  return raw
+    .split("/")
+    .map((x) => {
+      const k = TEACH_LANG_KEY[x.trim()];
+      return k ? t(`teachLang.${k}`) : x.trim();
+    })
+    .join(" / ");
+}
 
 export interface DeadlineItem {
   type: string; // Mở đơn / Hạn học bổng / Kết quả ...
@@ -308,6 +320,28 @@ export const professors: Professor[] = [
 ];
 
 export const professorById = (id: string) => professors.find((p) => p.id === id);
+
+// ---------------------------------------------------------------------------
+// CỐ VẤN / NGƯỜI HỖ TRỢ (Support) — dữ liệu mẫu cho trang cá nhân
+// ---------------------------------------------------------------------------
+export interface Advisor {
+  id: string;
+  name: string;
+  avatar: string; // emoji
+  roleKey: string; // key dịch: advisorRole.*
+  regions: string[]; // countryCode thế mạnh (hiển thị cờ)
+  langs: string[]; // key ngôn ngữ: teachLang.* (vi/en/ko/fr…)
+  rating: number; // 0-5
+  sessions: number;
+  email: string;
+}
+
+export const advisors: Advisor[] = [
+  { id: "adv-linh", name: "Linh Nguyễn", avatar: "👩🏻‍💼", roleKey: "government", regions: ["DE", "GB", "AU"], langs: ["vi", "en"], rating: 4.9, sessions: 320, email: "linh@scholarfinder.example" },
+  { id: "adv-david", name: "David Park", avatar: "👨🏻‍🏫", roleKey: "research", regions: ["JP", "KR", "SG"], langs: ["en", "ko"], rating: 4.8, sessions: 210, email: "david@scholarfinder.example" },
+  { id: "adv-marie", name: "Marie Laurent", avatar: "👩🏼‍🎓", roleKey: "europe", regions: ["FR", "NL", "CH"], langs: ["en", "fr"], rating: 4.7, sessions: 175, email: "marie@scholarfinder.example" },
+  { id: "adv-trang", name: "Trang Phạm", avatar: "✍️", roleKey: "essay", regions: ["US", "CA", "GB"], langs: ["vi", "en"], rating: 4.9, sessions: 400, email: "trang@scholarfinder.example" },
+];
 
 // ---------------------------------------------------------------------------
 // HỌC BỔNG
@@ -832,120 +866,166 @@ export const scholarshipById = (id: string) => scholarships.find((s) => s.id ===
 // HỒ SƠ NGƯỜI DÙNG (mặc định demo)
 // ---------------------------------------------------------------------------
 export interface Profile {
+  name: string; // họ tên (hiển thị ở trang cá nhân)
   level: Level;
   fields: string[];
   countries: string[]; // countryCode
-  gpa: number; // thang 4.0
+  gpa: number; // thang 4.0 (đã quy đổi)
   ielts: number;
   fundingNeed: "Full" | "Partial" | "Any";
+  hasGre: boolean; // đã có điểm GRE/GMAT
+  nationality: string; // "VN" | "Other"
+  intake: string; // kỳ nhập học dự kiến, "" = chưa xác định
+  workYears: number; // số năm kinh nghiệm làm việc
 }
 
 export const defaultProfile: Profile = {
+  name: "",
   level: "Master",
   fields: ["Data Science/AI", "Computer Science"],
   countries: ["DE", "JP", "SG", "CA", "GB"],
   gpa: 3.4,
   ielts: 7.0,
   fundingNeed: "Full",
+  hasGre: false,
+  nationality: "VN",
+  intake: "",
+  workYears: 0,
 };
 
+/** % hoàn thiện hồ sơ (progressive profiling) — 7 trường trọng yếu. */
+export function profileCompletion(p: Profile): number {
+  const filled = [
+    p.name.trim() !== "",
+    p.fields.length > 0,
+    p.countries.length > 0,
+    p.gpa > 0,
+    p.ielts > 0,
+    p.nationality !== "",
+    p.intake !== "",
+  ];
+  return Math.round((filled.filter(Boolean).length / filled.length) * 100);
+}
+
+// Quy đổi GPA thang 10 → thang 4.0 (ước tính tuyến tính, hiển thị "ước tính")
+export function gpa10to4(gpa10: number): number {
+  return Math.round((gpa10 / 10) * 4 * 100) / 100;
+}
+
 // ---------------------------------------------------------------------------
-// MATCH SCORE (cá nhân hóa) — rule-based, có giải thích
+// MATCH SCORE (cá nhân hóa) — rule-based, có giải thích, đa ngôn ngữ (nhận t)
 // ---------------------------------------------------------------------------
+export type MatchTier = "excellent" | "good" | "consider" | "ineligible";
+
 export interface MatchReason {
   label: string;
   status: "ok" | "warn" | "fail";
 }
 export interface MatchResult {
   score: number; // 0-100
-  label: string; // Rất phù hợp / Phù hợp / Cân nhắc / Chưa đủ điều kiện
+  tier: MatchTier;
+  label: string; // nhãn đã dịch theo ngôn ngữ hiện tại
   reasons: MatchReason[];
 }
 
-export function matchScore(profile: Profile, s: Scholarship): MatchResult {
+function tierOf(score: number): MatchTier {
+  if (score >= 80) return "excellent";
+  if (score >= 60) return "good";
+  if (score < 40) return "ineligible";
+  return "consider";
+}
+
+export function matchScore(profile: Profile, s: Scholarship, t: Translator): MatchResult {
   const reasons: MatchReason[] = [];
   let score = 0;
 
   // Quốc tịch (hard)
   if (s.eligibility.allowVN) {
-    reasons.push({ label: "Nhận ứng viên Việt Nam", status: "ok" });
+    reasons.push({ label: t("match.reason.allowVN"), status: "ok" });
   } else {
-    reasons.push({ label: "Không nhận quốc tịch Việt Nam", status: "fail" });
-    return { score: 5, label: "Chưa đủ điều kiện", reasons };
+    reasons.push({ label: t("match.reason.denyVN"), status: "fail" });
+    return { score: 5, tier: "ineligible", label: t("match.tier.ineligible"), reasons };
   }
 
   // Bậc học (20)
   if (s.levels.includes(profile.level)) {
     score += 20;
-    reasons.push({ label: `Đúng bậc học: ${LEVEL_VI[profile.level]}`, status: "ok" });
+    reasons.push({ label: t("match.reason.levelOk", { level: t(`level.${profile.level}`) }), status: "ok" });
   } else {
-    reasons.push({ label: `Không có bậc ${LEVEL_VI[profile.level]} (có: ${s.levels.map((l) => LEVEL_VI[l]).join(", ")})`, status: "fail" });
+    reasons.push({
+      label: t("match.reason.levelNo", {
+        level: t(`level.${profile.level}`),
+        levels: s.levels.map((l) => t(`level.${l}`)).join(", "),
+      }),
+      status: "fail",
+    });
   }
 
   // Ngành (20)
   const overlap = profile.fields.filter((f) => s.fields.includes(f));
   if (overlap.length > 0) {
     score += 20;
-    reasons.push({ label: `Khớp ngành: ${overlap.join(", ")}`, status: "ok" });
+    reasons.push({ label: t("match.reason.fieldOk", { fields: overlap.join(", ") }), status: "ok" });
   } else {
-    reasons.push({ label: "Ngành mong muốn không nằm trong phạm vi học bổng", status: "warn" });
+    reasons.push({ label: t("match.reason.fieldNo"), status: "warn" });
   }
 
   // Quốc gia (15)
   if (profile.countries.includes(s.countryCode)) {
     score += 15;
-    reasons.push({ label: `Đúng quốc gia mong muốn: ${s.country}`, status: "ok" });
+    reasons.push({ label: t("match.reason.countryOk", { country: t(`country.${s.countryCode}`) }), status: "ok" });
   } else {
     score += 4;
-    reasons.push({ label: `Quốc gia ngoài danh sách ưu tiên: ${s.country}`, status: "warn" });
+    reasons.push({ label: t("match.reason.countryWarn", { country: t(`country.${s.countryCode}`) }), status: "warn" });
   }
 
   // GPA (15)
   if (profile.gpa >= s.eligibility.minGpa) {
     score += 15;
-    reasons.push({ label: `GPA đạt (${profile.gpa.toFixed(1)} ≥ ${s.eligibility.minGpa.toFixed(1)}/4.0)`, status: "ok" });
+    reasons.push({ label: t("match.reason.gpaOk", { gpa: profile.gpa.toFixed(1), min: s.eligibility.minGpa.toFixed(1) }), status: "ok" });
   } else if (profile.gpa >= s.eligibility.minGpa - 0.3) {
     score += 6;
-    reasons.push({ label: `GPA gần đạt (cần ${s.eligibility.minGpa.toFixed(1)}/4.0)`, status: "warn" });
+    reasons.push({ label: t("match.reason.gpaClose", { min: s.eligibility.minGpa.toFixed(1) }), status: "warn" });
   } else {
-    reasons.push({ label: `GPA chưa đạt (cần ${s.eligibility.minGpa.toFixed(1)}/4.0)`, status: "fail" });
+    reasons.push({ label: t("match.reason.gpaNo", { min: s.eligibility.minGpa.toFixed(1) }), status: "fail" });
   }
 
   // IELTS (15)
   if (profile.ielts >= s.eligibility.minIelts) {
     score += 15;
-    reasons.push({ label: `IELTS đạt (${profile.ielts.toFixed(1)} ≥ ${s.eligibility.minIelts.toFixed(1)})`, status: "ok" });
+    reasons.push({ label: t("match.reason.ieltsOk", { ielts: profile.ielts.toFixed(1), min: s.eligibility.minIelts.toFixed(1) }), status: "ok" });
   } else if (profile.ielts >= s.eligibility.minIelts - 0.5) {
     score += 6;
-    reasons.push({ label: `IELTS gần đạt (cần ${s.eligibility.minIelts.toFixed(1)}, bạn ${profile.ielts.toFixed(1)})`, status: "warn" });
+    reasons.push({ label: t("match.reason.ieltsClose", { min: s.eligibility.minIelts.toFixed(1), ielts: profile.ielts.toFixed(1) }), status: "warn" });
   } else {
-    reasons.push({ label: `IELTS chưa đạt (cần ${s.eligibility.minIelts.toFixed(1)})`, status: "fail" });
+    reasons.push({ label: t("match.reason.ieltsNo", { min: s.eligibility.minIelts.toFixed(1) }), status: "fail" });
   }
 
   // Tài chính (10)
   if (profile.fundingNeed === "Any" || profile.fundingNeed === s.fundingLevel || (profile.fundingNeed === "Partial" && s.fundingLevel === "Full")) {
     score += 10;
-    reasons.push({ label: `Mức tài trợ phù hợp nhu cầu (${FUNDING_VI[s.fundingLevel]})`, status: "ok" });
+    reasons.push({ label: t("match.reason.fundingOk", { funding: t(`funding.${s.fundingLevel}`) }), status: "ok" });
   } else {
     score += 3;
-    reasons.push({ label: `Bạn cần Toàn phần nhưng học bổng là ${FUNDING_VI[s.fundingLevel]}`, status: "warn" });
+    reasons.push({ label: t("match.reason.fundingWarn", { funding: t(`funding.${s.fundingLevel}`) }), status: "warn" });
   }
 
   // GRE (5) - nếu cần GRE mà đây là rào cản
   if (s.eligibility.gre) {
-    reasons.push({ label: "Yêu cầu GRE/GMAT — cần chuẩn bị thêm", status: "warn" });
+    if (profile.hasGre) {
+      score += 5;
+      reasons.push({ label: t("match.reason.greHave"), status: "ok" });
+    } else {
+      reasons.push({ label: t("match.reason.greNeed"), status: "warn" });
+    }
   } else {
     score += 5;
-    reasons.push({ label: "Không yêu cầu GRE/GMAT", status: "ok" });
+    reasons.push({ label: t("match.reason.greNone"), status: "ok" });
   }
 
   score = Math.max(0, Math.min(100, score));
-  let label = "Cân nhắc";
-  if (score >= 80) label = "Rất phù hợp";
-  else if (score >= 60) label = "Phù hợp";
-  else if (score < 40) label = "Chưa đủ điều kiện";
-
-  return { score, label, reasons };
+  const tier = tierOf(score);
+  return { score, tier, label: t(`match.tier.${tier}`), reasons };
 }
 
 // ---------------------------------------------------------------------------
@@ -964,3 +1044,43 @@ export function daysLeft(dateStr: string): number {
   const ms = new Date(dateStr).getTime() - Date.now();
   return Math.ceil(ms / (1000 * 60 * 60 * 24));
 }
+
+// ---------------------------------------------------------------------------
+// TRẠNG THÁI DEADLINE (E2 — lọc theo trạng thái)
+// ---------------------------------------------------------------------------
+export type DeadlineStatus = "upcoming" | "open" | "closing" | "closed";
+
+export function deadlineStatus(s: Scholarship): DeadlineStatus {
+  const now = Date.now();
+  const future = s.deadlines
+    .filter((d) => new Date(d.date).getTime() >= now)
+    .sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime());
+  if (future.length === 0) return "closed";
+  const next = future[0];
+  if (next.type.includes("Mở đơn")) return "upcoming";
+  if (daysLeft(next.date) <= 30) return "closing";
+  return "open";
+}
+
+// ---------------------------------------------------------------------------
+// DANH MỤC SUY RA TỪ DỮ LIỆU (dùng cho bộ lọc & wizard)
+// ---------------------------------------------------------------------------
+export interface CountryInfo {
+  code: string;
+  name: string;
+  region: (typeof REGIONS)[number];
+}
+
+export const COUNTRIES: CountryInfo[] = (() => {
+  const m = new Map<string, CountryInfo>();
+  for (const s of scholarships) m.set(s.countryCode, { code: s.countryCode, name: s.country, region: s.region });
+  return Array.from(m.values()).sort((a, b) => a.name.localeCompare(b.name, "vi"));
+})();
+
+export const INTAKES: string[] = Array.from(new Set(scholarships.map((s) => s.intake))).sort();
+
+export const LANGUAGES: string[] = Array.from(
+  new Set(scholarships.flatMap((s) => s.language.split("/").map((x) => x.trim())))
+).sort((a, b) => a.localeCompare(b, "vi"));
+
+export const ALL_TAGS: string[] = Array.from(new Set(scholarships.flatMap((s) => s.tags))).sort();

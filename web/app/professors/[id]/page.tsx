@@ -3,18 +3,25 @@
 import { useState } from "react";
 import { useParams } from "next/navigation";
 import Link from "next/link";
+import { useTranslation } from "react-i18next";
 import { professorById, scholarshipById } from "@/lib/data";
 import { useTrack } from "@/lib/store";
 import { flagEmoji } from "@/lib/ui";
 
-const RECRUITING_VI: Record<string, { label: string; cls: string }> = {
-  recruiting: { label: "Đang tuyển nghiên cứu sinh", cls: "bg-emerald-100 text-emerald-700" },
-  unknown: { label: "Chưa rõ tình trạng tuyển", cls: "bg-slate-100 text-slate-600" },
-  not_recruiting: { label: "Hiện không tuyển", cls: "bg-rose-100 text-rose-700" },
+const RECRUITING_CLS: Record<string, string> = {
+  recruiting: "bg-emerald-100 text-emerald-700",
+  unknown: "bg-slate-100 text-slate-600",
+  not_recruiting: "bg-rose-100 text-rose-700",
+};
+const RECRUITING_KEY: Record<string, string> = {
+  recruiting: "profDetail.recruiting",
+  unknown: "profDetail.unknown",
+  not_recruiting: "profDetail.notRecruiting",
 };
 
 export default function ProfessorDetail() {
   const params = useParams<{ id: string }>();
+  const { t } = useTranslation();
   const p = professorById(params.id);
   const { profile } = useTrack();
   const [copied, setCopied] = useState(false);
@@ -22,27 +29,23 @@ export default function ProfessorDetail() {
   if (!p) {
     return (
       <div className="mx-auto max-w-3xl px-4 py-20 text-center">
-        <p className="text-slate-500">Không tìm thấy giáo sư.</p>
-        <Link href="/" className="mt-4 inline-block text-indigo-600 underline">← Về trang tìm kiếm</Link>
+        <p className="text-slate-500">{t("profDetail.notFound")}</p>
+        <Link href="/professors" className="mt-4 inline-block text-indigo-600 underline">← {t("profDetail.back")}</Link>
       </div>
     );
   }
 
-  const rec = RECRUITING_VI[p.recruiting];
   const related = p.scholarshipIds.map((id) => scholarshipById(id)).filter(Boolean);
 
-  const emailTemplate = `Chủ đề: Prospective ${profile.level} applicant interested in your research on ${p.keywords[0]}
-
-Kính gửi ${p.name},
-
-Em là [Tên của bạn], hiện [nền tảng học vấn/ngành]. Em đặc biệt quan tâm tới hướng nghiên cứu ${p.keywords.slice(0, 2).join(" và ")} của thầy/cô, đặc biệt là công trình "${p.publications[0]?.title}" (${p.publications[0]?.year}).
-
-Em dự định ứng tuyển tại ${p.university} và mong muốn được thầy/cô cân nhắc hướng dẫn. Nền tảng của em phù hợp vì [1-2 lý do cụ thể: kỹ năng, dự án, điểm số].
-
-Em xin đính kèm CV và [đề cương nghiên cứu/bảng điểm]. Không biết thầy/cô có nhận nghiên cứu sinh cho kỳ tới không ạ? Em rất mong có cơ hội trao đổi thêm.
-
-Trân trọng cảm ơn,
-[Tên của bạn] — [email] — [link CV/hồ sơ]`;
+  const emailTemplate = t("profDetail.emailTpl", {
+    level: profile.level,
+    kw: p.keywords[0],
+    kws: p.keywords.slice(0, 2).join(t("common.and")),
+    name: p.name,
+    pub: p.publications[0]?.title,
+    pubYear: p.publications[0]?.year,
+    uni: p.university,
+  });
 
   const copy = async () => {
     try {
@@ -56,7 +59,7 @@ Trân trọng cảm ơn,
 
   return (
     <div className="mx-auto max-w-5xl px-4 py-6">
-      <Link href="/" className="text-sm text-slate-500 hover:text-indigo-600">← Trang tìm kiếm</Link>
+      <Link href="/professors" className="text-sm text-slate-500 hover:text-indigo-600">← {t("profDetail.back")}</Link>
 
       {/* Header */}
       <div className="mt-3 rounded-2xl border border-slate-200 bg-white p-6">
@@ -67,21 +70,22 @@ Trân trọng cảm ơn,
             <p className="mt-1 text-sm text-slate-500">
               {flagEmoji(p.countryCode)} {p.university} · {p.department}
             </p>
-            <p className="text-sm text-slate-500">Phòng thí nghiệm: {p.lab}</p>
+            <p className="text-sm text-slate-500">{t("profDetail.lab")} {p.lab}</p>
           </div>
-          <span className={`rounded-full px-3 py-1 text-sm font-medium ${rec.cls}`}>{rec.label}</span>
+          <span className={`rounded-full px-3 py-1 text-sm font-medium ${RECRUITING_CLS[p.recruiting]}`}>{t(RECRUITING_KEY[p.recruiting])}</span>
         </div>
 
         <div className="mt-4 grid grid-cols-3 gap-3">
-          <Metric label="Công bố" value={p.metrics.publications} />
-          <Metric label="Trích dẫn" value={p.metrics.citations.toLocaleString()} />
-          <Metric label="h-index" value={p.metrics.hIndex} />
+          <Metric label={t("professors.pubs")} value={p.metrics.publications} />
+          {/* Locale cố định để server/client render giống nhau (tránh hydration mismatch) */}
+          <Metric label={t("professors.cites")} value={p.metrics.citations.toLocaleString("en-US")} />
+          <Metric label={t("professors.hIndex")} value={p.metrics.hIndex} />
         </div>
       </div>
 
       <div className="mt-6 grid gap-6 lg:grid-cols-[1fr_320px]">
         <div className="space-y-6">
-          <Card title="Hướng nghiên cứu">
+          <Card title={t("profDetail.research")}>
             <p className="text-sm text-slate-700">{p.summary}</p>
             <div className="mt-3 flex flex-wrap gap-1.5">
               {p.keywords.map((k) => (
@@ -95,7 +99,7 @@ Trân trọng cảm ơn,
             </div>
           </Card>
 
-          <Card title="Công bố tiêu biểu">
+          <Card title={t("profDetail.featuredPubs")}>
             <ul className="space-y-2">
               {p.publications.map((pub, i) => (
                 <li key={i} className="rounded-lg border border-slate-100 p-3 text-sm">
@@ -106,43 +110,41 @@ Trân trọng cảm ơn,
             </ul>
           </Card>
 
-          <Card title="Trợ lý liên hệ giáo sư (Outreach Helper)">
-            <p className="mb-2 text-sm text-slate-600">
-              Mẫu email đã cá nhân hóa theo hướng nghiên cứu &amp; hồ sơ của bạn. Hãy đọc kỹ 1–2 công bố của giáo sư và điền phần trong [ngoặc] trước khi gửi.
-            </p>
+          <Card title={t("profDetail.outreach")}>
+            <p className="mb-2 text-sm text-slate-600">{t("profDetail.outreachDesc")}</p>
             <pre className="thin-scroll max-h-72 overflow-auto whitespace-pre-wrap rounded-lg bg-slate-900 p-4 text-xs leading-relaxed text-slate-100">{emailTemplate}</pre>
             <button onClick={copy} className="mt-2 rounded-lg bg-indigo-600 px-4 py-2 text-sm font-medium text-white hover:bg-indigo-700">
-              {copied ? "✓ Đã sao chép" : "📋 Sao chép mẫu email"}
+              {copied ? t("profDetail.copied") : t("profDetail.copy")}
             </button>
             <ul className="mt-3 space-y-1 text-xs text-slate-500">
-              <li>✓ Đã tham chiếu công bố cụ thể của giáo sư</li>
-              <li>✓ Nêu rõ lý do phù hợp &amp; đính kèm CV</li>
-              <li>✓ Gửi từ email cá nhân của bạn (hệ thống không gửi hàng loạt — chống spam)</li>
+              <li>✓ {t("profDetail.tip1")}</li>
+              <li>✓ {t("profDetail.tip2")}</li>
+              <li>✓ {t("profDetail.tip3")}</li>
             </ul>
           </Card>
         </div>
 
         <aside className="space-y-4 lg:sticky lg:top-20 lg:h-fit">
-          <Card title="Liên hệ & hồ sơ">
+          <Card title={t("profDetail.contact")}>
             <div className="space-y-2 text-sm">
-              <LinkRow label="Email" value={p.email} href={`mailto:${p.email}`} />
-              <LinkRow label="Website / Lab" value="Trang nhóm nghiên cứu" href={p.website} />
-              <LinkRow label="Google Scholar" value="Hồ sơ Scholar" href={p.scholar} />
+              <LinkRow label={t("profDetail.email")} value={p.email} href={`mailto:${p.email}`} />
+              <LinkRow label={t("profDetail.website")} value={t("profDetail.websiteVal")} href={p.website} />
+              <LinkRow label="Google Scholar" value={t("profDetail.scholarVal")} href={p.scholar} />
               <LinkRow label="ORCID" value={p.orcid} href={`https://orcid.org/${p.orcid}`} />
             </div>
             <p className="mt-3 rounded bg-amber-50 p-2 text-xs text-amber-700">
-              ⚠️ Thông tin nghề nghiệp công khai (demo). Liên hệ có trách nhiệm, không gửi hàng loạt.
+              ⚠️ {t("profDetail.warn")}
             </p>
           </Card>
 
           {related.length > 0 && (
-            <Card title="Học bổng có thể áp dụng">
+            <Card title={t("profDetail.applicable")}>
               <div className="space-y-2">
                 {related.map((s) => s && (
                   <Link key={s.id} href={`/scholarships/${s.id}`}
                     className="block rounded-lg border border-slate-200 p-3 text-sm hover:border-indigo-400 hover:bg-indigo-50/40">
                     <p className="font-medium text-slate-800">{s.title}</p>
-                    <p className="text-xs text-slate-500">{flagEmoji(s.countryCode)} {s.country}</p>
+                    <p className="text-xs text-slate-500">{flagEmoji(s.countryCode)} {t(`country.${s.countryCode}`)}</p>
                   </Link>
                 ))}
               </div>
