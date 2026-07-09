@@ -6,7 +6,9 @@
 import { useMemo, useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
+import { GraduationCap, BookOpen, Globe, PenLine, Coins, Settings, PartyPopper } from "lucide-react";
 import { useTranslation } from "react-i18next";
+import HeroSky from "@/components/HeroSky";
 import {
   scholarships,
   matchScore,
@@ -24,7 +26,16 @@ import { useTrack } from "@/lib/store";
 import { flagEmoji } from "@/lib/ui";
 
 const STEP_IDS = ["level", "fields", "dest", "academic", "funding", "prefs", "done"] as const;
-const STEP_ICONS = ["🎓", "📚", "🌍", "📝", "💰", "⚙️", "🎉"];
+const ICON_CLS = "h-[18px] w-[18px]";
+const STEP_ICONS = [
+  <GraduationCap key="0" className={ICON_CLS} />,
+  <BookOpen key="1" className={ICON_CLS} />,
+  <Globe key="2" className={ICON_CLS} />,
+  <PenLine key="3" className={ICON_CLS} />,
+  <Coins key="4" className={ICON_CLS} />,
+  <Settings key="5" className={ICON_CLS} />,
+  <PartyPopper key="6" className={ICON_CLS} />,
+];
 
 const IELTS_OPTIONS = [0, 5.5, 6.0, 6.5, 7.0, 7.5, 8.0];
 
@@ -107,10 +118,10 @@ export default function StartWizard() {
 
   return (
     <div className="relative min-h-[calc(100vh-3.5rem)] overflow-hidden bg-[linear-gradient(165deg,#0a1230_0%,#152159_52%,#233a86_100%)] py-8">
-      {/* Nền sao */}
+      {/* Nền sao + tuyến bay */}
       <div className="starfield pointer-events-none absolute inset-0" />
-      <div className="animate-plane pointer-events-none absolute right-[12%] top-[6%] text-[#dbe9ff] opacity-90">
-        <svg width="52" height="52" viewBox="0 0 24 24" fill="currentColor"><path d="M2.5 19h19v2h-19zM22.07 9.64c-.21-.8-1.04-1.28-1.84-1.06L14.92 10 8.46 3.98l-1.93.52 3.87 6.7-4.97 1.34-1.97-1.54-1.45.39 2.59 4.49 17.42-4.67c.81-.23 1.28-1.05 1.06-1.86z" /></svg>
+      <div className="pointer-events-none absolute inset-x-0 top-0 h-[300px]">
+        <HeroSky id="wizard" />
       </div>
 
       <div className="relative mx-auto max-w-3xl px-4">

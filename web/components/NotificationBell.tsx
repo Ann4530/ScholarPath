@@ -4,6 +4,7 @@
 // và học bổng hồ sơ chưa xong mà hạn ≤30 ngày — bấm mở dropdown, đi thẳng tới việc cần làm.
 import { useEffect, useMemo, useRef, useState } from "react";
 import Link from "next/link";
+import { Bell } from "lucide-react";
 import { useTranslation } from "react-i18next";
 import { scholarshipById, nextDeadline, daysLeft } from "@/lib/data";
 import { useTrack } from "@/lib/store";
@@ -86,11 +87,11 @@ export default function NotificationBell() {
         onClick={() => setOpen((v) => !v)}
         title={t("notif.aria")}
         aria-label={t("notif.aria")}
-        className={`relative grid h-9 w-9 place-items-center rounded-[10px] border text-base transition ${
+        className={`relative grid h-9 w-9 place-items-center rounded-[10px] border text-[#5a7794] transition ${
           open ? "border-[#9cc1f5] bg-white ring-2 ring-[#dbe8f7]" : "border-[#dce8f4] bg-white hover:border-[#9cc1f5]"
         }`}
       >
-        🔔
+        <Bell className="h-[18px] w-[18px]" />
         {items.length > 0 && (
           <span className="absolute -right-1.5 -top-1.5 grid h-4.5 min-w-4 place-items-center rounded-full bg-rose-500 px-1 text-[10px] font-bold leading-none text-white">
             {items.length}
@@ -100,7 +101,7 @@ export default function NotificationBell() {
 
       {open && (
         <div className="animate-drop absolute right-0 z-50 mt-2 w-80 overflow-hidden rounded-[14px] border border-[#dce8f4] bg-white shadow-[0_18px_44px_-14px_rgba(23,50,76,0.4)]">
-          <p className="border-b border-[#eef3f9] px-3.5 py-2.5 text-sm font-bold text-[#1a3352]">🔔 {t("notif.title")}</p>
+          <p className="flex items-center gap-1.5 border-b border-[#eef3f9] px-3.5 py-2.5 text-sm font-bold text-[#1a3352]"><Bell className="h-4 w-4 text-[#2f6fe0]" /> {t("notif.title")}</p>
           {items.length === 0 ? (
             <p className="px-3.5 py-6 text-center text-sm text-[#93a7bd]">{t("notif.empty")}</p>
           ) : (

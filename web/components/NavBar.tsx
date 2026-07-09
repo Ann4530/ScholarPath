@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useTranslation } from "react-i18next";
+import { Sparkles } from "lucide-react";
 import { useTrack } from "@/lib/store";
 import LanguagePicker from "@/components/LanguagePicker";
 import NotificationBell from "@/components/NotificationBell";
@@ -57,7 +58,7 @@ export default function NavBar({ children }: { children?: React.ReactNode }) {
             href="/start"
             className="hidden items-center gap-1.5 rounded-[10px] bg-gradient-to-br from-[#1e3a8a] to-[#3b82f6] px-3.5 py-2 text-[13px] font-bold text-white shadow-[0_8px_18px_-10px_rgba(30,58,138,0.8)] transition hover:brightness-110 sm:flex"
           >
-            ✨ {t("nav.start")}
+            <Sparkles className="h-4 w-4" /> {t("nav.start")}
           </Link>
           <NotificationBell />
           <LanguagePicker />

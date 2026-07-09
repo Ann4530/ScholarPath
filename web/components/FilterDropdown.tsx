@@ -21,7 +21,7 @@ export default function FilterDropdown({
   align = "left",
 }: {
   label: string;
-  icon?: string;
+  icon?: React.ReactNode;
   options: FilterOption[];
   selected: string[];
   onToggle: (value: string) => void;

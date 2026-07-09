@@ -1,4 +1,5 @@
 import { signIn } from "@/auth";
+import HeroSky from "@/components/HeroSky";
 
 export default async function LoginPage({
   searchParams,
@@ -10,8 +11,8 @@ export default async function LoginPage({
   return (
     <div className="relative grid min-h-[calc(100vh-66px)] place-items-center overflow-hidden bg-[linear-gradient(160deg,#0a1230_0%,#152159_52%,#243a86_100%)] px-6 py-10">
       <div className="starfield pointer-events-none absolute inset-0" />
-      <div className="animate-plane pointer-events-none absolute right-[14%] top-[8%] text-[#dbe9ff] opacity-90">
-        <svg width="56" height="56" viewBox="0 0 24 24" fill="currentColor"><path d="M2.5 19h19v2h-19zM22.07 9.64c-.21-.8-1.04-1.28-1.84-1.06L14.92 10 8.46 3.98l-1.93.52 3.87 6.7-4.97 1.34-1.97-1.54-1.45.39 2.59 4.49 17.42-4.67c.81-.23 1.28-1.05 1.06-1.86z" /></svg>
+      <div className="pointer-events-none absolute inset-x-0 top-0 h-[320px]">
+        <HeroSky id="login" />
       </div>
 
       <div className="relative w-full max-w-[390px] rounded-[22px] bg-white p-8 shadow-[0_30px_70px_-20px_rgba(0,0,0,0.6)]">

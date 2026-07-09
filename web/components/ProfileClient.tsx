@@ -3,6 +3,7 @@
 // Trang cá nhân (account hub): Tổng quan (thống kê) · Hồ sơ học tập · Danh sách của tôi · Hỗ trợ.
 import { useMemo, useState } from "react";
 import Link from "next/link";
+import { Bookmark, PencilLine, Send, Clock, Target, FileText } from "lucide-react";
 import { useTranslation } from "react-i18next";
 import {
   scholarshipById,
@@ -181,12 +182,12 @@ export default function ProfileClient({ email }: { email: string | null }) {
           <div className="mt-6 space-y-6">
             {/* KPI */}
             <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-6">
-              <StatCard icon="📌" label={t("account.stat.tracking")} value={stats.total} tone="indigo" />
-              <StatCard icon="✏️" label={t("account.stat.inProgress")} value={stats.inProgress} tone="amber" />
-              <StatCard icon="📮" label={t("account.stat.submitted")} value={stats.submitted} tone="emerald" />
-              <StatCard icon="⏰" label={t("account.stat.soon")} value={stats.soon} tone="rose" />
-              <StatCard icon="🎯" label={t("account.stat.avgMatch")} value={`${stats.avgMatch}%`} tone="violet" />
-              <StatCard icon="📄" label={t("account.stat.avgDocs")} value={`${stats.avgDocs}%`} tone="sky" />
+              <StatCard icon={<Bookmark className="h-[18px] w-[18px]" />} label={t("account.stat.tracking")} value={stats.total} tone="indigo" />
+              <StatCard icon={<PencilLine className="h-[18px] w-[18px]" />} label={t("account.stat.inProgress")} value={stats.inProgress} tone="amber" />
+              <StatCard icon={<Send className="h-[18px] w-[18px]" />} label={t("account.stat.submitted")} value={stats.submitted} tone="emerald" />
+              <StatCard icon={<Clock className="h-[18px] w-[18px]" />} label={t("account.stat.soon")} value={stats.soon} tone="rose" />
+              <StatCard icon={<Target className="h-[18px] w-[18px]" />} label={t("account.stat.avgMatch")} value={`${stats.avgMatch}%`} tone="violet" />
+              <StatCard icon={<FileText className="h-[18px] w-[18px]" />} label={t("account.stat.avgDocs")} value={`${stats.avgDocs}%`} tone="sky" />
             </div>
 
             {/* Tổng giấy tờ đã hoàn thành */}
@@ -626,7 +627,7 @@ function EmptyState({ t }: { t: (k: string) => string }) {
   );
 }
 
-function StatCard({ icon, label, value, tone }: { icon: string; label: string; value: string | number; tone: string }) {
+function StatCard({ icon, label, value, tone }: { icon: React.ReactNode; label: string; value: string | number; tone: string }) {
   const chip: Record<string, string> = {
     indigo: "bg-[#eaf1fd] text-[#1c5cc0]",
     amber: "bg-[#fdf3e0] text-[#a9670a]",

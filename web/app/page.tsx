@@ -4,6 +4,11 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import Link from "next/link";
 import { useTranslation } from "react-i18next";
 import {
+  Globe, Flag, GraduationCap, BookOpen, Coins, Landmark, Clock, CalendarDays,
+  Trophy, PenLine, Calculator, UserCheck, Languages as LangIcon, Tag, BadgeCheck,
+  Sparkles, Search, SlidersHorizontal, X,
+} from "lucide-react";
+import {
   scholarships,
   matchScore,
   deadlineStatus,
@@ -24,6 +29,7 @@ import { useTrack } from "@/lib/store";
 import { flagEmoji } from "@/lib/ui";
 import ScholarshipCard from "@/components/ScholarshipCard";
 import FilterDropdown from "@/components/FilterDropdown";
+import HeroSky from "@/components/HeroSky";
 
 const LEVELS: Level[] = ["Bachelor", "Master", "PhD"];
 const FUNDINGS: FundingLevel[] = ["Full", "Partial", "TuitionOnly"];
@@ -187,11 +193,11 @@ export default function SearchPage() {
   };
 
   // Chips chọn nhanh trên hero — nối vào các bộ lọc sẵn có
-  const quickChips: { label: string; active: boolean; onClick: () => void }[] = [
-    { label: `💰 ${t("funding.Full")}`, active: funding.includes("Full"), onClick: () => setFunding(toggle(funding, "Full")) },
-    { label: `🎓 ${t("level.Master")}`, active: levels.includes("Master"), onClick: () => setLevels(toggle(levels, "Master")) },
-    { label: `🎓 ${t("level.PhD")}`, active: levels.includes("PhD"), onClick: () => setLevels(toggle(levels, "PhD")) },
-    { label: `✅ ${t("sidebar.eligibleOnly")}`, active: eligibleOnly, onClick: () => setEligibleOnly((v) => !v) },
+  const quickChips: { icon: React.ReactNode; label: string; active: boolean; onClick: () => void }[] = [
+    { icon: <Coins className="h-3.5 w-3.5" />, label: t("funding.Full"), active: funding.includes("Full"), onClick: () => setFunding(toggle(funding, "Full")) },
+    { icon: <GraduationCap className="h-3.5 w-3.5" />, label: t("level.Master"), active: levels.includes("Master"), onClick: () => setLevels(toggle(levels, "Master")) },
+    { icon: <GraduationCap className="h-3.5 w-3.5" />, label: t("level.PhD"), active: levels.includes("PhD"), onClick: () => setLevels(toggle(levels, "PhD")) },
+    { icon: <BadgeCheck className="h-3.5 w-3.5" />, label: t("sidebar.eligibleOnly"), active: eligibleOnly, onClick: () => setEligibleOnly((v) => !v) },
   ];
 
   return (
@@ -204,17 +210,8 @@ export default function SearchPage() {
           <div className="animate-twinkle pointer-events-none absolute left-[22%] top-8 h-1 w-1 rounded-full bg-white shadow-[0_0_8px_2px_rgba(255,255,255,0.7)]" />
           <div className="animate-twinkle pointer-events-none absolute left-[64%] top-[70px] h-[3px] w-[3px] rounded-full bg-[#cfe0ff] shadow-[0_0_7px_2px_rgba(160,200,255,0.7)] [animation-delay:0.6s]" />
           <div className="animate-twinkle pointer-events-none absolute left-[84%] top-11 h-1 w-1 rounded-full bg-[#ffe9a8] shadow-[0_0_9px_2px_rgba(255,220,140,0.7)] [animation-delay:0.3s]" />
-          {/* crescent moon */}
-          <div className="pointer-events-none absolute right-11 top-8 text-[#f6efc9] opacity-90 drop-shadow-[0_0_16px_rgba(246,239,201,0.5)]">
-            <svg width="40" height="40" viewBox="0 0 24 24" fill="currentColor"><path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9z" /></svg>
-          </div>
-          {/* flight arc + plane */}
-          <svg className="pointer-events-none absolute right-0 top-0 h-full w-[62%]" viewBox="0 0 560 320" fill="none" preserveAspectRatio="xMaxYMin meet">
-            <path className="animate-dash" d="M10 300 C 180 270, 300 230, 400 150 S 540 60, 560 30" stroke="#7cb8ff" strokeWidth="2.5" strokeDasharray="1 10" strokeLinecap="round" opacity="0.65" />
-          </svg>
-          <div className="animate-plane pointer-events-none absolute right-[16%] top-[88px] text-[#dbe9ff] drop-shadow-[0_10px_16px_rgba(0,0,0,0.35)]">
-            <svg width="72" height="72" viewBox="0 0 24 24" fill="currentColor"><path d="M2.5 19h19v2h-19zM22.07 9.64c-.21-.8-1.04-1.28-1.84-1.06L14.92 10 8.46 3.98l-1.93.52 3.87 6.7-4.97 1.34-1.97-1.54-1.45.39 2.59 4.49 17.42-4.67c.81-.23 1.28-1.05 1.06-1.86z" /></svg>
-          </div>
+          {/* trăng + tuyến bay + máy bay (component dùng chung) */}
+          <HeroSky id="home" />
 
           <div className="relative max-w-[600px]">
             <div className="inline-flex items-center gap-2 rounded-full border border-white/20 bg-white/10 px-3 py-1.5 text-[12.5px] font-semibold text-[#cfe0ff]">
@@ -228,7 +225,7 @@ export default function SearchPage() {
 
             <div className="mt-6 flex flex-wrap gap-2.5">
               <div className="relative flex min-w-[260px] flex-1 items-center rounded-[14px] bg-white shadow-[0_18px_40px_-18px_rgba(0,0,0,0.6)]">
-                <svg className="absolute left-4" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#93a7bd" strokeWidth="2.2" strokeLinecap="round"><circle cx="11" cy="11" r="7" /><path d="m21 21-4.3-4.3" /></svg>
+                <Search className="absolute left-4 h-[18px] w-[18px] text-[#93a7bd]" />
                 <input
                   value={q}
                   onChange={(e) => setQ(e.target.value)}
@@ -240,7 +237,7 @@ export default function SearchPage() {
                 href="/start"
                 className="flex items-center gap-2.5 rounded-[14px] bg-gradient-to-br from-[#3b82f6] to-[#5aa2ff] px-5 py-3.5 text-[14.5px] font-extrabold text-white shadow-[0_14px_30px_-12px_rgba(59,130,246,0.9)] transition hover:brightness-110"
               >
-                <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M12 3 13.9 8.6 19.5 8.6 15 12.1 16.7 17.6 12 14.2 7.3 17.6 9 12.1 4.5 8.6 10.1 8.6z" /></svg>
+                <Sparkles className="h-[17px] w-[17px]" />
                 {t("hero.start")}
               </Link>
               <button
@@ -258,13 +255,13 @@ export default function SearchPage() {
                 <button
                   key={i}
                   onClick={chip.onClick}
-                  className={`rounded-full border px-3 py-1.5 text-[12.5px] font-semibold transition ${
+                  className={`flex items-center gap-1.5 rounded-full border px-3 py-1.5 text-[12.5px] font-semibold transition ${
                     chip.active
                       ? "border-white/40 bg-white/25 text-white"
                       : "border-white/20 bg-white/10 text-[#e7f0ff] hover:bg-white/20"
                   }`}
                 >
-                  {chip.label}
+                  {chip.icon}{chip.label}
                 </button>
               ))}
             </div>
@@ -278,7 +275,7 @@ export default function SearchPage() {
           <div className="mb-3 flex items-center justify-between">
             <h2 className="font-extrabold text-[#1a3352]">{t("profilePanel.title")}</h2>
             <div className="flex items-center gap-3">
-              <Link href="/start" className="text-sm font-semibold text-[#2f6fe0] hover:underline">✨ {t("profilePanel.wizardLink")}</Link>
+              <Link href="/start" className="inline-flex items-center gap-1 text-sm font-semibold text-[#2f6fe0] hover:underline"><Sparkles className="h-3.5 w-3.5" /> {t("profilePanel.wizardLink")}</Link>
               <button onClick={() => setShowProfile(false)} className="text-sm text-[#7591ab] hover:text-[#1a3352]">{t("common.close")}</button>
             </div>
           </div>
@@ -380,7 +377,7 @@ export default function SearchPage() {
               {t("sidebar.advanced")}
             </div>
 
-            <Accordion title={`🏆 ${t("sidebar.qs")}`} active={maxRank > 0}>
+            <Accordion icon={<Trophy className="h-[15px] w-[15px]" />} title={t("sidebar.qs")} active={maxRank > 0}>
               <div className="grid grid-cols-2 gap-1.5">
                 {[0, 10, 30, 50, 100].map((v) => (
                   <button key={v} onClick={() => setMaxRank(v)}
@@ -391,7 +388,7 @@ export default function SearchPage() {
               </div>
             </Accordion>
 
-            <Accordion title={`📝 ${t("sidebar.ielts")}`} active={maxIelts > 0}>
+            <Accordion icon={<PenLine className="h-[15px] w-[15px]" />} title={t("sidebar.ielts")} active={maxIelts > 0}>
               <p className="mb-2 text-xs text-[#93a7bd]">{t("sidebar.ieltsHint")}</p>
               <div className="grid grid-cols-2 gap-1.5">
                 {[0, 6.0, 6.5, 7.0].map((v) => (
@@ -403,7 +400,7 @@ export default function SearchPage() {
               </div>
             </Accordion>
 
-            <Accordion title={`🧮 ${t("sidebar.gre")}`} active={gre !== "any"}>
+            <Accordion icon={<Calculator className="h-[15px] w-[15px]" />} title={t("sidebar.gre")} active={gre !== "any"}>
               <div className="flex gap-1.5">
                 {(["any", "no", "yes"] as const).map((v) => (
                   <button key={v} onClick={() => setGre(v)}
@@ -414,7 +411,7 @@ export default function SearchPage() {
               </div>
             </Accordion>
 
-            <Accordion title={`👨‍🏫 ${t("sidebar.supervisor")}`} active={supervisor !== "any"}>
+            <Accordion icon={<UserCheck className="h-[15px] w-[15px]" />} title={t("sidebar.supervisor")} active={supervisor !== "any"}>
               <div className="flex gap-1.5">
                 {(["any", "yes", "no"] as const).map((v) => (
                   <button key={v} onClick={() => setSupervisor(v)}
@@ -426,7 +423,7 @@ export default function SearchPage() {
               <p className="mt-2 text-[11px] leading-snug text-[#93a7bd]">{t("sidebar.supervisorHint")}</p>
             </Accordion>
 
-            <Accordion title={`🗣️ ${t("sidebar.teachLang")}`} active={languages.length > 0}>
+            <Accordion icon={<LangIcon className="h-[15px] w-[15px]" />} title={t("sidebar.teachLang")} active={languages.length > 0}>
               <div className="space-y-1.5">
                 {LANGUAGES.map((l) => (
                   <label key={l} className="flex cursor-pointer items-center gap-2 text-sm text-[#455f78]">
@@ -437,7 +434,7 @@ export default function SearchPage() {
               </div>
             </Accordion>
 
-            <Accordion title={`🏷️ ${t("sidebar.tags")}`} active={tags.length > 0}>
+            <Accordion icon={<Tag className="h-[15px] w-[15px]" />} title={t("sidebar.tags")} active={tags.length > 0}>
               <div className="flex flex-wrap gap-1.5">
                 {ALL_TAGS.map((tg) => (
                   <button key={tg} onClick={() => setTags(toggle(tags, tg))}
@@ -469,8 +466,8 @@ export default function SearchPage() {
               <div className="flex justify-between"><dt>{t("sidebar.rowGre")}</dt><dd className="font-semibold text-[#1a3352]">{profile.hasGre ? t("sidebar.greHave") : t("sidebar.greNone")}</dd></div>
               <div className="flex justify-between"><dt>{t("sidebar.rowFunding")}</dt><dd className="font-semibold text-[#1a3352]">{profile.fundingNeed === "Full" ? t("profilePanel.needFull") : profile.fundingNeed === "Partial" ? t("profilePanel.needPartial") : t("profilePanel.needAny")}</dd></div>
             </dl>
-            <Link href="/start" className="mt-3 block rounded-[10px] bg-gradient-to-br from-[#1e3a8a] to-[#3b82f6] px-3 py-2 text-center text-xs font-bold text-white transition hover:brightness-110">
-              ✨ {t("sidebar.wizardCta")}
+            <Link href="/start" className="mt-3 flex items-center justify-center gap-1.5 rounded-[10px] bg-gradient-to-br from-[#1e3a8a] to-[#3b82f6] px-3 py-2 text-center text-xs font-bold text-white transition hover:brightness-110">
+              <Sparkles className="h-3.5 w-3.5" /> {t("sidebar.wizardCta")}
             </Link>
           </div>
         </aside>
@@ -480,46 +477,46 @@ export default function SearchPage() {
           {/* Thanh lọc ngang */}
           <div className="mb-4 flex flex-wrap items-center gap-2.5 rounded-[16px] border border-[#d9e6f3] bg-white p-3 shadow-[0_4px_16px_-10px_rgba(23,50,76,0.25)]">
             <div className="flex items-center gap-1.5 px-1 text-[13.5px] font-extrabold text-[#2f6fe0]">
-              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.1" strokeLinecap="round" strokeLinejoin="round"><path d="M22 3H2l8 9.5V19l4 2v-8.5L22 3Z" /></svg>
+              <SlidersHorizontal className="h-4 w-4" />
               {t("filter.title")}
             </div>
             <FilterDropdown
-              label={t("filter.region")} icon="🌍"
+              label={t("filter.region")} icon={<Globe className="h-4 w-4" />}
               options={REGIONS.map((r) => ({ value: r, label: t(`region.${REGION_KEY[r]}`) }))}
               selected={regions} onToggle={(v) => setRegions(toggle(regions, v))} onClear={() => setRegions([])}
             />
             <FilterDropdown
-              label={t("filter.country")} icon="🚩" searchable
+              label={t("filter.country")} icon={<Flag className="h-4 w-4" />} searchable
               options={COUNTRIES.map((c) => ({ value: c.code, label: `${flagEmoji(c.code)} ${t(`country.${c.code}`)}` }))}
               selected={countries} onToggle={(v) => setCountries(toggle(countries, v))} onClear={() => setCountries([])}
             />
             <FilterDropdown
-              label={t("filter.level")} icon="🎓"
+              label={t("filter.level")} icon={<GraduationCap className="h-4 w-4" />}
               options={LEVELS.map((l) => ({ value: l, label: t(`level.${l}`) }))}
               selected={levels} onToggle={(v) => setLevels(toggle(levels, v as Level))} onClear={() => setLevels([])}
             />
             <FilterDropdown
-              label={t("filter.field")} icon="📚" searchable
+              label={t("filter.field")} icon={<BookOpen className="h-4 w-4" />} searchable
               options={FIELDS.map((f) => ({ value: f, label: f }))}
               selected={fields} onToggle={(v) => setFields(toggle(fields, v))} onClear={() => setFields([])}
             />
             <FilterDropdown
-              label={t("filter.funding")} icon="💰"
+              label={t("filter.funding")} icon={<Coins className="h-4 w-4" />}
               options={FUNDINGS.map((f) => ({ value: f, label: t(`funding.${f}`) }))}
               selected={funding} onToggle={(v) => setFunding(toggle(funding, v as FundingLevel))} onClear={() => setFunding([])}
             />
             <FilterDropdown
-              label={t("filter.providerType")} icon="🏛️"
+              label={t("filter.providerType")} icon={<Landmark className="h-4 w-4" />}
               options={PROVIDER_TYPES.map((p) => ({ value: p, label: t(`providerType.${p}`) }))}
               selected={providerTypes} onToggle={(v) => setProviderTypes(toggle(providerTypes, v as ProviderType))} onClear={() => setProviderTypes([])}
             />
             <FilterDropdown
-              label={t("filter.deadline")} icon="⏰"
+              label={t("filter.deadline")} icon={<Clock className="h-4 w-4" />}
               options={DL_STATUSES.map((d) => ({ value: d, label: t(`deadlineStatus.${d}`) }))}
               selected={dlStatus} onToggle={(v) => setDlStatus(toggle(dlStatus, v as DeadlineStatus))} onClear={() => setDlStatus([])}
             />
             <FilterDropdown
-              label={t("filter.intake")} icon="🗓️" align="right"
+              label={t("filter.intake")} icon={<CalendarDays className="h-4 w-4" />} align="right"
               options={INTAKES.map((i) => ({ value: i, label: i }))}
               selected={intakes} onToggle={(v) => setIntakes(toggle(intakes, v))} onClear={() => setIntakes([])}
             />
@@ -527,7 +524,7 @@ export default function SearchPage() {
             <div className="flex-1" />
             {chips.length > 0 && (
               <button onClick={clearAll} className="flex items-center gap-1.5 rounded-[11px] border border-[#f7d0d5] bg-[#fff0f1] px-3 py-2 text-[12.5px] font-bold text-[#d33a4a]">
-                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round"><path d="M18 6 6 18M6 6l12 12" /></svg>
+                <X className="h-3.5 w-3.5" />
                 {t("common.clearAll")} ({chips.length})
               </button>
             )}
@@ -551,7 +548,7 @@ export default function SearchPage() {
               {chips.map((c, i) => (
                 <button key={i} onClick={c.onRemove} className="animate-drop flex items-center gap-1.5 rounded-full border border-[#c4dbfb] bg-[#e7f0ff] py-1 pl-3 pr-2 text-xs font-semibold text-[#1c5cc0]">
                   {c.label}
-                  <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round"><path d="M18 6 6 18M6 6l12 12" /></svg>
+                  <X className="h-3 w-3" />
                 </button>
               ))}
             </div>
@@ -563,7 +560,7 @@ export default function SearchPage() {
               <span className="text-[21px] font-extrabold text-[#1a3352]">{results.length}</span> {t("results.matchWord")}
             </p>
             <Link href="/start" className="flex items-center gap-1.5 rounded-[11px] border border-[#c8dcfa] bg-[#eaf1fd] px-3.5 py-2 text-[12.5px] font-bold text-[#2f6fe0]">
-              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M12 3 13.9 8.6 19.5 8.6 15 12.1 16.7 17.6 12 14.2 7.3 17.6 9 12.1 4.5 8.6 10.1 8.6z" /></svg>
+              <Sparkles className="h-3.5 w-3.5" />
               {t("results.suggestCta")}
             </Link>
           </div>
@@ -595,7 +592,7 @@ export default function SearchPage() {
 }
 
 // Nhóm lọc dạng accordion: đóng mặc định, bấm mới xổ nội dung
-function Accordion({ title, active, children }: { title: string; active?: boolean; children: React.ReactNode }) {
+function Accordion({ icon, title, active, children }: { icon?: React.ReactNode; title: string; active?: boolean; children: React.ReactNode }) {
   const [open, setOpen] = useState(false);
   return (
     <div className="border-t border-[#eef3f9]">
@@ -604,7 +601,7 @@ function Accordion({ title, active, children }: { title: string; active?: boolea
         onClick={() => setOpen((v) => !v)}
         className="flex w-full items-center justify-between px-3 py-3 text-left"
       >
-        <span className="text-[13.5px] font-bold text-[#324a63]">{title}</span>
+        <span className="flex items-center gap-2 text-[13.5px] font-bold text-[#324a63]"><span className="text-[#2f6fe0]">{icon}</span>{title}</span>
         <span className="flex items-center gap-1.5">
           {active && <span className="h-2 w-2 rounded-full bg-[#2f6fe0]" />}
           <svg className={`h-3.5 w-3.5 text-[#93a7bd] transition-transform ${open ? "rotate-180" : ""}`} viewBox="0 0 20 20" fill="currentColor">

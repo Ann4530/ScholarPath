@@ -5,9 +5,11 @@
 import { useMemo, useState } from "react";
 import Link from "next/link";
 import { useTranslation } from "react-i18next";
+import { FlaskConical, Medal, Flag, UserSearch, Search } from "lucide-react";
 import { professors, scholarshipById } from "@/lib/data";
 import { flagEmoji } from "@/lib/ui";
 import FilterDropdown from "@/components/FilterDropdown";
+import HeroSky from "@/components/HeroSky";
 
 const PROF_FIELDS = Array.from(new Set(professors.flatMap((p) => p.fields))).sort();
 const PROF_COUNTRIES = Array.from(new Set(professors.map((p) => p.countryCode)));
@@ -72,12 +74,7 @@ export default function ProfessorsPage() {
       {/* Hero */}
       <section className="relative overflow-hidden rounded-[22px] bg-[linear-gradient(150deg,#0e1638_0%,#1c2a63_52%,#34459c_100%)] px-8 py-9 text-white">
         <div className="starfield pointer-events-none absolute inset-0" />
-        <div className="pointer-events-none absolute right-8 top-6 text-[#f6efc9] opacity-90 drop-shadow-[0_0_14px_rgba(246,239,201,0.5)]">
-          <svg width="34" height="34" viewBox="0 0 24 24" fill="currentColor"><path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9z" /></svg>
-        </div>
-        <div className="animate-plane pointer-events-none absolute right-[15%] top-[70px] text-[#dbe9ff] drop-shadow-[0_8px_12px_rgba(0,0,0,0.35)]">
-          <svg width="52" height="52" viewBox="0 0 24 24" fill="currentColor"><path d="M2.5 19h19v2h-19zM22.07 9.64c-.21-.8-1.04-1.28-1.84-1.06L14.92 10 8.46 3.98l-1.93.52 3.87 6.7-4.97 1.34-1.97-1.54-1.45.39 2.59 4.49 17.42-4.67c.81-.23 1.28-1.05 1.06-1.86z" /></svg>
-        </div>
+        <HeroSky id="profs" />
         <div className="relative">
           <div className="mb-3.5 inline-flex items-center gap-2 rounded-full border border-white/20 bg-white/10 px-3 py-1.5 text-xs font-semibold text-[#cdd6f7]">
             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><path d="M22 10v6M2 10l10-5 10 5-10 5z" /><path d="M6 12v5c3 3 9 3 12 0v-5" /></svg>
@@ -86,7 +83,7 @@ export default function ProfessorsPage() {
           <h1 className="text-[27px] font-extrabold tracking-tight">{t("professors.title")}</h1>
           <p className="mt-2 max-w-[520px] text-[14.5px] leading-relaxed text-[#c5d2f0]">{t("professors.desc")}</p>
           <div className="relative mt-5 flex max-w-[520px] items-center rounded-[13px] bg-white shadow-[0_14px_34px_-16px_rgba(0,0,0,0.5)]">
-            <svg className="absolute left-4" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#93a7bd" strokeWidth="2.2" strokeLinecap="round"><circle cx="11" cy="11" r="7" /><path d="m21 21-4.3-4.3" /></svg>
+            <Search className="absolute left-4 h-[18px] w-[18px] text-[#93a7bd]" />
             <input
               value={q}
               onChange={(e) => setQ(e.target.value)}
@@ -100,28 +97,28 @@ export default function ProfessorsPage() {
       {/* Hàng lọc ngang */}
       <div className="mt-4 flex flex-wrap items-center gap-2">
         <FilterDropdown
-          label={t("professors.fField")} icon="🧪" searchable
+          label={t("professors.fField")} icon={<FlaskConical className="h-4 w-4" />} searchable
           options={PROF_FIELDS.map((f) => ({ value: f, label: f }))}
           selected={fields}
           onToggle={(v) => setFields(toggle(fields, v))}
           onClear={() => setFields([])}
         />
         <FilterDropdown
-          label={t("professors.fRank")} icon="🎖️"
+          label={t("professors.fRank")} icon={<Medal className="h-4 w-4" />}
           options={RANKS.map((r) => ({ value: r, label: t(`rank.${r}`) }))}
           selected={ranks}
           onToggle={(v) => setRanks(toggle(ranks, v))}
           onClear={() => setRanks([])}
         />
         <FilterDropdown
-          label={t("professors.fCountry")} icon="🚩"
+          label={t("professors.fCountry")} icon={<Flag className="h-4 w-4" />}
           options={PROF_COUNTRIES.map((c) => ({ value: c, label: `${flagEmoji(c)} ${t(`country.${c}`)}` }))}
           selected={countries}
           onToggle={(v) => setCountries(toggle(countries, v))}
           onClear={() => setCountries([])}
         />
         <FilterDropdown
-          label={t("professors.fRecruiting")} icon="🟢"
+          label={t("professors.fRecruiting")} icon={<UserSearch className="h-4 w-4" />}
           options={Object.keys(RECRUITING_KEY).map((v) => ({ value: v, label: t(RECRUITING_KEY[v]) }))}
           selected={recruiting}
           onToggle={(v) => setRecruiting(toggle(recruiting, v))}
