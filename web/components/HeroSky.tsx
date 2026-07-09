@@ -30,9 +30,9 @@ export default function HeroSky({ id = "hs" }: { id?: string }) {
       <ellipse cx="150" cy="250" rx="90" ry="34" fill={`url(#${id}-cloud)`} />
       <ellipse cx="470" cy="120" rx="120" ry="42" fill={`url(#${id}-cloud)`} />
 
-      {/* trăng lưỡi liềm (góc trên phải, tách khỏi tuyến bay) */}
-      <circle cx="540" cy="52" r="30" fill={`url(#${id}-cloud)`} />
-      <g transform="translate(519 31) scale(1.6)" opacity="0.92">
+      {/* trăng lưỡi liềm — đặt trên vùng trời trống, PHÍA TRÊN tuyến bay (không chạm đường bay) */}
+      <circle cx="318" cy="60" r="30" fill={`url(#${id}-cloud)`} />
+      <g transform="translate(297 39) scale(1.6)" opacity="0.9">
         <path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9z" fill="#f6efc9" />
       </g>
 

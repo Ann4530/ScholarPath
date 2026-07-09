@@ -167,23 +167,23 @@ export default function SearchPage() {
     return list;
   }, [profile, q, regions, countries, levels, fields, funding, providerTypes, dlStatus, intakes, languages, tags, maxRank, maxIelts, gre, supervisor, eligibleOnly, sort, t]);
 
-  // ---- Chips "bộ lọc đang áp dụng" ----
+  // ---- Chips "bộ lọc đang áp dụng" (chỉ chữ, giữ cờ quốc gia) ----
   const chips: { label: string; onRemove: () => void }[] = [
-    ...regions.map((r) => ({ label: `🌍 ${t(`region.${REGION_KEY[r as keyof typeof REGION_KEY]}`)}`, onRemove: () => setRegions(toggle(regions, r)) })),
+    ...regions.map((r) => ({ label: t(`region.${REGION_KEY[r as keyof typeof REGION_KEY]}`), onRemove: () => setRegions(toggle(regions, r)) })),
     ...countries.map((c) => ({ label: `${flagEmoji(c)} ${t(`country.${c}`)}`, onRemove: () => setCountries(toggle(countries, c)) })),
-    ...levels.map((l) => ({ label: `🎓 ${t(`level.${l}`)}`, onRemove: () => setLevels(toggle(levels, l)) })),
-    ...fields.map((f) => ({ label: `📚 ${f}`, onRemove: () => setFields(toggle(fields, f)) })),
-    ...funding.map((f) => ({ label: `💰 ${t(`funding.${f}`)}`, onRemove: () => setFunding(toggle(funding, f)) })),
-    ...providerTypes.map((p) => ({ label: `🏛️ ${t(`providerType.${p}`)}`, onRemove: () => setProviderTypes(toggle(providerTypes, p)) })),
-    ...dlStatus.map((d) => ({ label: `⏰ ${t(`deadlineStatus.${d}`)}`, onRemove: () => setDlStatus(toggle(dlStatus, d)) })),
-    ...intakes.map((i) => ({ label: `🗓️ ${i}`, onRemove: () => setIntakes(toggle(intakes, i)) })),
-    ...languages.map((l) => ({ label: `🗣️ ${teachLanguages(l, t)}`, onRemove: () => setLanguages(toggle(languages, l)) })),
+    ...levels.map((l) => ({ label: t(`level.${l}`), onRemove: () => setLevels(toggle(levels, l)) })),
+    ...fields.map((f) => ({ label: f, onRemove: () => setFields(toggle(fields, f)) })),
+    ...funding.map((f) => ({ label: t(`funding.${f}`), onRemove: () => setFunding(toggle(funding, f)) })),
+    ...providerTypes.map((p) => ({ label: t(`providerType.${p}`), onRemove: () => setProviderTypes(toggle(providerTypes, p)) })),
+    ...dlStatus.map((d) => ({ label: t(`deadlineStatus.${d}`), onRemove: () => setDlStatus(toggle(dlStatus, d)) })),
+    ...intakes.map((i) => ({ label: i, onRemove: () => setIntakes(toggle(intakes, i)) })),
+    ...languages.map((l) => ({ label: teachLanguages(l, t), onRemove: () => setLanguages(toggle(languages, l)) })),
     ...tags.map((tg) => ({ label: tg, onRemove: () => setTags(toggle(tags, tg)) })),
-    ...(maxRank > 0 ? [{ label: `🏆 QS ${t("sidebar.topN", { n: maxRank })}`, onRemove: () => setMaxRank(0) }] : []),
-    ...(maxIelts > 0 ? [{ label: `📝 IELTS ≤ ${maxIelts.toFixed(1)}`, onRemove: () => setMaxIelts(0) }] : []),
-    ...(gre !== "any" ? [{ label: gre === "no" ? `🚫 ${t("sidebar.greNo")} GRE` : "GRE/GMAT", onRemove: () => setGre("any") }] : []),
-    ...(supervisor !== "any" ? [{ label: `👨‍🏫 ${supervisor === "yes" ? t("common.yes") : t("common.no")}`, onRemove: () => setSupervisor("any") }] : []),
-    ...(eligibleOnly ? [{ label: `✅ ${t("sidebar.eligibleOnly")}`, onRemove: () => setEligibleOnly(false) }] : []),
+    ...(maxRank > 0 ? [{ label: `QS ${t("sidebar.topN", { n: maxRank })}`, onRemove: () => setMaxRank(0) }] : []),
+    ...(maxIelts > 0 ? [{ label: `IELTS ≤ ${maxIelts.toFixed(1)}`, onRemove: () => setMaxIelts(0) }] : []),
+    ...(gre !== "any" ? [{ label: gre === "no" ? `${t("sidebar.greNo")} GRE` : "GRE/GMAT", onRemove: () => setGre("any") }] : []),
+    ...(supervisor !== "any" ? [{ label: `${t("sidebar.supervisor")}: ${supervisor === "yes" ? t("common.yes") : t("common.no")}`, onRemove: () => setSupervisor("any") }] : []),
+    ...(eligibleOnly ? [{ label: t("sidebar.eligibleOnly"), onRemove: () => setEligibleOnly(false) }] : []),
   ];
 
   const clearAll = () => {
