@@ -186,65 +186,109 @@ export default function SearchPage() {
     setSupervisor("any"); setGre("any"); setEligibleOnly(false); setMaxRank(0); setMaxIelts(0); setQ("");
   };
 
+  // Chips chọn nhanh trên hero — nối vào các bộ lọc sẵn có
+  const quickChips: { label: string; active: boolean; onClick: () => void }[] = [
+    { label: `💰 ${t("funding.Full")}`, active: funding.includes("Full"), onClick: () => setFunding(toggle(funding, "Full")) },
+    { label: `🎓 ${t("level.Master")}`, active: levels.includes("Master"), onClick: () => setLevels(toggle(levels, "Master")) },
+    { label: `🎓 ${t("level.PhD")}`, active: levels.includes("PhD"), onClick: () => setLevels(toggle(levels, "PhD")) },
+    { label: `✅ ${t("sidebar.eligibleOnly")}`, active: eligibleOnly, onClick: () => setEligibleOnly((v) => !v) },
+  ];
+
   return (
-    <div className="mx-auto max-w-7xl px-4 py-6">
-      {/* Hero */}
-      <section className="relative overflow-hidden rounded-3xl bg-gradient-to-br from-indigo-600 via-violet-600 to-fuchsia-600 p-6 text-white sm:p-10">
-        <div className="pointer-events-none absolute -right-20 -top-24 h-72 w-72 rounded-full bg-white/10 blur-2xl" />
-        <div className="pointer-events-none absolute -bottom-28 -left-16 h-72 w-72 rounded-full bg-fuchsia-400/20 blur-2xl" />
-        <div className="relative">
-          <p className="text-sm font-medium uppercase tracking-widest text-indigo-200">ScholarFinder</p>
-          <h1 className="mt-1 max-w-2xl text-3xl font-bold leading-tight sm:text-4xl">
-            {t("hero.title")} <span className="text-amber-300">{t("hero.titleHl")}</span>
-          </h1>
-          <p className="mt-3 max-w-2xl text-indigo-100">{t("hero.desc")}</p>
-          <div className="mt-5 flex flex-col gap-2 sm:flex-row">
-            <div className="relative flex-1">
-              <span className="pointer-events-none absolute left-4 top-1/2 -translate-y-1/2 text-slate-400">🔍</span>
-              <input
-                value={q}
-                onChange={(e) => setQ(e.target.value)}
-                placeholder={t("hero.searchPh")}
-                className="w-full rounded-xl border-0 py-3.5 pl-11 pr-4 text-slate-800 shadow-lg outline-none ring-2 ring-transparent focus:ring-amber-300"
-              />
-            </div>
-            <Link
-              href="/start"
-              className="group flex items-center justify-center gap-2 rounded-xl bg-amber-400 px-5 py-3.5 font-bold text-slate-900 shadow-lg transition hover:bg-amber-300"
-            >
-              🚀 {t("hero.start")}
-              <span className="transition-transform group-hover:translate-x-0.5">→</span>
-            </Link>
-            <button
-              onClick={() => setShowProfile((v) => !v)}
-              className="rounded-xl bg-white/15 px-5 py-3.5 font-medium ring-1 ring-white/40 transition hover:bg-white/25"
-            >
-              ⚙️ {t("hero.profile")}
-            </button>
+    <div className="mx-auto max-w-[1200px] px-6 pb-16">
+      {/* ============ STARRY HERO ============ */}
+      <section className="pt-6">
+        <div className="relative overflow-hidden rounded-[26px] bg-[linear-gradient(160deg,#0a1230_0%,#152159_52%,#243a86_100%)] px-8 py-11 sm:px-10">
+          <div className="starfield pointer-events-none absolute inset-0" />
+          {/* twinkles */}
+          <div className="animate-twinkle pointer-events-none absolute left-[22%] top-8 h-1 w-1 rounded-full bg-white shadow-[0_0_8px_2px_rgba(255,255,255,0.7)]" />
+          <div className="animate-twinkle pointer-events-none absolute left-[64%] top-[70px] h-[3px] w-[3px] rounded-full bg-[#cfe0ff] shadow-[0_0_7px_2px_rgba(160,200,255,0.7)] [animation-delay:0.6s]" />
+          <div className="animate-twinkle pointer-events-none absolute left-[84%] top-11 h-1 w-1 rounded-full bg-[#ffe9a8] shadow-[0_0_9px_2px_rgba(255,220,140,0.7)] [animation-delay:0.3s]" />
+          {/* crescent moon */}
+          <div className="pointer-events-none absolute right-11 top-8 text-[#f6efc9] opacity-90 drop-shadow-[0_0_16px_rgba(246,239,201,0.5)]">
+            <svg width="40" height="40" viewBox="0 0 24 24" fill="currentColor"><path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9z" /></svg>
           </div>
-          <p className="mt-3 text-xs text-indigo-200">
-            💡 {t("hero.hint1")} <b>{t("hero.start")}</b> {t("hero.hint2")}
-          </p>
+          {/* flight arc + plane */}
+          <svg className="pointer-events-none absolute right-0 top-0 h-full w-[62%]" viewBox="0 0 560 320" fill="none" preserveAspectRatio="xMaxYMin meet">
+            <path className="animate-dash" d="M10 300 C 180 270, 300 230, 400 150 S 540 60, 560 30" stroke="#7cb8ff" strokeWidth="2.5" strokeDasharray="1 10" strokeLinecap="round" opacity="0.65" />
+          </svg>
+          <div className="animate-plane pointer-events-none absolute right-[16%] top-[88px] text-[#dbe9ff] drop-shadow-[0_10px_16px_rgba(0,0,0,0.35)]">
+            <svg width="72" height="72" viewBox="0 0 24 24" fill="currentColor"><path d="M2.5 19h19v2h-19zM22.07 9.64c-.21-.8-1.04-1.28-1.84-1.06L14.92 10 8.46 3.98l-1.93.52 3.87 6.7-4.97 1.34-1.97-1.54-1.45.39 2.59 4.49 17.42-4.67c.81-.23 1.28-1.05 1.06-1.86z" /></svg>
+          </div>
+
+          <div className="relative max-w-[600px]">
+            <div className="inline-flex items-center gap-2 rounded-full border border-white/20 bg-white/10 px-3 py-1.5 text-[12.5px] font-semibold text-[#cfe0ff]">
+              <span className="h-[7px] w-[7px] rounded-full bg-[#4ade80] shadow-[0_0_0_4px_rgba(74,222,128,0.2)]" />
+              {t("results.count", { n: scholarships.length })} · 7/2026
+            </div>
+            <h1 className="mt-4 text-[34px] font-extrabold leading-[1.1] tracking-tight text-white sm:text-[39px]">
+              {t("hero.title")} <span className="text-[#a5cbff]">{t("hero.titleHl")}</span>
+            </h1>
+            <p className="mt-3.5 max-w-[490px] text-[15px] leading-relaxed text-white/75">{t("hero.desc")}</p>
+
+            <div className="mt-6 flex flex-wrap gap-2.5">
+              <div className="relative flex min-w-[260px] flex-1 items-center rounded-[14px] bg-white shadow-[0_18px_40px_-18px_rgba(0,0,0,0.6)]">
+                <svg className="absolute left-4" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#93a7bd" strokeWidth="2.2" strokeLinecap="round"><circle cx="11" cy="11" r="7" /><path d="m21 21-4.3-4.3" /></svg>
+                <input
+                  value={q}
+                  onChange={(e) => setQ(e.target.value)}
+                  placeholder={t("hero.searchPh")}
+                  className="w-full rounded-[14px] border-0 bg-transparent py-3.5 pl-11 pr-4 text-[14.5px] text-[#1a3352] outline-none"
+                />
+              </div>
+              <Link
+                href="/start"
+                className="flex items-center gap-2.5 rounded-[14px] bg-gradient-to-br from-[#3b82f6] to-[#5aa2ff] px-5 py-3.5 text-[14.5px] font-extrabold text-white shadow-[0_14px_30px_-12px_rgba(59,130,246,0.9)] transition hover:brightness-110"
+              >
+                <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M12 3 13.9 8.6 19.5 8.6 15 12.1 16.7 17.6 12 14.2 7.3 17.6 9 12.1 4.5 8.6 10.1 8.6z" /></svg>
+                {t("hero.start")}
+              </Link>
+              <button
+                onClick={() => setShowProfile((v) => !v)}
+                title={t("hero.profile")}
+                className="grid place-items-center rounded-[14px] border border-white/20 bg-white/10 px-4 text-white transition hover:bg-white/20"
+              >
+                ⚙️
+              </button>
+            </div>
+
+            <div className="mt-4 flex flex-wrap items-center gap-2">
+              <span className="text-[12.5px] font-semibold text-white/60">{t("common.quickPick")}:</span>
+              {quickChips.map((chip, i) => (
+                <button
+                  key={i}
+                  onClick={chip.onClick}
+                  className={`rounded-full border px-3 py-1.5 text-[12.5px] font-semibold transition ${
+                    chip.active
+                      ? "border-white/40 bg-white/25 text-white"
+                      : "border-white/20 bg-white/10 text-[#e7f0ff] hover:bg-white/20"
+                  }`}
+                >
+                  {chip.label}
+                </button>
+              ))}
+            </div>
+          </div>
         </div>
       </section>
 
       {/* Trình chỉnh hồ sơ */}
       {showProfile && (
-        <section className="animate-drop mt-4 rounded-2xl border border-indigo-200 bg-indigo-50/50 p-4">
+        <section className="animate-drop mt-4 rounded-[18px] border border-[#dce8f4] bg-white p-5 shadow-[0_1px_2px_rgba(23,50,76,0.04)]">
           <div className="mb-3 flex items-center justify-between">
-            <h2 className="font-semibold text-slate-800">{t("profilePanel.title")}</h2>
+            <h2 className="font-extrabold text-[#1a3352]">{t("profilePanel.title")}</h2>
             <div className="flex items-center gap-3">
-              <Link href="/start" className="text-sm font-medium text-indigo-600 hover:underline">✨ {t("profilePanel.wizardLink")}</Link>
-              <button onClick={() => setShowProfile(false)} className="text-sm text-slate-500 hover:text-slate-800">{t("common.close")}</button>
+              <Link href="/start" className="text-sm font-semibold text-[#2f6fe0] hover:underline">✨ {t("profilePanel.wizardLink")}</Link>
+              <button onClick={() => setShowProfile(false)} className="text-sm text-[#7591ab] hover:text-[#1a3352]">{t("common.close")}</button>
             </div>
           </div>
           <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
             <label className="text-sm">
-              <span className="mb-1 block font-medium text-slate-600">{t("profilePanel.level")}</span>
+              <span className="mb-1 block font-semibold text-[#5a7794]">{t("profilePanel.level")}</span>
               <select
                 value={profile.level}
                 onChange={(e) => setProfile({ ...profile, level: e.target.value as Level })}
-                className="w-full rounded-lg border border-slate-300 bg-white px-3 py-2"
+                className="w-full rounded-[10px] border border-[#cfe0f2] bg-white px-3 py-2 text-[#1a3352]"
               >
                 {LEVELS.map((l) => (
                   <option key={l} value={l}>{t(`level.${l}`)}</option>
@@ -252,27 +296,27 @@ export default function SearchPage() {
               </select>
             </label>
             <label className="text-sm">
-              <span className="mb-1 block font-medium text-slate-600">{t("profilePanel.gpa")}</span>
+              <span className="mb-1 block font-semibold text-[#5a7794]">{t("profilePanel.gpa")}</span>
               <input
                 type="number" step="0.1" min="0" max="4" value={profile.gpa}
                 onChange={(e) => setProfile({ ...profile, gpa: parseFloat(e.target.value) || 0 })}
-                className="w-full rounded-lg border border-slate-300 bg-white px-3 py-2"
+                className="w-full rounded-[10px] border border-[#cfe0f2] bg-white px-3 py-2 text-[#1a3352]"
               />
             </label>
             <label className="text-sm">
-              <span className="mb-1 block font-medium text-slate-600">{t("profilePanel.ielts")}</span>
+              <span className="mb-1 block font-semibold text-[#5a7794]">{t("profilePanel.ielts")}</span>
               <input
                 type="number" step="0.5" min="0" max="9" value={profile.ielts}
                 onChange={(e) => setProfile({ ...profile, ielts: parseFloat(e.target.value) || 0 })}
-                className="w-full rounded-lg border border-slate-300 bg-white px-3 py-2"
+                className="w-full rounded-[10px] border border-[#cfe0f2] bg-white px-3 py-2 text-[#1a3352]"
               />
             </label>
             <label className="text-sm">
-              <span className="mb-1 block font-medium text-slate-600">{t("profilePanel.fundingNeed")}</span>
+              <span className="mb-1 block font-semibold text-[#5a7794]">{t("profilePanel.fundingNeed")}</span>
               <select
                 value={profile.fundingNeed}
                 onChange={(e) => setProfile({ ...profile, fundingNeed: e.target.value as "Full" | "Partial" | "Any" })}
-                className="w-full rounded-lg border border-slate-300 bg-white px-3 py-2"
+                className="w-full rounded-[10px] border border-[#cfe0f2] bg-white px-3 py-2 text-[#1a3352]"
               >
                 <option value="Full">{t("profilePanel.needFull")}</option>
                 <option value="Partial">{t("profilePanel.needPartial")}</option>
@@ -280,18 +324,18 @@ export default function SearchPage() {
               </select>
             </label>
           </div>
-          <label className="mt-3 flex w-fit cursor-pointer items-center gap-2 rounded-lg bg-white px-3 py-2 text-sm ring-1 ring-slate-200">
+          <label className="mt-3 flex w-fit cursor-pointer items-center gap-2 rounded-[10px] bg-[#f6f9fd] px-3 py-2 text-sm ring-1 ring-[#dce8f4]">
             <input
               type="checkbox"
               checked={profile.hasGre}
               onChange={() => setProfile({ ...profile, hasGre: !profile.hasGre })}
-              className="h-4 w-4 accent-indigo-600"
+              className="h-4 w-4 accent-[#2f6fe0]"
             />
-            <span className="text-slate-700">{t("profilePanel.hasGre")}</span>
+            <span className="text-[#455f78]">{t("profilePanel.hasGre")}</span>
           </label>
           <div className="mt-4 grid gap-4 lg:grid-cols-2">
             <div className="text-sm">
-              <span className="mb-1 block font-medium text-slate-600">{t("profilePanel.fields")}</span>
+              <span className="mb-1 block font-semibold text-[#5a7794]">{t("profilePanel.fields")}</span>
               <div className="flex flex-wrap gap-1.5">
                 {FIELDS.map((f) => (
                   <button
@@ -299,15 +343,15 @@ export default function SearchPage() {
                     onClick={() => setProfile({ ...profile, fields: toggle(profile.fields, f) })}
                     className={`rounded-full px-3 py-1 text-xs ring-1 transition ${
                       profile.fields.includes(f)
-                        ? "bg-indigo-600 text-white ring-indigo-600"
-                        : "bg-white text-slate-600 ring-slate-300 hover:ring-indigo-400"
+                        ? "bg-[#2f6fe0] text-white ring-[#2f6fe0]"
+                        : "bg-white text-[#5a7794] ring-[#cfe0f2] hover:ring-[#9cc1f5]"
                     }`}
                   >{f}</button>
                 ))}
               </div>
             </div>
             <div className="text-sm">
-              <span className="mb-1 block font-medium text-slate-600">{t("profilePanel.countries")}</span>
+              <span className="mb-1 block font-semibold text-[#5a7794]">{t("profilePanel.countries")}</span>
               <div className="flex flex-wrap gap-1.5">
                 {COUNTRIES.map((c) => (
                   <button
@@ -315,8 +359,8 @@ export default function SearchPage() {
                     onClick={() => setProfile({ ...profile, countries: toggle(profile.countries, c.code) })}
                     className={`rounded-full px-3 py-1 text-xs ring-1 transition ${
                       profile.countries.includes(c.code)
-                        ? "bg-indigo-600 text-white ring-indigo-600"
-                        : "bg-white text-slate-600 ring-slate-300 hover:ring-indigo-400"
+                        ? "bg-[#2f6fe0] text-white ring-[#2f6fe0]"
+                        : "bg-white text-[#5a7794] ring-[#cfe0f2] hover:ring-[#9cc1f5]"
                     }`}
                   >{flagEmoji(c.code)} {t(`country.${c.code}`)}</button>
                 ))}
@@ -326,128 +370,34 @@ export default function SearchPage() {
         </section>
       )}
 
-      {/* HÀNG LỌC NGANG — bấm vào mới xổ danh sách */}
-      <div className="sticky top-14 z-30 -mx-4 mt-5 border-y border-slate-200 bg-white/95 px-4 py-3 backdrop-blur">
-        <div className="mx-auto flex max-w-7xl flex-wrap items-center gap-2">
-          <FilterDropdown
-            label={t("filter.region")} icon="🌍"
-            options={REGIONS.map((r) => ({ value: r, label: t(`region.${REGION_KEY[r]}`) }))}
-            selected={regions}
-            onToggle={(v) => setRegions(toggle(regions, v))}
-            onClear={() => setRegions([])}
-          />
-          <FilterDropdown
-            label={t("filter.country")} icon="🚩" searchable
-            options={COUNTRIES.map((c) => ({ value: c.code, label: `${flagEmoji(c.code)} ${t(`country.${c.code}`)}` }))}
-            selected={countries}
-            onToggle={(v) => setCountries(toggle(countries, v))}
-            onClear={() => setCountries([])}
-          />
-          <FilterDropdown
-            label={t("filter.level")} icon="🎓"
-            options={LEVELS.map((l) => ({ value: l, label: t(`level.${l}`) }))}
-            selected={levels}
-            onToggle={(v) => setLevels(toggle(levels, v as Level))}
-            onClear={() => setLevels([])}
-          />
-          <FilterDropdown
-            label={t("filter.field")} icon="📚" searchable
-            options={FIELDS.map((f) => ({ value: f, label: f }))}
-            selected={fields}
-            onToggle={(v) => setFields(toggle(fields, v))}
-            onClear={() => setFields([])}
-          />
-          <FilterDropdown
-            label={t("filter.funding")} icon="💰"
-            options={FUNDINGS.map((f) => ({ value: f, label: t(`funding.${f}`) }))}
-            selected={funding}
-            onToggle={(v) => setFunding(toggle(funding, v as FundingLevel))}
-            onClear={() => setFunding([])}
-          />
-          <FilterDropdown
-            label={t("filter.providerType")} icon="🏛️"
-            options={PROVIDER_TYPES.map((p) => ({ value: p, label: t(`providerType.${p}`) }))}
-            selected={providerTypes}
-            onToggle={(v) => setProviderTypes(toggle(providerTypes, v as ProviderType))}
-            onClear={() => setProviderTypes([])}
-          />
-          <FilterDropdown
-            label={t("filter.deadline")} icon="⏰"
-            options={DL_STATUSES.map((d) => ({ value: d, label: t(`deadlineStatus.${d}`) }))}
-            selected={dlStatus}
-            onToggle={(v) => setDlStatus(toggle(dlStatus, v as DeadlineStatus))}
-            onClear={() => setDlStatus([])}
-          />
-          <FilterDropdown
-            label={t("filter.intake")} icon="🗓️" align="right"
-            options={INTAKES.map((i) => ({ value: i, label: i }))}
-            selected={intakes}
-            onToggle={(v) => setIntakes(toggle(intakes, v))}
-            onClear={() => setIntakes([])}
-          />
-
-          <div className="ml-auto flex items-center gap-2">
-            <label className="hidden text-xs font-medium text-slate-400 sm:block">{t("filter.sortLabel")}</label>
-            <select
-              value={sort}
-              onChange={(e) => setSort(e.target.value as Sort)}
-              className="rounded-full border border-slate-300 bg-white px-3 py-2 text-sm font-medium text-slate-700"
-            >
-              <option value="match">{t("filter.sortMatch")}</option>
-              <option value="deadline">{t("filter.sortDeadline")}</option>
-              <option value="funding">{t("filter.sortFunding")}</option>
-              <option value="qs">{t("filter.sortQs")}</option>
-            </select>
-          </div>
-        </div>
-
-        {/* Chips bộ lọc đang áp dụng */}
-        {chips.length > 0 && (
-          <div className="mx-auto mt-2.5 flex max-w-7xl flex-wrap items-center gap-1.5">
-            {chips.map((c, i) => (
-              <span key={i} className="animate-drop flex items-center gap-1 rounded-full bg-indigo-50 px-2.5 py-1 text-xs font-medium text-indigo-700 ring-1 ring-indigo-200">
-                {c.label}
-                <button onClick={c.onRemove} className="ml-0.5 text-indigo-400 hover:text-rose-600">✕</button>
-              </span>
-            ))}
-            <button onClick={clearAll} className="ml-1 text-xs font-medium text-slate-400 hover:text-rose-600">
-              {t("common.clearAll")}
-            </button>
-          </div>
-        )}
-      </div>
-
       {/* Nội dung: sidebar dọc (nâng cao) + kết quả */}
-      <div className="mt-6 grid gap-6 lg:grid-cols-[270px_1fr]">
-        <aside className="h-fit space-y-4 lg:sticky lg:top-32">
-          <label className="flex cursor-pointer items-center gap-2 rounded-xl border border-emerald-200 bg-emerald-50 p-3 text-sm shadow-sm">
-            <input type="checkbox" checked={eligibleOnly} onChange={() => setEligibleOnly((v) => !v)} className="h-4 w-4 accent-emerald-600" />
-            <span className="font-medium text-emerald-800">{t("sidebar.eligibleOnly")}</span>
-          </label>
-
-          <div className="rounded-xl border border-slate-200 bg-white px-4 shadow-sm">
-            <div className="flex items-center justify-between py-3">
-              <h2 className="text-sm font-bold uppercase tracking-wide text-slate-500">{t("sidebar.advanced")}</h2>
+      <div className="mt-5 grid gap-6 lg:grid-cols-[258px_1fr]">
+        {/* SIDEBAR */}
+        <aside className="h-fit lg:sticky lg:top-[82px]">
+          <div className="rounded-[18px] border border-[#d9e6f3] bg-white p-2 shadow-[0_1px_2px_rgba(23,50,76,0.03)]">
+            <div className="flex items-center gap-2 px-3 pb-2.5 pt-3 text-sm font-extrabold text-[#1a3352]">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#2f6fe0" strokeWidth="2.1" strokeLinecap="round" strokeLinejoin="round"><path d="M3 6h18M7 12h10M11 18h2" /></svg>
+              {t("sidebar.advanced")}
             </div>
 
             <Accordion title={`🏆 ${t("sidebar.qs")}`} active={maxRank > 0}>
               <div className="grid grid-cols-2 gap-1.5">
                 {[0, 10, 30, 50, 100].map((v) => (
                   <button key={v} onClick={() => setMaxRank(v)}
-                    className={`rounded-lg px-2 py-1.5 text-xs font-medium ring-1 transition ${
-                      maxRank === v ? "bg-indigo-600 text-white ring-indigo-600" : "bg-white text-slate-600 ring-slate-300 hover:ring-indigo-400"
+                    className={`rounded-lg px-2 py-1.5 text-xs font-semibold ring-1 transition ${
+                      maxRank === v ? "bg-[#2f6fe0] text-white ring-[#2f6fe0]" : "bg-white text-[#5a7794] ring-[#cfe0f2] hover:ring-[#9cc1f5]"
                     }`}>{v === 0 ? t("sidebar.anyRank") : t("sidebar.topN", { n: v })}</button>
                 ))}
               </div>
             </Accordion>
 
             <Accordion title={`📝 ${t("sidebar.ielts")}`} active={maxIelts > 0}>
-              <p className="mb-2 text-xs text-slate-400">{t("sidebar.ieltsHint")}</p>
+              <p className="mb-2 text-xs text-[#93a7bd]">{t("sidebar.ieltsHint")}</p>
               <div className="grid grid-cols-2 gap-1.5">
                 {[0, 6.0, 6.5, 7.0].map((v) => (
                   <button key={v} onClick={() => setMaxIelts(v)}
-                    className={`rounded-lg px-2 py-1.5 text-xs font-medium ring-1 transition ${
-                      maxIelts === v ? "bg-indigo-600 text-white ring-indigo-600" : "bg-white text-slate-600 ring-slate-300 hover:ring-indigo-400"
+                    className={`rounded-lg px-2 py-1.5 text-xs font-semibold ring-1 transition ${
+                      maxIelts === v ? "bg-[#2f6fe0] text-white ring-[#2f6fe0]" : "bg-white text-[#5a7794] ring-[#cfe0f2] hover:ring-[#9cc1f5]"
                     }`}>{v === 0 ? t("common.any") : `≤ ${v.toFixed(1)}`}</button>
                 ))}
               </div>
@@ -457,8 +407,8 @@ export default function SearchPage() {
               <div className="flex gap-1.5">
                 {(["any", "no", "yes"] as const).map((v) => (
                   <button key={v} onClick={() => setGre(v)}
-                    className={`flex-1 rounded-lg px-2 py-1.5 text-xs font-medium ring-1 transition ${
-                      gre === v ? "bg-indigo-600 text-white ring-indigo-600" : "bg-white text-slate-600 ring-slate-300 hover:ring-indigo-400"
+                    className={`flex-1 rounded-lg px-2 py-1.5 text-xs font-semibold ring-1 transition ${
+                      gre === v ? "bg-[#2f6fe0] text-white ring-[#2f6fe0]" : "bg-white text-[#5a7794] ring-[#cfe0f2] hover:ring-[#9cc1f5]"
                     }`}>{v === "any" ? t("common.any") : v === "no" ? t("sidebar.greNo") : t("sidebar.greYes")}</button>
                 ))}
               </div>
@@ -468,19 +418,19 @@ export default function SearchPage() {
               <div className="flex gap-1.5">
                 {(["any", "yes", "no"] as const).map((v) => (
                   <button key={v} onClick={() => setSupervisor(v)}
-                    className={`flex-1 rounded-lg px-2 py-1.5 text-xs font-medium ring-1 transition ${
-                      supervisor === v ? "bg-indigo-600 text-white ring-indigo-600" : "bg-white text-slate-600 ring-slate-300 hover:ring-indigo-400"
+                    className={`flex-1 rounded-lg px-2 py-1.5 text-xs font-semibold ring-1 transition ${
+                      supervisor === v ? "bg-[#2f6fe0] text-white ring-[#2f6fe0]" : "bg-white text-[#5a7794] ring-[#cfe0f2] hover:ring-[#9cc1f5]"
                     }`}>{v === "any" ? t("common.any") : v === "yes" ? t("common.yes") : t("common.no")}</button>
                 ))}
               </div>
-              <p className="mt-2 text-[11px] leading-snug text-slate-400">{t("sidebar.supervisorHint")}</p>
+              <p className="mt-2 text-[11px] leading-snug text-[#93a7bd]">{t("sidebar.supervisorHint")}</p>
             </Accordion>
 
             <Accordion title={`🗣️ ${t("sidebar.teachLang")}`} active={languages.length > 0}>
               <div className="space-y-1.5">
                 {LANGUAGES.map((l) => (
-                  <label key={l} className="flex cursor-pointer items-center gap-2 text-sm text-slate-700">
-                    <input type="checkbox" checked={languages.includes(l)} onChange={() => setLanguages(toggle(languages, l))} className="h-4 w-4 accent-indigo-600" />
+                  <label key={l} className="flex cursor-pointer items-center gap-2 text-sm text-[#455f78]">
+                    <input type="checkbox" checked={languages.includes(l)} onChange={() => setLanguages(toggle(languages, l))} className="h-4 w-4 accent-[#2f6fe0]" />
                     <span>{teachLanguages(l, t)}</span>
                   </label>
                 ))}
@@ -491,64 +441,154 @@ export default function SearchPage() {
               <div className="flex flex-wrap gap-1.5">
                 {ALL_TAGS.map((tg) => (
                   <button key={tg} onClick={() => setTags(toggle(tags, tg))}
-                    className={`rounded-full px-2.5 py-1 text-[11px] font-medium ring-1 transition ${
-                      tags.includes(tg) ? "bg-indigo-600 text-white ring-indigo-600" : "bg-white text-slate-500 ring-slate-300 hover:ring-indigo-400"
+                    className={`rounded-full px-2.5 py-1 text-[11px] font-semibold ring-1 transition ${
+                      tags.includes(tg) ? "bg-[#2f6fe0] text-white ring-[#2f6fe0]" : "bg-white text-[#5a7794] ring-[#cfe0f2] hover:ring-[#9cc1f5]"
                     }`}>{tg}</button>
                 ))}
               </div>
             </Accordion>
+
+            <div className="border-t border-[#eef3f9] p-3">
+              <label className="flex cursor-pointer items-center gap-2.5 rounded-xl border border-[#c4ecd8] bg-[#e9f8f0] px-3 py-2.5">
+                <input type="checkbox" checked={eligibleOnly} onChange={() => setEligibleOnly((v) => !v)} className="h-4 w-4 accent-[#0f9d6b]" />
+                <span className="text-[12.5px] font-bold text-[#0b7a52]">{t("sidebar.eligibleOnly")}</span>
+              </label>
+            </div>
           </div>
 
           {/* Tóm tắt hồ sơ */}
-          <div className="rounded-xl border border-slate-200 bg-white p-4 text-sm shadow-sm">
+          <div className="mt-4 rounded-[18px] border border-[#dce8f4] bg-white p-4 text-sm shadow-[0_1px_2px_rgba(23,50,76,0.03)]">
             <div className="mb-2 flex items-center justify-between">
-              <h3 className="font-semibold text-slate-800">{t("sidebar.profileTitle")}</h3>
-              <button onClick={() => { setShowProfile(true); window.scrollTo({ top: 0, behavior: "smooth" }); }} className="text-xs text-indigo-600 hover:underline">{t("common.edit")}</button>
+              <h3 className="font-bold text-[#1a3352]">{t("sidebar.profileTitle")}</h3>
+              <button onClick={() => { setShowProfile(true); window.scrollTo({ top: 0, behavior: "smooth" }); }} className="text-xs text-[#2f6fe0] hover:underline">{t("common.edit")}</button>
             </div>
-            <dl className="space-y-1 text-xs text-slate-600">
-              <div className="flex justify-between"><dt>{t("sidebar.rowLevel")}</dt><dd className="font-medium text-slate-800">{t(`level.${profile.level}`)}</dd></div>
-              <div className="flex justify-between"><dt>{t("sidebar.rowGpa")}</dt><dd className="font-medium text-slate-800">{profile.gpa.toFixed(1)}/4.0</dd></div>
-              <div className="flex justify-between"><dt>{t("sidebar.rowIelts")}</dt><dd className="font-medium text-slate-800">{profile.ielts.toFixed(1)}</dd></div>
-              <div className="flex justify-between"><dt>{t("sidebar.rowGre")}</dt><dd className="font-medium text-slate-800">{profile.hasGre ? t("sidebar.greHave") : t("sidebar.greNone")}</dd></div>
-              <div className="flex justify-between"><dt>{t("sidebar.rowFunding")}</dt><dd className="font-medium text-slate-800">{profile.fundingNeed === "Full" ? t("profilePanel.needFull") : profile.fundingNeed === "Partial" ? t("profilePanel.needPartial") : t("profilePanel.needAny")}</dd></div>
+            <dl className="space-y-1 text-xs text-[#5a7794]">
+              <div className="flex justify-between"><dt>{t("sidebar.rowLevel")}</dt><dd className="font-semibold text-[#1a3352]">{t(`level.${profile.level}`)}</dd></div>
+              <div className="flex justify-between"><dt>{t("sidebar.rowGpa")}</dt><dd className="font-semibold text-[#1a3352]">{profile.gpa.toFixed(1)}/4.0</dd></div>
+              <div className="flex justify-between"><dt>{t("sidebar.rowIelts")}</dt><dd className="font-semibold text-[#1a3352]">{profile.ielts.toFixed(1)}</dd></div>
+              <div className="flex justify-between"><dt>{t("sidebar.rowGre")}</dt><dd className="font-semibold text-[#1a3352]">{profile.hasGre ? t("sidebar.greHave") : t("sidebar.greNone")}</dd></div>
+              <div className="flex justify-between"><dt>{t("sidebar.rowFunding")}</dt><dd className="font-semibold text-[#1a3352]">{profile.fundingNeed === "Full" ? t("profilePanel.needFull") : profile.fundingNeed === "Partial" ? t("profilePanel.needPartial") : t("profilePanel.needAny")}</dd></div>
             </dl>
-            <Link href="/start" className="mt-3 block rounded-lg bg-gradient-to-r from-indigo-600 to-violet-600 px-3 py-2 text-center text-xs font-semibold text-white transition hover:from-indigo-500 hover:to-violet-500">
+            <Link href="/start" className="mt-3 block rounded-[10px] bg-gradient-to-br from-[#1e3a8a] to-[#3b82f6] px-3 py-2 text-center text-xs font-bold text-white transition hover:brightness-110">
               ✨ {t("sidebar.wizardCta")}
             </Link>
           </div>
         </aside>
 
-        {/* Kết quả */}
-        <section>
-          <div className="mb-4 flex flex-wrap items-center justify-between gap-2">
-            <p className="text-sm text-slate-600">
-              <span className="font-semibold text-slate-900">{t("results.count", { n: results.length })}</span>
-              {chips.length > 0 && <span className="text-slate-400"> {t("results.filtersOn", { n: chips.length })}</span>}
+        {/* KẾT QUẢ */}
+        <main>
+          {/* Thanh lọc ngang */}
+          <div className="mb-4 flex flex-wrap items-center gap-2.5 rounded-[16px] border border-[#d9e6f3] bg-white p-3 shadow-[0_4px_16px_-10px_rgba(23,50,76,0.25)]">
+            <div className="flex items-center gap-1.5 px-1 text-[13.5px] font-extrabold text-[#2f6fe0]">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.1" strokeLinecap="round" strokeLinejoin="round"><path d="M22 3H2l8 9.5V19l4 2v-8.5L22 3Z" /></svg>
+              {t("filter.title")}
+            </div>
+            <FilterDropdown
+              label={t("filter.region")} icon="🌍"
+              options={REGIONS.map((r) => ({ value: r, label: t(`region.${REGION_KEY[r]}`) }))}
+              selected={regions} onToggle={(v) => setRegions(toggle(regions, v))} onClear={() => setRegions([])}
+            />
+            <FilterDropdown
+              label={t("filter.country")} icon="🚩" searchable
+              options={COUNTRIES.map((c) => ({ value: c.code, label: `${flagEmoji(c.code)} ${t(`country.${c.code}`)}` }))}
+              selected={countries} onToggle={(v) => setCountries(toggle(countries, v))} onClear={() => setCountries([])}
+            />
+            <FilterDropdown
+              label={t("filter.level")} icon="🎓"
+              options={LEVELS.map((l) => ({ value: l, label: t(`level.${l}`) }))}
+              selected={levels} onToggle={(v) => setLevels(toggle(levels, v as Level))} onClear={() => setLevels([])}
+            />
+            <FilterDropdown
+              label={t("filter.field")} icon="📚" searchable
+              options={FIELDS.map((f) => ({ value: f, label: f }))}
+              selected={fields} onToggle={(v) => setFields(toggle(fields, v))} onClear={() => setFields([])}
+            />
+            <FilterDropdown
+              label={t("filter.funding")} icon="💰"
+              options={FUNDINGS.map((f) => ({ value: f, label: t(`funding.${f}`) }))}
+              selected={funding} onToggle={(v) => setFunding(toggle(funding, v as FundingLevel))} onClear={() => setFunding([])}
+            />
+            <FilterDropdown
+              label={t("filter.providerType")} icon="🏛️"
+              options={PROVIDER_TYPES.map((p) => ({ value: p, label: t(`providerType.${p}`) }))}
+              selected={providerTypes} onToggle={(v) => setProviderTypes(toggle(providerTypes, v as ProviderType))} onClear={() => setProviderTypes([])}
+            />
+            <FilterDropdown
+              label={t("filter.deadline")} icon="⏰"
+              options={DL_STATUSES.map((d) => ({ value: d, label: t(`deadlineStatus.${d}`) }))}
+              selected={dlStatus} onToggle={(v) => setDlStatus(toggle(dlStatus, v as DeadlineStatus))} onClear={() => setDlStatus([])}
+            />
+            <FilterDropdown
+              label={t("filter.intake")} icon="🗓️" align="right"
+              options={INTAKES.map((i) => ({ value: i, label: i }))}
+              selected={intakes} onToggle={(v) => setIntakes(toggle(intakes, v))} onClear={() => setIntakes([])}
+            />
+
+            <div className="flex-1" />
+            {chips.length > 0 && (
+              <button onClick={clearAll} className="flex items-center gap-1.5 rounded-[11px] border border-[#f7d0d5] bg-[#fff0f1] px-3 py-2 text-[12.5px] font-bold text-[#d33a4a]">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round"><path d="M18 6 6 18M6 6l12 12" /></svg>
+                {t("common.clearAll")} ({chips.length})
+              </button>
+            )}
+            <label className="flex items-center gap-2 pr-1 text-[12.5px] font-semibold text-[#5a7794]">{t("filter.sortLabel")}
+              <select
+                value={sort}
+                onChange={(e) => setSort(e.target.value as Sort)}
+                className="rounded-[10px] border border-[#cfe0f2] bg-white px-2.5 py-2 text-[12.5px] font-semibold text-[#1a3352] outline-none"
+              >
+                <option value="match">{t("filter.sortMatch")}</option>
+                <option value="deadline">{t("filter.sortDeadline")}</option>
+                <option value="funding">{t("filter.sortFunding")}</option>
+                <option value="qs">{t("filter.sortQs")}</option>
+              </select>
+            </label>
+          </div>
+
+          {/* Chips bộ lọc đang áp dụng */}
+          {chips.length > 0 && (
+            <div className="mb-4 flex flex-wrap items-center gap-1.5">
+              {chips.map((c, i) => (
+                <button key={i} onClick={c.onRemove} className="animate-drop flex items-center gap-1.5 rounded-full border border-[#c4dbfb] bg-[#e7f0ff] py-1 pl-3 pr-2 text-xs font-semibold text-[#1c5cc0]">
+                  {c.label}
+                  <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round"><path d="M18 6 6 18M6 6l12 12" /></svg>
+                </button>
+              ))}
+            </div>
+          )}
+
+          {/* Header kết quả */}
+          <div className="mb-4 flex flex-wrap items-center justify-between gap-3">
+            <p className="text-sm font-medium text-[#5a7794]">
+              <span className="text-[21px] font-extrabold text-[#1a3352]">{results.length}</span> {t("results.matchWord")}
             </p>
+            <Link href="/start" className="flex items-center gap-1.5 rounded-[11px] border border-[#c8dcfa] bg-[#eaf1fd] px-3.5 py-2 text-[12.5px] font-bold text-[#2f6fe0]">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M12 3 13.9 8.6 19.5 8.6 15 12.1 16.7 17.6 12 14.2 7.3 17.6 9 12.1 4.5 8.6 10.1 8.6z" /></svg>
+              {t("results.suggestCta")}
+            </Link>
           </div>
 
           {results.length === 0 ? (
-            <div className="rounded-2xl border border-dashed border-slate-300 bg-white p-12 text-center">
-              <div className="text-4xl">🔎</div>
-              <p className="mt-3 font-medium text-slate-700">{t("results.emptyTitle")}</p>
-              <p className="mt-1 text-sm text-slate-500">
-                {t("results.tryPre")} <button onClick={clearAll} className="text-indigo-600 underline">{t("results.clearFilters")}</button> {t("results.or")}{" "}
-                <Link href="/start" className="text-indigo-600 underline">{t("results.resetWizard")}</Link>.
-              </p>
+            <div className="rounded-[18px] border border-dashed border-[#cfe0f2] bg-white p-12 text-center">
+              <div className="mx-auto grid h-14 w-14 place-items-center rounded-2xl bg-[#eef4fb]">
+                <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#93a7bd" strokeWidth="2" strokeLinecap="round"><circle cx="11" cy="11" r="7" /><path d="m21 21-4.3-4.3" /></svg>
+              </div>
+              <p className="mt-3.5 font-semibold text-[#5a7794]">{t("results.emptyTitle")}</p>
+              <button onClick={clearAll} className="mt-3 rounded-[11px] bg-[#2f6fe0] px-5 py-2.5 text-[13.5px] font-bold text-white">{t("results.clearFilters")}</button>
             </div>
           ) : (
-            <div className="grid gap-4 sm:grid-cols-2">
+            <div className="grid gap-4 [grid-template-columns:repeat(auto-fill,minmax(340px,1fr))]">
               {results.map(({ s, match }) => (
                 <ScholarshipCard key={s.id} s={s} match={match} />
               ))}
             </div>
           )}
 
-          <p className="mt-6 text-center text-xs text-slate-400">
-            {t("results.tip1")} <b>⇄ {t("results.tipCompare")}</b> {t("results.tip2")}{" "}
-            <Link href="/board" className="text-indigo-600 underline">{t("results.tipBoard")}</Link> {t("results.tip3")}
+          <p className="mt-6 text-center text-xs text-[#93a7bd]">
+            {t("results.tip1")} <b className="text-[#5a7794]">⇄ {t("results.tipCompare")}</b> {t("results.tip2")}{" "}
+            <Link href="/board" className="text-[#2f6fe0] underline">{t("results.tipBoard")}</Link> {t("results.tip3")}
           </p>
-        </section>
+        </main>
       </div>
     </div>
   );
@@ -558,21 +598,21 @@ export default function SearchPage() {
 function Accordion({ title, active, children }: { title: string; active?: boolean; children: React.ReactNode }) {
   const [open, setOpen] = useState(false);
   return (
-    <div className="border-t border-slate-100">
+    <div className="border-t border-[#eef3f9]">
       <button
         type="button"
         onClick={() => setOpen((v) => !v)}
-        className="flex w-full items-center justify-between py-3 text-left"
+        className="flex w-full items-center justify-between px-3 py-3 text-left"
       >
-        <span className="text-sm font-medium text-slate-700">{title}</span>
+        <span className="text-[13.5px] font-bold text-[#324a63]">{title}</span>
         <span className="flex items-center gap-1.5">
-          {active && <span className="h-2 w-2 rounded-full bg-indigo-500" />}
-          <svg className={`h-3.5 w-3.5 text-slate-400 transition-transform ${open ? "rotate-180" : ""}`} viewBox="0 0 20 20" fill="currentColor">
+          {active && <span className="h-2 w-2 rounded-full bg-[#2f6fe0]" />}
+          <svg className={`h-3.5 w-3.5 text-[#93a7bd] transition-transform ${open ? "rotate-180" : ""}`} viewBox="0 0 20 20" fill="currentColor">
             <path fillRule="evenodd" d="M5.23 7.21a.75.75 0 011.06.02L10 11.17l3.71-3.94a.75.75 0 111.08 1.04l-4.25 4.5a.75.75 0 01-1.08 0l-4.25-4.5a.75.75 0 01.02-1.06z" clipRule="evenodd" />
           </svg>
         </span>
       </button>
-      {open && <div className="animate-drop pb-4">{children}</div>}
+      {open && <div className="animate-drop px-3 pb-4">{children}</div>}
     </div>
   );
 }

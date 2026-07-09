@@ -10,6 +10,7 @@
     "next": "Continue",
     "edit": "Edit",
     "clearAll": "Clear all",
+    "quickPick": "Quick pick",
     "and": " and "
   },
   "nav": {
@@ -149,6 +150,7 @@
     "countries": "Preferred countries"
   },
   "filter": {
+    "title": "Filter",
     "region": "Region",
     "country": "Country",
     "level": "Level",
@@ -193,6 +195,8 @@
   },
   "results": {
     "count": "{{n}} matching scholarships",
+    "matchWord": "matching scholarships",
+    "suggestCta": "Not sure where to start? Let me suggest",
     "filtersOn": "· {{n}} filters applied",
     "emptyTitle": "No scholarships match your filters",
     "tryPre": "Try",
@@ -207,6 +211,7 @@
   },
   "card": {
     "needSupervisor": "Needs supervisor",
+    "needProposal": "Research proposal",
     "track": "+ Track",
     "tracking": "✓ Tracking",
     "compareAdd": "Add to comparison (max 4)",

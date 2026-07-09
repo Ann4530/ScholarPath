@@ -23,12 +23,12 @@ export default function ComparePage() {
     return (
       <div className="mx-auto max-w-3xl px-4 py-20 text-center">
         <div className="text-5xl">⇄</div>
-        <h1 className="mt-4 text-xl font-bold text-slate-800">{t("compare.emptyTitle")}</h1>
-        <p className="mt-2 text-slate-500">
+        <h1 className="mt-4 text-xl font-bold text-[#1a3352]">{t("compare.emptyTitle")}</h1>
+        <p className="mt-2 text-[#7591ab]">
           {items.length === 0 ? t("compare.emptyNone") : t("compare.emptyOne")}{" "}
           {t("compare.emptyHint1")} <b>⇄</b> {t("compare.emptyHint2")}
         </p>
-        <Link href="/" className="mt-6 inline-block rounded-xl bg-indigo-600 px-5 py-2.5 font-medium text-white hover:bg-indigo-700">
+        <Link href="/" className="mt-6 inline-block rounded-xl bg-[#2f6fe0] px-5 py-2.5 font-bold text-white hover:brightness-105">
           {t("compare.backCta")}
         </Link>
       </div>
@@ -42,34 +42,34 @@ export default function ComparePage() {
   const bestMatch = Math.max(...matches.map((m) => m.score));
 
   return (
-    <div className="mx-auto max-w-7xl px-4 py-6">
+    <div className="mx-auto max-w-[1200px] px-6 py-6">
       <div className="flex flex-wrap items-center justify-between gap-3">
         <div>
-          <Link href="/" className="text-sm text-slate-500 hover:text-indigo-600">{t("compare.back")}</Link>
-          <h1 className="mt-1 text-2xl font-bold text-slate-900">{t("compare.title", { n: items.length })}</h1>
+          <Link href="/" className="text-sm text-[#7591ab] hover:text-[#2f6fe0]">{t("compare.back")}</Link>
+          <h1 className="mt-1 text-2xl font-extrabold tracking-tight text-[#12345c]">{t("compare.title", { n: items.length })}</h1>
         </div>
-        <button onClick={clearCompare} className="rounded-lg border border-slate-300 px-3 py-2 text-sm text-slate-600 hover:border-rose-300 hover:text-rose-600">
+        <button onClick={clearCompare} className="rounded-lg border border-[#f7d0d5] bg-[#fff0f1] px-3 py-2 text-sm font-bold text-[#d33a4a]">
           {t("compare.clear")}
         </button>
       </div>
 
-      <div className="thin-scroll mt-5 overflow-x-auto rounded-2xl border border-slate-200 bg-white shadow-sm">
+      <div className="sf-scroll mt-5 overflow-x-auto rounded-[16px] border border-[#dce8f4] bg-white">
         <table className="w-full min-w-[720px] border-collapse text-sm">
           <thead>
             <tr>
-              <th className="sticky left-0 z-10 w-44 bg-slate-50 p-3 text-left text-xs font-semibold uppercase tracking-wide text-slate-400">
+              <th className="sticky left-0 z-10 w-44 bg-[#f6f9fd] p-3 text-left text-xs font-semibold uppercase tracking-wide text-[#93a7bd]">
                 {t("compare.criteria")}
               </th>
               {items.map((s) => (
-                <th key={s.id} className="min-w-52 border-l border-slate-100 bg-slate-50 p-3 text-left align-top">
+                <th key={s.id} className="min-w-52 border-l border-[#eef3f9] bg-[#f6f9fd] p-3 text-left align-top">
                   <div className="flex items-start justify-between gap-2">
                     <div>
-                      <p className="text-xs font-normal text-slate-500">{flagEmoji(s.countryCode)} {t(`country.${s.countryCode}`)} · QS #{s.qsRank}</p>
-                      <Link href={`/scholarships/${s.id}`} className="mt-0.5 block font-bold leading-snug text-slate-900 hover:text-indigo-600">
+                      <p className="text-xs font-normal text-[#7591ab]">{flagEmoji(s.countryCode)} {t(`country.${s.countryCode}`)} · QS #{s.qsRank}</p>
+                      <Link href={`/scholarships/${s.id}`} className="mt-0.5 block font-bold leading-snug text-[#12345c] hover:text-[#2f6fe0]">
                         {s.title}
                       </Link>
                     </div>
-                    <button onClick={() => toggleCompare(s.id)} className="shrink-0 text-slate-300 hover:text-rose-500" title={t("compare.removeTitle")}>✕</button>
+                    <button onClick={() => toggleCompare(s.id)} className="shrink-0 text-[#c3ccd8] hover:text-[#d33a4a]" title={t("compare.removeTitle")}>✕</button>
                   </div>
                 </th>
               ))}
@@ -78,24 +78,24 @@ export default function ComparePage() {
           <tbody>
             <Row label={t("compare.rowMatch")}>
               {items.map((s, i) => (
-                <td key={s.id} className="border-l border-t border-slate-100 p-3">
+                <td key={s.id} className="border-l border-t border-[#eef3f9] p-3">
                   <span className={`inline-flex items-center gap-1 rounded-lg border px-2.5 py-1 font-bold ${matchColor(matches[i].score)}`}>
                     {matches[i].score}%
                     {matches[i].score === bestMatch && <span title={t("compare.kingTitle")}>👑</span>}
                   </span>
-                  <p className="mt-1 text-xs text-slate-500">{matches[i].label}</p>
+                  <p className="mt-1 text-xs text-[#7591ab]">{matches[i].label}</p>
                 </td>
               ))}
             </Row>
             <Row label={t("compare.rowFunding")}>
               {items.map((s) => (
-                <Cell key={s.id}><b className={s.fundingLevel === "Full" ? "text-emerald-600" : "text-amber-600"}>{t(`funding.${s.fundingLevel}`)}</b></Cell>
+                <Cell key={s.id}><b className={s.fundingLevel === "Full" ? "text-[#0b7a52]" : "text-[#a9670a]"}>{t(`funding.${s.fundingLevel}`)}</b></Cell>
               ))}
             </Row>
             <Row label={t("compare.rowBenefits")}>
               {items.map((s) => (
                 <Cell key={s.id}>
-                  <ul className="space-y-0.5 text-xs text-slate-600">
+                  <ul className="space-y-0.5 text-xs text-[#455f78]">
                     {s.benefits.map((b) => <li key={b}>◆ {b}</li>)}
                   </ul>
                 </Cell>
@@ -110,31 +110,31 @@ export default function ComparePage() {
             <Row label={t("compare.rowMinGpa")}>
               {items.map((s) => (
                 <Cell key={s.id}>
-                  <b className={s.eligibility.minGpa === minGpa ? "text-emerald-600" : "text-slate-800"}>
+                  <b className={s.eligibility.minGpa === minGpa ? "text-[#0b7a52]" : "text-[#1a3352]"}>
                     {s.eligibility.minGpa.toFixed(1)}/4.0
                   </b>
-                  {s.eligibility.minGpa === minGpa && <span className="ml-1 text-xs text-emerald-600">{t("compare.easiest")}</span>}
+                  {s.eligibility.minGpa === minGpa && <span className="ml-1 text-xs text-[#0b7a52]">{t("compare.easiest")}</span>}
                 </Cell>
               ))}
             </Row>
             <Row label={t("compare.rowMinIelts")}>
               {items.map((s) => (
                 <Cell key={s.id}>
-                  <b className={s.eligibility.minIelts === minIelts ? "text-emerald-600" : "text-slate-800"}>
+                  <b className={s.eligibility.minIelts === minIelts ? "text-[#0b7a52]" : "text-[#1a3352]"}>
                     {s.eligibility.minIelts.toFixed(1)}
                   </b>
-                  {s.eligibility.minIelts === minIelts && <span className="ml-1 text-xs text-emerald-600">{t("compare.easiest")}</span>}
+                  {s.eligibility.minIelts === minIelts && <span className="ml-1 text-xs text-[#0b7a52]">{t("compare.easiest")}</span>}
                 </Cell>
               ))}
             </Row>
             <Row label={t("compare.rowGre")}>
               {items.map((s) => (
-                <Cell key={s.id}>{s.eligibility.gre ? <span className="text-amber-600">{t("compare.greMaybe")}</span> : <span className="text-emerald-600">{t("compare.greNo")}</span>}</Cell>
+                <Cell key={s.id}>{s.eligibility.gre ? <span className="text-[#a9670a]">{t("compare.greMaybe")}</span> : <span className="text-[#0b7a52]">{t("compare.greNo")}</span>}</Cell>
               ))}
             </Row>
             <Row label={t("compare.rowSup")}>
               {items.map((s) => (
-                <Cell key={s.id}>{s.requiresSupervisor ? <span className="text-violet-600">{t("compare.supYes")}</span> : t("common.no")}</Cell>
+                <Cell key={s.id}>{s.requiresSupervisor ? <span className="text-[#7c3aed]">{t("compare.supYes")}</span> : t("common.no")}</Cell>
               ))}
             </Row>
             <Row label={t("compare.rowProposal")}>
@@ -148,8 +148,8 @@ export default function ComparePage() {
                   <Cell key={s.id}>
                     {dl && (
                       <>
-                        <p className="font-medium text-slate-800">{dl.date}</p>
-                        <p className="text-xs text-slate-500">{dl.type} · <span className={deadlineColor(days)}>{deadlineText(days, t)}</span></p>
+                        <p className="font-semibold text-[#1a3352]">{dl.date}</p>
+                        <p className="text-xs text-[#7591ab]">{dl.type} · <span className={deadlineColor(days)}>{deadlineText(days, t)}</span></p>
                       </>
                     )}
                   </Cell>
@@ -163,7 +163,7 @@ export default function ComparePage() {
               {items.map((s) => (
                 <Cell key={s.id}>
                   {s.university}
-                  <p className={`text-xs ${s.qsRank === bestQs ? "font-semibold text-emerald-600" : "text-slate-500"}`}>
+                  <p className={`text-xs ${s.qsRank === bestQs ? "font-semibold text-[#0b7a52]" : "text-[#7591ab]"}`}>
                     QS #{s.qsRank}{s.qsRank === bestQs && ` ${t("compare.best")}`}
                   </p>
                 </Cell>
@@ -173,7 +173,7 @@ export default function ComparePage() {
               {items.map((s) => (
                 <Cell key={s.id}>
                   {t(`providerType.${s.providerType}`)}
-                  <p className="text-xs text-slate-500">{s.provider}</p>
+                  <p className="text-xs text-[#7591ab]">{s.provider}</p>
                 </Cell>
               ))}
             </Row>
@@ -184,26 +184,26 @@ export default function ComparePage() {
               {items.map((s) => (
                 <Cell key={s.id}>
                   <b>{t("compare.docsCount", { n: s.documents.length })}</b>
-                  <p className="text-xs text-slate-500">{s.documents.slice(0, 3).join(" · ")}{s.documents.length > 3 ? "…" : ""}</p>
+                  <p className="text-xs text-[#7591ab]">{s.documents.slice(0, 3).join(" · ")}{s.documents.length > 3 ? "…" : ""}</p>
                 </Cell>
               ))}
             </Row>
             <Row label={t("compare.rowTrust")}>
-              {items.map((s) => <Cell key={s.id}><b className="text-emerald-600">{s.trustScore}/100</b> · {t("compare.updated", { d: s.lastVerified })}</Cell>)}
+              {items.map((s) => <Cell key={s.id}><b className="text-[#0b7a52]">{s.trustScore}/100</b> · {t("compare.updated", { d: s.lastVerified })}</Cell>)}
             </Row>
             <Row label="">
               {items.map((s) => (
-                <td key={s.id} className="border-l border-t border-slate-100 p-3">
+                <td key={s.id} className="border-l border-t border-[#eef3f9] p-3">
                   <div className="flex flex-col gap-1.5">
                     <button
                       onClick={() => toggleTrack(s.id)}
                       className={`rounded-lg px-3 py-1.5 text-xs font-semibold transition ${
-                        isTracked(s.id) ? "bg-emerald-600 text-white" : "border border-indigo-600 text-indigo-600 hover:bg-indigo-50"
+                        isTracked(s.id) ? "bg-[#0f9d6b] text-white" : "border border-[#c8dcfa] bg-[#eaf1fd] text-[#2f6fe0] hover:bg-[#e0ebfc]"
                       }`}
                     >
                       {isTracked(s.id) ? t("compare.tracking") : t("compare.track")}
                     </button>
-                    <Link href={`/scholarships/${s.id}`} className="rounded-lg bg-slate-900 px-3 py-1.5 text-center text-xs font-semibold text-white hover:bg-slate-700">
+                    <Link href={`/scholarships/${s.id}`} className="rounded-lg bg-[#1a3352] px-3 py-1.5 text-center text-xs font-bold text-white hover:bg-[#22406a]">
                       {t("compare.viewDetail")} →
                     </Link>
                   </div>
@@ -214,7 +214,7 @@ export default function ComparePage() {
         </table>
       </div>
 
-      <p className="mt-4 text-xs text-slate-400">{t("compare.legend")}</p>
+      <p className="mt-4 text-xs text-[#93a7bd]">{t("compare.legend")}</p>
     </div>
   );
 }
@@ -222,7 +222,7 @@ export default function ComparePage() {
 function Row({ label, children }: { label: string; children: React.ReactNode }) {
   return (
     <tr className="align-top">
-      <th className="sticky left-0 z-10 border-t border-slate-100 bg-white p-3 text-left text-xs font-semibold text-slate-500">
+      <th className="sticky left-0 z-10 border-t border-[#eef3f9] bg-white p-3 text-left text-xs font-semibold text-[#7591ab]">
         {label}
       </th>
       {children}
@@ -231,5 +231,5 @@ function Row({ label, children }: { label: string; children: React.ReactNode }) 
 }
 
 function Cell({ children }: { children: React.ReactNode }) {
-  return <td className="border-l border-t border-slate-100 p-3 text-slate-700">{children}</td>;
+  return <td className="border-l border-t border-[#eef3f9] p-3 text-[#455f78]">{children}</td>;
 }

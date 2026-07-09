@@ -8,22 +8,29 @@ export default async function LoginPage({
   const { error, callbackUrl } = await searchParams;
 
   return (
-    <div className="flex min-h-[70vh] items-center justify-center px-4">
-      <div className="w-full max-w-md rounded-2xl border border-slate-200 bg-white p-8 shadow-sm">
-        <div className="flex items-center gap-2">
-          <span className="grid h-9 w-9 place-items-center rounded-lg bg-indigo-600 text-lg font-black text-white">S</span>
-          <span className="text-xl font-bold text-slate-900">
-            Scholar<span className="text-indigo-600">Finder</span>
+    <div className="relative grid min-h-[calc(100vh-66px)] place-items-center overflow-hidden bg-[linear-gradient(160deg,#0a1230_0%,#152159_52%,#243a86_100%)] px-6 py-10">
+      <div className="starfield pointer-events-none absolute inset-0" />
+      <div className="animate-plane pointer-events-none absolute right-[14%] top-[8%] text-[#dbe9ff] opacity-90">
+        <svg width="56" height="56" viewBox="0 0 24 24" fill="currentColor"><path d="M2.5 19h19v2h-19zM22.07 9.64c-.21-.8-1.04-1.28-1.84-1.06L14.92 10 8.46 3.98l-1.93.52 3.87 6.7-4.97 1.34-1.97-1.54-1.45.39 2.59 4.49 17.42-4.67c.81-.23 1.28-1.05 1.06-1.86z" /></svg>
+      </div>
+
+      <div className="relative w-full max-w-[390px] rounded-[22px] bg-white p-8 shadow-[0_30px_70px_-20px_rgba(0,0,0,0.6)]">
+        <div className="flex items-center justify-center gap-2.5">
+          <span className="grid h-10 w-10 place-items-center rounded-[12px] bg-gradient-to-br from-[#1e3a8a] to-[#3b82f6] text-white">
+            <svg width="21" height="21" viewBox="0 0 24 24" fill="#fff"><path d="M2.5 19h19v2h-19zM22.07 9.64c-.21-.8-1.04-1.28-1.84-1.06L14.92 10 8.46 3.98l-1.93.52 3.87 6.7-4.97 1.34-1.97-1.54-1.45.39 2.59 4.49 17.42-4.67c.81-.23 1.28-1.05 1.06-1.86z" /></svg>
+          </span>
+          <span className="text-xl font-extrabold tracking-tight text-[#1a3352]">
+            Scholar<span className="text-[#2f6fe0]">Finder</span>
           </span>
         </div>
 
-        <h1 className="mt-6 text-lg font-semibold text-slate-900">Đăng nhập để tiếp tục</h1>
-        <p className="mt-1 text-sm text-slate-500">
+        <h1 className="mt-5 text-center text-xl font-extrabold text-[#12345c]">Đăng nhập để tiếp tục</h1>
+        <p className="mt-1 text-center text-[13px] text-[#7591ab]">
           Trang này chỉ dành cho người dùng được cấp quyền. Vui lòng đăng nhập bằng email đã được duyệt.
         </p>
 
         {error && (
-          <div className="mt-4 rounded-lg border border-rose-200 bg-rose-50 p-3 text-sm text-rose-700">
+          <div className="mt-4 rounded-[11px] border border-[#f7ccd2] bg-[#fdecee] p-3 text-sm text-[#b23343]">
             Tài khoản của bạn <b>không nằm trong danh sách được phép</b> truy cập. Vui lòng dùng email đã được cấp quyền
             hoặc liên hệ quản trị viên.
           </div>
@@ -38,7 +45,7 @@ export default async function LoginPage({
         >
           <button
             type="submit"
-            className="flex w-full items-center justify-center gap-3 rounded-lg border border-slate-300 bg-white px-4 py-3 font-medium text-slate-700 transition hover:bg-slate-50"
+            className="flex w-full items-center justify-center gap-3 rounded-[12px] border border-[#dce8f4] bg-white px-4 py-3 font-bold text-[#1a3352] transition hover:bg-[#f6f9fd]"
           >
             <svg width="20" height="20" viewBox="0 0 48 48" aria-hidden="true">
               <path fill="#FFC107" d="M43.6 20.5H42V20H24v8h11.3c-1.6 4.7-6.1 8-11.3 8-6.6 0-12-5.4-12-12s5.4-12 12-12c3.1 0 5.9 1.2 8 3.1l5.7-5.7C34.6 4.1 29.6 2 24 2 11.8 2 2 11.8 2 24s9.8 22 22 22 22-9.8 22-22c0-1.3-.1-2.3-.4-3.5z" />
@@ -50,7 +57,7 @@ export default async function LoginPage({
           </button>
         </form>
 
-        <p className="mt-6 text-center text-xs text-slate-400">
+        <p className="mt-6 text-center text-xs text-[#93a7bd]">
           Được bảo vệ bằng đăng nhập. Chỉ email trong danh sách cho phép mới truy cập được.
         </p>
       </div>

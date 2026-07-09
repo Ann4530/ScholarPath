@@ -8,7 +8,7 @@ export default function SignOutButton() {
   return (
     <button
       type="submit"
-      className="rounded-lg border border-slate-300 px-3 py-1.5 text-sm font-medium text-slate-600 transition hover:bg-slate-100"
+      className="rounded-[10px] border border-[#dce8f4] bg-white px-3 py-1.5 text-sm font-semibold text-[#5a7794] transition hover:border-[#9cc1f5] hover:text-[#2f6fe0]"
     >
       {t("nav.signOut")}
     </button>

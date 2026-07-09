@@ -1,0 +1,1918 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+  * { box-sizing: border-box; }
+  html, body { margin: 0; padding: 0; }
+  body { background: #eef4fb; font-family: 'Be Vietnam Pro', system-ui, sans-serif; -webkit-font-smoothing: antialiased; color: #1a3352; }
+  ::selection { background: #bcdcff; }
+  input::placeholder { color: #93a7bd; }
+  @keyframes sf-twinkle { 0%,100% { opacity: .25; transform: scale(.7); } 50% { opacity: 1; transform: scale(1); } }
+  @keyframes sf-plane { 0% { transform: translate(0,0) rotate(0deg); } 50% { transform: translate(10px,-8px) rotate(-2deg); } 100% { transform: translate(0,0) rotate(0deg); } }
+  @keyframes sf-dash { to { stroke-dashoffset: -600; } }
+  @keyframes sf-floaty { 0%,100% { transform: translateY(0) rotate(-4deg); } 50% { transform: translateY(-12px) rotate(2deg); } }
+  @keyframes sf-rise { from { opacity: 0; transform: translateY(14px); } to { opacity: 1; transform: translateY(0); } }
+  .sf-scroll::-webkit-scrollbar { width: 8px; height: 8px; }
+  .sf-scroll::-webkit-scrollbar-thumb { background: #cbdcef; border-radius: 999px; }
+  .sf-scroll::-webkit-scrollbar-track { background: transparent; }
+</style>
+</helmet>
+
+<div style="min-height:100vh;background:#eef4fb;">
+
+  <!-- ============ ONBOARDING WIZARD ============ -->
+  <sc-if value="{{ wizardOpen }}" hint-placeholder-val="{{ false }}">
+    <div style="position:fixed;inset:0;z-index:100;overflow:auto;background:linear-gradient(165deg,#0a1230 0%,#152159 52%,#233a86 100%);">
+      <div style="position:absolute;inset:0;pointer-events:none;background-image:radial-gradient(1.6px 1.6px at 8% 18%,#fff,transparent 60%),radial-gradient(1.4px 1.4px at 18% 52%,rgba(255,255,255,.85),transparent 60%),radial-gradient(1px 1px at 27% 28%,rgba(255,255,255,.7),transparent 60%),radial-gradient(1.8px 1.8px at 33% 72%,#fff,transparent 60%),radial-gradient(1px 1px at 41% 40%,rgba(255,255,255,.6),transparent 60%),radial-gradient(1.5px 1.5px at 48% 16%,#fff,transparent 60%),radial-gradient(1.2px 1.2px at 55% 60%,rgba(255,255,255,.8),transparent 60%),radial-gradient(1px 1px at 62% 34%,rgba(255,255,255,.6),transparent 60%),radial-gradient(1.7px 1.7px at 69% 74%,#fff,transparent 60%),radial-gradient(1.1px 1.1px at 74% 22%,rgba(255,255,255,.7),transparent 60%),radial-gradient(1.4px 1.4px at 82% 54%,#fff,transparent 60%),radial-gradient(1px 1px at 88% 32%,rgba(255,255,255,.6),transparent 60%),radial-gradient(1.6px 1.6px at 92% 70%,#fff,transparent 60%),radial-gradient(1px 1px at 15% 82%,rgba(255,255,255,.6),transparent 60%),radial-gradient(1.3px 1.3px at 58% 86%,rgba(255,255,255,.7),transparent 60%),radial-gradient(1px 1px at 78% 88%,rgba(255,255,255,.55),transparent 60%);"></div>
+
+      <div style="position:relative;max-width:720px;margin:0 auto;min-height:100vh;display:flex;flex-direction:column;padding:22px 20px 32px;">
+        <!-- header -->
+        <div style="display:flex;align-items:center;justify-content:space-between;">
+          <div style="display:flex;align-items:center;gap:10px;color:#fff;">
+            <div style="width:34px;height:34px;border-radius:10px;background:linear-gradient(135deg,#3b82f6,#7cb8ff);display:grid;place-items:center;box-shadow:0 6px 18px -6px rgba(59,130,246,.8);">
+              <svg width="19" height="19" viewBox="0 0 24 24" fill="#fff"><path d="M2.5 19h19v2h-19zM22.07 9.64c-.21-.8-1.04-1.28-1.84-1.06L14.92 10 8.46 3.98l-1.93.52 3.87 6.7-4.97 1.34-1.97-1.54-1.45.39 2.59 4.49 17.42-4.67c.81-.23 1.28-1.05 1.06-1.86z"/></svg>
+            </div>
+            <span style="font-weight:800;font-size:16px;letter-spacing:-0.01em;">Trợ lý chọn học bổng</span>
+          </div>
+          <button onClick="{{ wizardClose }}" style="width:34px;height:34px;border-radius:10px;background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.22);color:#fff;cursor:pointer;display:grid;place-items:center;">
+            <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M18 6 6 18M6 6l12 12"/></svg>
+          </button>
+        </div>
+
+        <!-- progress -->
+        <div style="margin-top:20px;">
+          <div style="display:flex;align-items:center;justify-content:space-between;color:rgba(255,255,255,.72);font-size:12.5px;font-weight:600;">
+            <span>{{ stepName }}</span>
+            <span>Bước {{ stepHuman }}/{{ stepTotal }}</span>
+          </div>
+          <div style="margin-top:8px;height:6px;border-radius:999px;background:rgba(255,255,255,.16);overflow:hidden;">
+            <div style="height:100%;border-radius:999px;background:linear-gradient(90deg,#5aa2ff,#a5cbff);width:{{ progressPct }}%;transition:width .35s cubic-bezier(.4,0,.2,1);"></div>
+          </div>
+        </div>
+
+        <!-- body -->
+        <div style="flex:1;margin-top:26px;">
+
+          <!-- STEP 0: Level -->
+          <sc-if value="{{ isStep0 }}" hint-placeholder-val="{{ true }}">
+            <div>
+              <h2 style="margin:0;color:#fff;font-size:26px;font-weight:800;letter-spacing:-0.02em;">Bạn muốn học bậc nào?</h2>
+              <p style="margin:8px 0 0;color:rgba(255,255,255,.7);font-size:14.5px;">Chọn bậc học bạn đang nhắm tới để chúng tôi lọc đúng chương trình.</p>
+              <div style="margin-top:22px;display:grid;grid-template-columns:repeat(3,1fr);gap:12px;">
+                <sc-for list="{{ levelCards }}" as="lc" hint-placeholder-count="3">
+                  <button onClick="{{ lc.onClick }}" style="text-align:left;cursor:pointer;border-radius:18px;padding:20px 18px;background:{{ lc.bg }};border:1.5px solid {{ lc.border }};color:{{ lc.fg }};transition:all .18s;">
+                    <div style="width:44px;height:44px;border-radius:12px;background:{{ lc.iconBg }};display:grid;place-items:center;">
+                      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="{{ lc.iconFg }}" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 10 12 5 2 10l10 5 10-5Z"/><path d="M6 12v5c0 1 2.7 2.5 6 2.5s6-1.5 6-2.5v-5"/></svg>
+                    </div>
+                    <div style="margin-top:14px;font-size:16px;font-weight:800;">{{ lc.title }}</div>
+                    <div style="margin-top:4px;font-size:12.5px;opacity:.8;">{{ lc.desc }}</div>
+                  </button>
+                </sc-for>
+              </div>
+            </div>
+          </sc-if>
+
+          <!-- STEP 1: Fields -->
+          <sc-if value="{{ isStep1 }}" hint-placeholder-val="{{ false }}">
+            <div>
+              <h2 style="margin:0;color:#fff;font-size:26px;font-weight:800;letter-spacing:-0.02em;">Bạn quan tâm ngành nào?</h2>
+              <p style="margin:8px 0 0;color:rgba(255,255,255,.7);font-size:14.5px;">Chọn 1–3 ngành. Học bổng khớp ngành sẽ được ưu tiên.</p>
+              <div style="margin-top:22px;display:flex;flex-wrap:wrap;gap:10px;">
+                <sc-for list="{{ fieldCards }}" as="fc" hint-placeholder-count="12">
+                  <button onClick="{{ fc.onClick }}" style="cursor:pointer;display:flex;align-items:center;gap:9px;padding:11px 16px;border-radius:13px;font-size:13.5px;font-weight:600;transition:all .16s;background:{{ fc.bg }};border:1.5px solid {{ fc.border }};color:{{ fc.fg }};">
+                    <span style="width:9px;height:9px;border-radius:999px;background:{{ fc.dot }};"></span>{{ fc.label }}
+                  </button>
+                </sc-for>
+              </div>
+            </div>
+          </sc-if>
+
+          <!-- STEP 2: Destination -->
+          <sc-if value="{{ isStep2 }}" hint-placeholder-val="{{ false }}">
+            <div>
+              <h2 style="margin:0;color:#fff;font-size:26px;font-weight:800;letter-spacing:-0.02em;">Bạn muốn bay tới đâu?</h2>
+              <p style="margin:8px 0 0;color:rgba(255,255,255,.7);font-size:14.5px;">Chọn khu vực để chọn nhanh, hoặc tick từng quốc gia bên dưới.</p>
+              <div style="margin-top:20px;display:flex;flex-wrap:wrap;gap:9px;">
+                <sc-for list="{{ regionCards }}" as="rc" hint-placeholder-count="4">
+                  <button onClick="{{ rc.onClick }}" style="cursor:pointer;padding:9px 15px;border-radius:999px;font-size:13px;font-weight:700;background:{{ rc.bg }};border:1.5px solid {{ rc.border }};color:{{ rc.fg }};">{{ rc.label }}</button>
+                </sc-for>
+              </div>
+              <div style="margin-top:16px;display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:9px;">
+                <sc-for list="{{ countryCards }}" as="cc" hint-placeholder-count="13">
+                  <button onClick="{{ cc.onClick }}" style="cursor:pointer;display:flex;align-items:center;gap:9px;padding:10px 13px;border-radius:12px;font-size:13px;font-weight:600;text-align:left;background:{{ cc.bg }};border:1.5px solid {{ cc.border }};color:{{ cc.fg }};">
+                    <span style="font-size:17px;">{{ cc.flag }}</span><span style="min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">{{ cc.name }}</span>
+                  </button>
+                </sc-for>
+              </div>
+            </div>
+          </sc-if>
+
+          <!-- STEP 3: Academics -->
+          <sc-if value="{{ isStep3 }}" hint-placeholder-val="{{ false }}">
+            <div>
+              <h2 style="margin:0;color:#fff;font-size:26px;font-weight:800;letter-spacing:-0.02em;">Học lực của bạn?</h2>
+              <p style="margin:8px 0 0;color:rgba(255,255,255,.7);font-size:14.5px;">Dùng để kiểm tra điều kiện GPA / IELTS của từng học bổng.</p>
+
+              <div style="margin-top:24px;background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.16);border-radius:18px;padding:22px;">
+                <div style="display:flex;align-items:baseline;justify-content:space-between;color:#fff;">
+                  <span style="font-weight:700;font-size:15px;">GPA (thang 4.0)</span>
+                  <span style="font-weight:800;font-size:22px;color:#a5cbff;">{{ gpaLabel }}</span>
+                </div>
+                <input type="range" min="0" max="4" step="0.1" value="{{ gpaVal }}" onInput="{{ onGpa }}" style="margin-top:10px;width:100%;accent-color:#5aa2ff;cursor:pointer;">
+
+                <div style="margin-top:22px;display:flex;align-items:baseline;justify-content:space-between;color:#fff;">
+                  <span style="font-weight:700;font-size:15px;">IELTS</span>
+                  <span style="font-weight:800;font-size:22px;color:#a5cbff;">{{ ieltsLabel }}</span>
+                </div>
+                <input type="range" min="0" max="9" step="0.5" value="{{ ieltsVal }}" onInput="{{ onIelts }}" style="margin-top:10px;width:100%;accent-color:#5aa2ff;cursor:pointer;">
+
+                <div style="margin-top:24px;color:#fff;font-weight:700;font-size:15px;">Bạn đã có chứng chỉ GRE/GMAT chưa?</div>
+                <div style="margin-top:10px;display:flex;gap:9px;">
+                  <sc-for list="{{ greCards }}" as="gc" hint-placeholder-count="2">
+                    <button onClick="{{ gc.onClick }}" style="flex:1;cursor:pointer;padding:11px;border-radius:12px;font-size:13.5px;font-weight:700;background:{{ gc.bg }};border:1.5px solid {{ gc.border }};color:{{ gc.fg }};">{{ gc.label }}</button>
+                  </sc-for>
+                </div>
+              </div>
+            </div>
+          </sc-if>
+
+          <!-- STEP 4: Funding -->
+          <sc-if value="{{ isStep4 }}" hint-placeholder-val="{{ false }}">
+            <div>
+              <h2 style="margin:0;color:#fff;font-size:26px;font-weight:800;letter-spacing:-0.02em;">Nhu cầu tài chính?</h2>
+              <p style="margin:8px 0 0;color:rgba(255,255,255,.7);font-size:14.5px;">Chúng tôi sẽ ưu tiên học bổng phù hợp với ngân sách của bạn.</p>
+              <div style="margin-top:22px;display:flex;flex-direction:column;gap:12px;">
+                <sc-for list="{{ fundingCards }}" as="uc" hint-placeholder-count="3">
+                  <button onClick="{{ uc.onClick }}" style="cursor:pointer;text-align:left;display:flex;align-items:center;gap:16px;padding:18px 20px;border-radius:16px;background:{{ uc.bg }};border:1.5px solid {{ uc.border }};color:{{ uc.fg }};transition:all .16s;">
+                    <div style="flex-shrink:0;width:46px;height:46px;border-radius:13px;background:{{ uc.iconBg }};display:grid;place-items:center;">
+                      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="{{ uc.iconFg }}" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="8" cy="8" r="6"/><path d="M18.09 10.37A6 6 0 1 1 10.34 18M7 6h1v4M16.71 13.88l.7.71-2.82 2.82"/></svg>
+                    </div>
+                    <div>
+                      <div style="font-size:16px;font-weight:800;">{{ uc.title }}</div>
+                      <div style="margin-top:3px;font-size:12.5px;opacity:.8;">{{ uc.desc }}</div>
+                    </div>
+                  </button>
+                </sc-for>
+              </div>
+            </div>
+          </sc-if>
+
+          <!-- STEP 5: Result -->
+          <sc-if value="{{ isStep5 }}" hint-placeholder-val="{{ false }}">
+            <div style="text-align:center;">
+              <div style="margin:6px auto 0;width:76px;height:76px;border-radius:22px;background:linear-gradient(135deg,#3b82f6,#7cb8ff);display:grid;place-items:center;box-shadow:0 16px 40px -12px rgba(59,130,246,.9);animation:sf-floaty 4s ease-in-out infinite;">
+                <svg width="40" height="40" viewBox="0 0 24 24" fill="#fff"><path d="M2.5 19h19v2h-19zM22.07 9.64c-.21-.8-1.04-1.28-1.84-1.06L14.92 10 8.46 3.98l-1.93.52 3.87 6.7-4.97 1.34-1.97-1.54-1.45.39 2.59 4.49 17.42-4.67c.81-.23 1.28-1.05 1.06-1.86z"/></svg>
+              </div>
+              <h2 style="margin:20px 0 0;color:#fff;font-size:27px;font-weight:800;letter-spacing:-0.02em;">Tìm thấy <span style="color:#a5cbff;">{{ wizCount }}</span> học bổng phù hợp</h2>
+              <p style="margin:8px 0 0;color:rgba(255,255,255,.7);font-size:14.5px;">Dựa trên hồ sơ bạn vừa nhập. Xem trước 3 gợi ý hàng đầu:</p>
+              <div style="margin-top:22px;display:flex;flex-direction:column;gap:10px;text-align:left;">
+                <sc-for list="{{ wizTop }}" as="wt" hint-placeholder-count="3">
+                  <div style="display:flex;align-items:center;gap:14px;background:rgba(255,255,255,.09);border:1px solid rgba(255,255,255,.16);border-radius:14px;padding:13px 16px;">
+                    <span style="font-size:22px;">{{ wt.flag }}</span>
+                    <div style="flex:1;min-width:0;">
+                      <div style="color:#fff;font-weight:700;font-size:14px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">{{ wt.title }}</div>
+                      <div style="color:rgba(255,255,255,.6);font-size:12px;margin-top:2px;">{{ wt.uni }}</div>
+                    </div>
+                    <div style="flex-shrink:0;text-align:right;">
+                      <div style="font-weight:800;font-size:17px;color:{{ wt.color }};">{{ wt.matchPct }}</div>
+                      <div style="font-size:10px;color:rgba(255,255,255,.55);">{{ wt.label }}</div>
+                    </div>
+                  </div>
+                </sc-for>
+              </div>
+            </div>
+          </sc-if>
+        </div>
+
+        <!-- footer nav -->
+        <div style="margin-top:26px;display:flex;align-items:center;justify-content:space-between;gap:12px;">
+          <button onClick="{{ wizardBack }}" style="visibility:{{ backVis }};padding:12px 20px;border-radius:13px;background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.22);color:#fff;font-family:inherit;font-size:14px;font-weight:700;cursor:pointer;">← Quay lại</button>
+          <sc-if value="{{ isStep5 }}" hint-placeholder-val="{{ false }}">
+            <button onClick="{{ wizardApply }}" style="flex:1;max-width:320px;padding:14px 24px;border-radius:13px;background:linear-gradient(135deg,#3b82f6,#5aa2ff);border:0;color:#fff;font-family:inherit;font-size:15px;font-weight:800;cursor:pointer;box-shadow:0 12px 30px -10px rgba(59,130,246,.9);">Xem {{ wizCount }} học bổng của tôi →</button>
+          </sc-if>
+          <sc-if value="{{ showNext }}" hint-placeholder-val="{{ true }}">
+            <button onClick="{{ wizardNext }}" style="padding:13px 28px;border-radius:13px;background:#fff;border:0;color:#12345c;font-family:inherit;font-size:14.5px;font-weight:800;cursor:pointer;box-shadow:0 10px 24px -12px rgba(0,0,0,.5);">Tiếp tục →</button>
+          </sc-if>
+        </div>
+      </div>
+    </div>
+  </sc-if>
+
+  <!-- ============ NAV ============ -->
+  <header style="position:sticky;top:0;z-index:40;background:rgba(238,244,251,0.85);backdrop-filter:blur(12px);border-bottom:1px solid #d9e6f3;">
+    <div style="max-width:1200px;margin:0 auto;padding:13px 24px;display:flex;align-items:center;justify-content:space-between;">
+      <div style="display:flex;align-items:center;gap:11px;">
+        <div style="width:36px;height:36px;border-radius:11px;background:linear-gradient(135deg,#1e3a8a,#3b82f6);display:grid;place-items:center;box-shadow:0 6px 16px -7px rgba(30,58,138,.7);">
+          <svg width="19" height="19" viewBox="0 0 24 24" fill="#fff"><path d="M2.5 19h19v2h-19zM22.07 9.64c-.21-.8-1.04-1.28-1.84-1.06L14.92 10 8.46 3.98l-1.93.52 3.87 6.7-4.97 1.34-1.97-1.54-1.45.39 2.59 4.49 17.42-4.67c.81-.23 1.28-1.05 1.06-1.86z"/></svg>
+        </div>
+        <span style="font-weight:800;font-size:19px;letter-spacing:-0.02em;">Scholar<span style="color:#2f6fe0;">Finder</span></span>
+      </div>
+      <div style="display:flex;align-items:center;gap:8px;">
+        <nav style="display:flex;align-items:center;gap:4px;background:#dbe8f7;padding:4px;border-radius:12px;">
+          <sc-for list="{{ navItems }}" as="ni" hint-placeholder-count="4">
+            <button onClick="{{ ni.onClick }}" style="border:0;cursor:pointer;font-family:inherit;padding:8px 15px;border-radius:9px;font-size:13.5px;font-weight:{{ ni.weight }};background:{{ ni.bg }};color:{{ ni.fg }};box-shadow:{{ ni.shadow }};display:flex;align-items:center;gap:7px;">
+              {{ ni.label }}
+              <sc-if value="{{ ni.badgeShow }}" hint-placeholder-val="{{ false }}"><span style="min-width:20px;height:20px;padding:0 6px;border-radius:999px;background:#2f6fe0;color:#fff;font-size:11px;font-weight:700;display:inline-flex;align-items:center;justify-content:center;">{{ ni.badge }}</span></sc-if>
+            </button>
+          </sc-for>
+        </nav>
+        <button onClick="{{ openWizard }}" style="margin-left:2px;display:flex;align-items:center;gap:6px;background:linear-gradient(135deg,#1e3a8a,#3b82f6);border:0;color:#fff;padding:8px 14px;border-radius:10px;font-family:inherit;font-size:13px;font-weight:700;cursor:pointer;box-shadow:0 8px 18px -10px rgba(30,58,138,.8);">✨ Bắt đầu</button>
+        <button onClick="{{ navProfile }}" title="Hồ sơ" style="width:38px;height:38px;border-radius:999px;background:linear-gradient(135deg,#0f9d6b,#34c88a);display:grid;place-items:center;color:#fff;font-weight:700;font-size:14px;margin-left:6px;border:0;cursor:pointer;">MH</button>
+      </div>
+    </div>
+  </header>
+
+  <sc-if value="{{ isHome }}" hint-placeholder-val="{{ true }}">
+  <!-- ============ STARRY HERO ============ -->
+  <section style="max-width:1200px;margin:0 auto;padding:24px 24px 0;">
+    <div style="position:relative;overflow:hidden;border-radius:26px;background:linear-gradient(160deg,#0a1230 0%,#152159 52%,#243a86 100%);padding:44px 42px 46px;">
+      <!-- starfield -->
+      <div style="position:absolute;inset:0;pointer-events:none;background-image:radial-gradient(1.6px 1.6px at 8% 22%,#fff,transparent 60%),radial-gradient(1.4px 1.4px at 18% 58%,rgba(255,255,255,.85),transparent 60%),radial-gradient(1px 1px at 27% 30%,rgba(255,255,255,.7),transparent 60%),radial-gradient(1.8px 1.8px at 33% 76%,#fff,transparent 60%),radial-gradient(1px 1px at 41% 44%,rgba(255,255,255,.55),transparent 60%),radial-gradient(1.5px 1.5px at 47% 18%,#fff,transparent 60%),radial-gradient(1.2px 1.2px at 54% 64%,rgba(255,255,255,.8),transparent 60%),radial-gradient(1px 1px at 61% 36%,rgba(255,255,255,.55),transparent 60%),radial-gradient(1.7px 1.7px at 67% 78%,#fff,transparent 60%),radial-gradient(1.1px 1.1px at 73% 24%,rgba(255,255,255,.7),transparent 60%),radial-gradient(1.4px 1.4px at 80% 58%,#fff,transparent 60%),radial-gradient(1px 1px at 86% 34%,rgba(255,255,255,.55),transparent 60%),radial-gradient(1.6px 1.6px at 91% 72%,#fff,transparent 60%),radial-gradient(1px 1px at 14% 84%,rgba(255,255,255,.5),transparent 60%),radial-gradient(1.3px 1.3px at 57% 88%,rgba(255,255,255,.65),transparent 60%),radial-gradient(1px 1px at 77% 90%,rgba(255,255,255,.5),transparent 60%);"></div>
+      <!-- twinkles -->
+      <div style="position:absolute;top:30px;left:22%;width:4px;height:4px;border-radius:999px;background:#fff;box-shadow:0 0 8px 2px rgba(255,255,255,.7);animation:sf-twinkle 3s ease-in-out infinite;"></div>
+      <div style="position:absolute;top:70px;left:64%;width:3px;height:3px;border-radius:999px;background:#cfe0ff;box-shadow:0 0 7px 2px rgba(160,200,255,.7);animation:sf-twinkle 4.2s ease-in-out .6s infinite;"></div>
+      <div style="position:absolute;top:120px;left:40%;width:3px;height:3px;border-radius:999px;background:#fff;box-shadow:0 0 6px 2px rgba(255,255,255,.6);animation:sf-twinkle 3.6s ease-in-out 1.2s infinite;"></div>
+      <div style="position:absolute;top:44px;left:84%;width:4px;height:4px;border-radius:999px;background:#ffe9a8;box-shadow:0 0 9px 2px rgba(255,220,140,.7);animation:sf-twinkle 5s ease-in-out .3s infinite;"></div>
+      <!-- crescent moon -->
+      <div style="position:absolute;top:34px;right:44px;color:#f6efc9;opacity:.92;filter:drop-shadow(0 0 16px rgba(246,239,201,.5));">
+        <svg width="40" height="40" viewBox="0 0 24 24" fill="currentColor"><path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9z"/></svg>
+      </div>
+      <!-- dotted flight arc + plane -->
+      <svg style="position:absolute;top:0;right:0;width:62%;height:100%;pointer-events:none;" viewBox="0 0 560 320" fill="none" preserveAspectRatio="xMaxYMin meet">
+        <path d="M10 300 C 180 270, 300 230, 400 150 S 540 60, 560 30" stroke="#7cb8ff" stroke-width="2.5" stroke-dasharray="1 10" stroke-linecap="round" opacity="0.65" style="animation:sf-dash 26s linear infinite;"/>
+      </svg>
+      <div style="position:absolute;top:88px;right:16%;color:#dbe9ff;animation:sf-plane 6s ease-in-out infinite;filter:drop-shadow(0 10px 16px rgba(0,0,0,.35));">
+        <svg width="72" height="72" viewBox="0 0 24 24" fill="currentColor"><path d="M2.5 19h19v2h-19zM22.07 9.64c-.21-.8-1.04-1.28-1.84-1.06L14.92 10 8.46 3.98l-1.93.52 3.87 6.7-4.97 1.34-1.97-1.54-1.45.39 2.59 4.49 17.42-4.67c.81-.23 1.28-1.05 1.06-1.86z"/></svg>
+      </div>
+
+      <div style="position:relative;max-width:600px;">
+        <div style="display:inline-flex;align-items:center;gap:8px;background:rgba(255,255,255,0.1);border:1px solid rgba(255,255,255,0.2);padding:6px 13px;border-radius:999px;font-size:12.5px;font-weight:600;color:#cfe0ff;">
+          <span style="width:7px;height:7px;border-radius:999px;background:#4ade80;box-shadow:0 0 0 4px rgba(74,222,128,0.2);"></span>
+          {{ totalCount }} học bổng du học · cập nhật 7/2026
+        </div>
+        <h1 style="font-weight:800;font-size:39px;line-height:1.1;letter-spacing:-0.025em;margin:18px 0 0;color:#fff;">Chạm tới ngôi trường<br>mơ ước của bạn</h1>
+        <p style="margin:14px 0 0;max-width:490px;font-size:15px;line-height:1.6;color:rgba(255,255,255,.75);font-weight:400;">Tìm học bổng phù hợp với hồ sơ — chấm điểm theo GPA, IELTS và ngành của bạn, kèm kỳ nhập học, giáo sư hướng dẫn và checklist giấy tờ.</p>
+
+        <div style="margin-top:26px;display:flex;gap:11px;flex-wrap:wrap;">
+          <div style="flex:1;min-width:270px;position:relative;display:flex;align-items:center;background:#fff;border-radius:14px;box-shadow:0 18px 40px -18px rgba(0,0,0,.6);">
+            <svg style="position:absolute;left:16px;" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#93a7bd" stroke-width="2.2" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><path d="m21 21-4.3-4.3"/></svg>
+            <input value="{{ q }}" onInput="{{ onSearch }}" placeholder="Tên học bổng, trường, ngành, quốc gia…" style="width:100%;border:0;outline:none;background:transparent;padding:15px 16px 15px 44px;font-size:14.5px;font-family:inherit;color:#1a3352;border-radius:14px;">
+          </div>
+          <button onClick="{{ openWizard }}" style="display:flex;align-items:center;gap:9px;background:linear-gradient(135deg,#3b82f6,#5aa2ff);border:0;color:#fff;padding:0 22px;border-radius:14px;font-family:inherit;font-size:14.5px;font-weight:800;cursor:pointer;box-shadow:0 14px 30px -12px rgba(59,130,246,.9);">
+            <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3 13.9 8.6 19.5 8.6 15 12.1 16.7 17.6 12 14.2 7.3 17.6 9 12.1 4.5 8.6 10.1 8.6z"/></svg>
+            Gợi ý theo bước
+          </button>
+        </div>
+
+        <div style="margin-top:15px;display:flex;align-items:center;gap:8px;flex-wrap:wrap;">
+          <span style="font-size:12.5px;color:rgba(255,255,255,.6);font-weight:600;">Chọn nhanh:</span>
+          <sc-for list="{{ quickChips }}" as="chip" hint-placeholder-count="4">
+            <button onClick="{{ chip.onClick }}" style="background:rgba(255,255,255,0.12);border:1px solid rgba(255,255,255,0.22);color:#e7f0ff;padding:6px 13px;border-radius:999px;font-family:inherit;font-size:12.5px;font-weight:600;cursor:pointer;">{{ chip.label }}</button>
+          </sc-for>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- click-away backdrop -->
+  <sc-if value="{{ anyFilterOpen }}" hint-placeholder-val="{{ false }}">
+    <div onClick="{{ closeFilters }}" style="position:fixed;inset:0;z-index:20;"></div>
+  </sc-if>
+
+  <!-- ============ BODY ============ -->
+  <div style="max-width:1200px;margin:0 auto;padding:20px 24px 60px;display:grid;grid-template-columns:258px 1fr;gap:24px;align-items:start;">
+
+    <!-- VERTICAL SIDEBAR (accordion) -->
+    <aside style="position:sticky;top:82px;">
+      <div style="background:#fff;border:1px solid #d9e6f3;border-radius:18px;padding:8px;box-shadow:0 1px 2px rgba(23,50,76,0.03);">
+        <div style="padding:12px 12px 10px;display:flex;align-items:center;gap:8px;font-weight:800;font-size:14px;color:#1a3352;">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#2f6fe0" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18M7 12h10M11 18h2"/></svg>
+          Bộ lọc chi tiết
+        </div>
+
+        <sc-for list="{{ sideSections }}" as="sec" hint-placeholder-count="6">
+          <div style="border-top:1px solid #eef3f9;">
+            <button onClick="{{ sec.toggle }}" style="width:100%;display:flex;align-items:center;gap:10px;padding:12px;background:none;border:0;cursor:pointer;font-family:inherit;">
+              <span style="flex-shrink:0;width:30px;height:30px;border-radius:9px;background:{{ sec.iconBg }};display:grid;place-items:center;">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="{{ sec.iconFg }}" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="{{ sec.icon1 }}"></path><path d="{{ sec.icon2 }}"></path></svg>
+              </span>
+              <span style="flex:1;text-align:left;font-size:13.5px;font-weight:700;color:#324a63;">{{ sec.label }}</span>
+              <sc-if value="{{ sec.hasCount }}" hint-placeholder-val="{{ false }}"><span style="min-width:18px;height:18px;padding:0 5px;border-radius:999px;background:#2f6fe0;color:#fff;font-size:10.5px;font-weight:800;display:inline-flex;align-items:center;justify-content:center;">{{ sec.count }}</span></sc-if>
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#93a7bd" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" style="transform:{{ sec.chev }};transition:transform .18s;"><path d="m6 9 6 6 6-6"/></svg>
+            </button>
+            <sc-if value="{{ sec.open }}" hint-placeholder-val="{{ false }}">
+              <div class="sf-scroll" style="padding:2px 12px 14px;max-height:230px;overflow-y:auto;overflow-x:hidden;">
+                <div style="display:flex;flex-direction:column;gap:3px;">
+                  <sc-for list="{{ sec.options }}" as="op" hint-placeholder-count="4">
+                    <label style="display:flex;align-items:center;gap:10px;padding:8px 8px;border-radius:9px;cursor:pointer;font-size:12.5px;font-weight:500;color:#324a63;background:{{ op.rowBg }};">
+                      <span style="flex-shrink:0;width:17px;height:17px;border-radius:{{ op.boxRadius }};border:2px solid {{ op.boxBorder }};background:{{ op.boxBg }};display:grid;place-items:center;">
+                        <sc-if value="{{ op.active }}" hint-placeholder-val="{{ false }}"><svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="3.4" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg></sc-if>
+                      </span>
+                      <input type="checkbox" checked="{{ op.active }}" onChange="{{ op.onClick }}" style="display:none;">
+                      {{ op.label }}
+                    </label>
+                  </sc-for>
+                </div>
+              </div>
+            </sc-if>
+          </div>
+        </sc-for>
+
+        <div style="border-top:1px solid #eef3f9;padding:12px;">
+          <label style="display:flex;align-items:center;gap:10px;cursor:pointer;background:#e9f8f0;border:1px solid #c4ecd8;border-radius:12px;padding:11px 12px;">
+            <input type="checkbox" checked="{{ eligibleOnly }}" onChange="{{ toggleEligible }}" style="width:16px;height:16px;accent-color:#0f9d6b;cursor:pointer;">
+            <span style="font-size:12.5px;font-weight:700;color:#0b7a52;">Chỉ học bổng tôi đủ điều kiện</span>
+          </label>
+        </div>
+      </div>
+    </aside>
+
+    <!-- RESULTS -->
+    <main>
+      <!-- filter bar (aligned with results column) -->
+      <div style="position:relative;z-index:30;margin:0 0 16px;">
+    <div style="position:relative;background:#fff;border:1px solid #d9e6f3;border-radius:16px;padding:11px 12px;box-shadow:0 4px 16px -10px rgba(23,50,76,.25);display:flex;align-items:center;gap:9px;flex-wrap:wrap;">
+      <div style="display:flex;align-items:center;gap:7px;color:#2f6fe0;font-weight:800;font-size:13.5px;padding:0 6px 0 4px;">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round"><path d="M22 3H2l8 9.5V19l4 2v-8.5L22 3Z"/></svg>
+        Lọc
+      </div>
+      <sc-for list="{{ topFilters }}" as="fd" hint-placeholder-count="4">
+        <div style="position:relative;">
+          <button onClick="{{ fd.toggle }}" style="display:flex;align-items:center;gap:7px;padding:9px 13px;border-radius:11px;font-family:inherit;font-size:13px;font-weight:600;cursor:pointer;background:{{ fd.btnBg }};border:1px solid {{ fd.btnBorder }};color:{{ fd.btnFg }};">
+            {{ fd.label }}
+            <sc-if value="{{ fd.hasCount }}" hint-placeholder-val="{{ false }}"><span style="min-width:18px;height:18px;padding:0 5px;border-radius:999px;background:#2f6fe0;color:#fff;font-size:10.5px;font-weight:800;display:inline-flex;align-items:center;justify-content:center;">{{ fd.count }}</span></sc-if>
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" style="transform:{{ fd.chev }};transition:transform .18s;"><path d="m6 9 6 6 6-6"/></svg>
+          </button>
+          <sc-if value="{{ fd.isOpen }}" hint-placeholder-val="{{ false }}">
+            <div class="sf-scroll" style="position:absolute;top:calc(100% + 8px);left:0;z-index:60;width:246px;max-height:290px;overflow-y:auto;overflow-x:hidden;background:#fff;border:1px solid #dce8f4;border-radius:14px;box-shadow:0 18px 44px -14px rgba(23,50,76,.4);padding:8px;">
+              <sc-for list="{{ fd.options }}" as="op" hint-placeholder-count="5">
+                <label style="display:flex;align-items:center;gap:10px;padding:9px 10px;border-radius:9px;cursor:pointer;font-size:13px;font-weight:500;color:#324a63;background:{{ op.rowBg }};">
+                  <span style="flex-shrink:0;width:18px;height:18px;border-radius:6px;border:2px solid {{ op.boxBorder }};background:{{ op.boxBg }};display:grid;place-items:center;">
+                    <sc-if value="{{ op.active }}" hint-placeholder-val="{{ false }}"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg></sc-if>
+                  </span>
+                  <input type="checkbox" checked="{{ op.active }}" onChange="{{ op.onClick }}" style="display:none;">
+                  {{ op.label }}
+                </label>
+              </sc-for>
+            </div>
+          </sc-if>
+        </div>
+      </sc-for>
+
+      <div style="flex:1;"></div>
+      <sc-if value="{{ hasFilters }}" hint-placeholder-val="{{ false }}">
+        <button onClick="{{ clearAll }}" style="display:flex;align-items:center;gap:6px;padding:9px 13px;border-radius:11px;background:#fff0f1;border:1px solid #f7d0d5;color:#d33a4a;font-family:inherit;font-size:12.5px;font-weight:700;cursor:pointer;">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M18 6 6 18M6 6l12 12"/></svg>
+          Xóa ({{ activeCount }})
+        </button>
+      </sc-if>
+      <label style="display:flex;align-items:center;gap:8px;font-size:12.5px;color:#5a7794;font-weight:600;padding-right:4px;">Sắp xếp
+        <select value="{{ sort }}" onChange="{{ onSort }}" style="border:1px solid #cfe0f2;background:#fff;border-radius:10px;padding:8px 10px;font-family:inherit;font-size:12.5px;font-weight:600;color:#1a3352;cursor:pointer;outline:none;">
+          <option value="match">Mức phù hợp</option>
+          <option value="deadline">Deadline gần nhất</option>
+          <option value="funding">Mức tài trợ</option>
+          <option value="qs">Hạng QS</option>
+        </select>
+      </label>
+    </div>
+
+    <!-- applied chips -->
+    <sc-if value="{{ hasFilters }}" hint-placeholder-val="{{ false }}">
+      <div style="margin-top:11px;display:flex;flex-wrap:wrap;gap:7px;align-items:center;">
+        <sc-for list="{{ appliedChips }}" as="ac" hint-placeholder-count="3">
+          <button onClick="{{ ac.onRemove }}" style="display:flex;align-items:center;gap:7px;padding:5px 8px 5px 12px;border-radius:999px;background:#e7f0ff;border:1px solid #c4dbfb;color:#1c5cc0;font-family:inherit;font-size:12px;font-weight:600;cursor:pointer;">
+            {{ ac.label }}
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M18 6 6 18M6 6l12 12"/></svg>
+          </button>
+        </sc-for>
+      </div>
+    </sc-if>
+      </div>
+      <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px;margin-bottom:16px;">
+        <p style="margin:0;font-size:14px;color:#5a7794;font-weight:500;"><span style="font-size:21px;font-weight:800;color:#1a3352;">{{ resultCount }}</span> học bổng phù hợp</p>
+        <button onClick="{{ openWizard }}" style="display:flex;align-items:center;gap:7px;background:#eaf1fd;border:1px solid #c8dcfa;color:#2f6fe0;padding:8px 14px;border-radius:11px;font-family:inherit;font-size:12.5px;font-weight:700;cursor:pointer;">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3 13.9 8.6 19.5 8.6 15 12.1 16.7 17.6 12 14.2 7.3 17.6 9 12.1 4.5 8.6 10.1 8.6z"/></svg>
+          Chưa biết chọn gì? Để tôi gợi ý
+        </button>
+      </div>
+
+      <sc-if value="{{ isEmpty }}" hint-placeholder-val="{{ false }}">
+        <div style="border:1.5px dashed #cfe0f2;background:#fff;border-radius:18px;padding:52px 24px;text-align:center;color:#7591ab;">
+          <div style="margin:0 auto;width:56px;height:56px;border-radius:16px;background:#eef4fb;display:grid;place-items:center;">
+            <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#93a7bd" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><path d="m21 21-4.3-4.3"/></svg>
+          </div>
+          <p style="margin:14px 0 0;font-weight:600;">Không có học bổng khớp bộ lọc.</p>
+          <button onClick="{{ clearAll }}" style="margin-top:12px;background:#2f6fe0;color:#fff;border:0;padding:10px 20px;border-radius:11px;font-family:inherit;font-weight:600;font-size:13.5px;cursor:pointer;">Xóa bộ lọc</button>
+        </div>
+      </sc-if>
+
+      <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(360px,1fr));gap:16px;">
+        <sc-for list="{{ results }}" as="c" hint-placeholder-count="6">
+          <div style="display:flex;flex-direction:column;background:#fff;border:1px solid #dce8f4;border-radius:18px;padding:18px;box-shadow:0 1px 2px rgba(23,50,76,0.04);">
+            <!-- head -->
+            <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:14px;">
+              <div style="min-width:0;flex:1;">
+                <div style="display:flex;align-items:center;gap:7px;flex-wrap:wrap;font-size:12px;color:#7591ab;font-weight:500;">
+                  <span style="font-size:15px;">{{ c.flag }}</span>
+                  <span>{{ c.country }} · {{ c.city }}</span>
+                  <span style="background:#eaf4fe;color:#1c5cc0;padding:1px 7px;border-radius:999px;font-size:11px;font-weight:700;">QS #{{ c.qs }}</span>
+                </div>
+                <h3 style="margin:9px 0 0;font-size:16px;font-weight:700;line-height:1.3;letter-spacing:-0.01em;color:#1a3352;">{{ c.title }}</h3>
+                <div style="margin:6px 0 0;display:flex;align-items:center;gap:6px;font-size:12.5px;color:#7591ab;font-weight:400;">
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#93a7bd" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 22V4a2 2 0 0 1 2-2h8a2 2 0 0 1 2 2v18Z"/><path d="M10 6h4M10 10h4M10 14h4"/></svg>
+                  {{ c.uni }}
+                </div>
+              </div>
+              <div style="flex-shrink:0;display:flex;flex-direction:column;align-items:center;width:66px;">
+                <div style="width:56px;height:56px;border-radius:999px;background:{{ c.matchRing }};display:grid;place-items:center;">
+                  <div style="width:42px;height:42px;border-radius:999px;background:#fff;display:grid;place-items:center;font-size:14px;font-weight:800;white-space:nowrap;color:{{ c.matchFg }};">{{ c.matchPct }}</div>
+                </div>
+                <div style="font-size:10px;font-weight:700;color:{{ c.matchFg }};margin-top:6px;text-align:center;line-height:1.15;">{{ c.matchLabel }}</div>
+              </div>
+            </div>
+
+            <!-- meta grid -->
+            <div style="margin-top:15px;display:grid;grid-template-columns:1fr 1fr;gap:9px;">
+              <div style="display:flex;align-items:center;gap:8px;">
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#0f9d6b" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="8" cy="8" r="6"/><path d="M18.09 10.37A6 6 0 1 1 10.34 18M7 6h1v4M16.71 13.88l.7.71-2.82 2.82"/></svg>
+                <span style="font-size:12px;color:#455f78;font-weight:600;">{{ c.fundingLabel }}</span>
+              </div>
+              <div style="display:flex;align-items:center;gap:8px;">
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#7c74e0" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 10 12 5 2 10l10 5 10-5Z"/><path d="M6 12v5c0 1 2.7 2.5 6 2.5s6-1.5 6-2.5v-5"/></svg>
+                <span style="font-size:12px;color:#455f78;font-weight:600;">{{ c.levelsLabel }}</span>
+              </div>
+              <div style="display:flex;align-items:center;gap:8px;">
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#2f8fe6" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m5 8 6 6M4 14l6-6 2-3M2 5h12M7 2h1M22 22l-5-10-5 10M14 18h6"/></svg>
+                <span style="font-size:12px;color:#455f78;font-weight:600;">{{ c.language }}</span>
+              </div>
+              <div style="display:flex;align-items:center;gap:8px;">
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#e0921a" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="3"/><path d="M16 2v4M8 2v4M3 10h18"/></svg>
+                <span style="font-size:12px;color:#455f78;font-weight:600;">Nhập học {{ c.intake }}</span>
+              </div>
+            </div>
+
+            <!-- requirement chips -->
+            <div style="margin-top:13px;display:flex;flex-wrap:wrap;gap:6px;">
+              <span style="display:flex;align-items:center;gap:5px;background:#f3f6fb;color:#5a7794;padding:4px 9px;border-radius:8px;font-size:11px;font-weight:600;">
+                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8Z"/><path d="M14 2v6h6M9 15l2 2 4-4"/></svg>
+                {{ c.docLabel }}
+              </span>
+              <sc-if value="{{ c.reqSupervisor }}" hint-placeholder-val="{{ false }}">
+                <span style="display:flex;align-items:center;gap:5px;background:#f2ecfe;color:#6d3ee0;border:1px solid #ddd0fb;padding:4px 9px;border-radius:8px;font-size:11px;font-weight:700;">
+                  <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="m16 11 2 2 4-4"/></svg>
+                  Cần người hướng dẫn
+                </span>
+              </sc-if>
+              <sc-if value="{{ c.reqGre }}" hint-placeholder-val="{{ false }}">
+                <span style="background:#fdf3e0;color:#a9670a;border:1px solid #f5e0b8;padding:4px 9px;border-radius:8px;font-size:11px;font-weight:700;">Cần GRE/GMAT</span>
+              </sc-if>
+              <sc-if value="{{ c.reqProposal }}" hint-placeholder-val="{{ false }}">
+                <span style="background:#e7f2ff;color:#1c5cc0;border:1px solid #bcdcfb;padding:4px 9px;border-radius:8px;font-size:11px;font-weight:700;">Cần đề cương NC</span>
+              </sc-if>
+            </div>
+
+            <div style="flex:1;"></div>
+
+            <!-- deadline -->
+            <div style="margin-top:15px;padding-top:13px;border-top:1px solid #eef3f9;display:flex;align-items:center;gap:8px;font-size:12.5px;">
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="{{ c.dlColor }}" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg>
+              <span style="color:#7591ab;font-weight:400;">{{ c.dlType }}:</span>
+              <span style="color:#455f78;font-weight:600;">{{ c.dlDate }}</span>
+              <span style="margin-left:auto;color:{{ c.dlColor }};font-weight:700;">{{ c.dlText }}</span>
+            </div>
+
+            <!-- actions -->
+            <div style="margin-top:14px;display:flex;gap:9px;">
+              <button onClick="{{ c.onTrack }}" style="flex:1;display:flex;align-items:center;justify-content:center;gap:7px;padding:10px;border-radius:11px;font-family:inherit;font-size:13px;font-weight:700;cursor:pointer;background:{{ c.trackBg }};color:{{ c.trackFg }};border:1px solid {{ c.trackBorder }};">
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="{{ c.trackIconFill }}" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m19 21-7-4-7 4V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/></svg>
+                {{ c.trackLabel }}
+              </button>
+              <button onClick="{{ c.onCompare }}" title="So sánh" style="padding:10px 12px;border-radius:11px;font-family:inherit;cursor:pointer;background:{{ c.cmpBg }};color:{{ c.cmpFg }};border:1px solid {{ c.cmpBorder }};display:grid;place-items:center;">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m17 3 4 4-4 4"/><path d="M21 7H9a4 4 0 0 0-4 4"/><path d="m7 21-4-4 4-4"/><path d="M3 17h12a4 4 0 0 0 4-4"/></svg>
+              </button>
+              <button onClick="{{ c.onOpen }}" style="padding:10px 16px;border-radius:11px;font-family:inherit;font-size:13px;font-weight:700;cursor:pointer;background:#1a3352;color:#fff;border:0;">Chi tiết</button>
+            </div>
+          </div>
+        </sc-for>
+      </div>
+    </main>
+    <footer style="margin-top:20px;border-top:1px solid #dbe6f2;">
+      <div style="max-width:1200px;margin:0 auto;padding:22px 0 4px;display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:12px;">
+        <div style="display:flex;align-items:center;gap:9px;">
+          <div style="width:28px;height:28px;border-radius:9px;background:linear-gradient(135deg,#1e3a8a,#3b82f6);display:grid;place-items:center;"><svg width="15" height="15" viewBox="0 0 24 24" fill="#fff"><path d="M2.5 19h19v2h-19zM22.07 9.64c-.21-.8-1.04-1.28-1.84-1.06L14.92 10 8.46 3.98l-1.93.52 3.87 6.7-4.97 1.34-1.97-1.54-1.45.39 2.59 4.49 17.42-4.67c.81-.23 1.28-1.05 1.06-1.86z"/></svg></div>
+          <span style="font-size:13px;font-weight:700;color:#1a3352;">ScholarFinder</span>
+        </div>
+        <p style="margin:0;font-size:11.5px;color:#93a7bd;">Dữ liệu minh họa cho <b style="color:#5a7794;">demo thiết kế</b> — luôn kiểm tra tại nguồn chính thức trước khi nộp hồ sơ.</p>
+      </div>
+    </footer>
+  </div>
+  </sc-if>
+  <sc-if value="{{ isDetail }}" hint-placeholder-val="{{ false }}">
+    <div style="max-width:1120px;margin:0 auto;padding:20px 24px 60px;">
+      <button onClick="{{ backHome }}" style="display:flex;align-items:center;gap:6px;background:none;border:0;color:#5a7794;font-family:inherit;font-size:13.5px;font-weight:600;cursor:pointer;padding:6px 0;">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="m15 18-6-6 6-6"/></svg>
+        Quay lại danh sách
+      </button>
+      <sc-if value="{{ selExists }}" hint-placeholder-val="{{ true }}">
+        <!-- header -->
+        <div style="margin-top:10px;background:#fff;border:1px solid #dce8f4;border-radius:20px;padding:26px;">
+          <div style="display:flex;flex-wrap:wrap;gap:18px;align-items:flex-start;justify-content:space-between;">
+            <div style="min-width:0;flex:1;">
+              <div style="display:flex;flex-wrap:wrap;align-items:center;gap:8px;font-size:12.5px;color:#7591ab;font-weight:500;">
+                <span style="font-size:16px;">{{ selFlag }}</span>
+                <span>{{ selCountry }} · {{ selCity }}</span>
+                <span style="background:#eaf4fe;color:#1c5cc0;padding:1px 8px;border-radius:999px;font-size:11px;font-weight:700;">QS #{{ selQs }}</span>
+                <span style="background:#f2ecfe;color:#7c3aed;padding:1px 8px;border-radius:999px;font-size:11px;font-weight:700;">{{ selProviderType }}</span>
+              </div>
+              <h1 style="margin:10px 0 0;font-size:26px;font-weight:800;letter-spacing:-0.02em;color:#12345c;line-height:1.18;">{{ selTitle }}</h1>
+              <p style="margin:6px 0 0;font-size:13.5px;color:#5a7794;">Đơn vị cấp: {{ selProvider }}</p>
+              <div style="margin-top:14px;display:flex;flex-wrap:wrap;gap:7px;">
+                <span style="background:#e9f8f0;color:#0b7a52;border:1px solid #c4ecd8;padding:4px 10px;border-radius:8px;font-size:12px;font-weight:700;">{{ selFundLabel }}</span>
+                <span style="background:#eef3f9;color:#5a7794;padding:4px 10px;border-radius:8px;font-size:12px;font-weight:600;">{{ selLevels }}</span>
+                <span style="background:#eaf4fe;color:#1c5cc0;padding:4px 10px;border-radius:8px;font-size:12px;font-weight:600;">{{ selLang }}</span>
+                <sc-if value="{{ selReqSup }}" hint-placeholder-val="{{ false }}"><span style="background:#f2ecfe;color:#7c3aed;padding:4px 10px;border-radius:8px;font-size:12px;font-weight:700;">Cần người hướng dẫn</span></sc-if>
+                <sc-if value="{{ selReqProposal }}" hint-placeholder-val="{{ false }}"><span style="background:#fdf3e0;color:#a9670a;padding:4px 10px;border-radius:8px;font-size:12px;font-weight:700;">Cần đề cương NC</span></sc-if>
+              </div>
+            </div>
+            <div style="flex-shrink:0;display:flex;flex-direction:column;align-items:center;">
+              <div style="width:88px;height:88px;border-radius:999px;background:conic-gradient({{ selMatchBar }} {{ selMatchWidth }}, #e6eef6 0);display:grid;place-items:center;">
+                <div style="width:66px;height:66px;border-radius:999px;background:#fff;display:grid;place-items:center;">
+                  <div style="font-size:22px;font-weight:800;line-height:1;color:{{ selMatchFg }};">{{ selMatchPct }}</div>
+                </div>
+              </div>
+              <div style="margin-top:8px;font-size:12px;font-weight:700;color:{{ selMatchFg }};">{{ selMatchLabel }}</div>
+            </div>
+          </div>
+        </div>
+
+        <div style="margin-top:18px;display:grid;grid-template-columns:1fr 336px;gap:18px;align-items:start;">
+          <!-- main column -->
+          <div style="display:flex;flex-direction:column;gap:16px;">
+            <div style="background:#fff;border:1px solid #dce8f4;border-radius:16px;padding:20px;">
+              <h2 style="margin:0 0 10px;font-size:15px;font-weight:800;color:#1a3352;">Tổng quan</h2>
+              <p style="margin:0;font-size:14px;line-height:1.65;color:#455f78;">{{ selSummary }}</p>
+            </div>
+
+            <div style="background:#fff;border:1px solid #dce8f4;border-radius:16px;padding:20px;">
+              <h2 style="margin:0 0 12px;font-size:15px;font-weight:800;color:#1a3352;">Vì sao phù hợp với bạn</h2>
+              <div style="height:8px;border-radius:999px;background:#eef3f9;overflow:hidden;">
+                <div style="height:100%;border-radius:999px;width:{{ selMatchWidth }};background:{{ selMatchBar }};"></div>
+              </div>
+              <div style="margin-top:14px;display:grid;grid-template-columns:1fr 1fr;gap:9px;">
+                <sc-for list="{{ selReasons }}" as="r" hint-placeholder-count="8">
+                  <div style="display:flex;align-items:flex-start;gap:8px;">
+                    <span style="flex-shrink:0;width:7px;height:7px;border-radius:999px;margin-top:6px;background:{{ r.color }};"></span>
+                    <span style="font-size:12.5px;line-height:1.4;color:{{ r.textColor }};">{{ r.label }}</span>
+                  </div>
+                </sc-for>
+              </div>
+            </div>
+
+            <div style="background:#fff;border:1px solid #dce8f4;border-radius:16px;padding:20px;">
+              <h2 style="margin:0 0 12px;font-size:15px;font-weight:800;color:#1a3352;">Quyền lợi học bổng</h2>
+              <div style="display:grid;grid-template-columns:1fr 1fr;gap:9px;">
+                <sc-for list="{{ selBenefits }}" as="b" hint-placeholder-count="4">
+                  <div style="display:flex;align-items:flex-start;gap:8px;font-size:13px;color:#455f78;">
+                    <svg style="flex-shrink:0;margin-top:2px;" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#10a06d" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>
+                    {{ b }}
+                  </div>
+                </sc-for>
+              </div>
+            </div>
+
+            <div style="background:#fff;border:1px solid #dce8f4;border-radius:16px;padding:20px;">
+              <h2 style="margin:0 0 12px;font-size:15px;font-weight:800;color:#1a3352;">Điều kiện & thông tin</h2>
+              <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;">
+                <sc-for list="{{ selFacts }}" as="f" hint-placeholder-count="6">
+                  <div style="background:#f6f9fd;border:1px solid #e6eef6;border-radius:11px;padding:11px 13px;">
+                    <div style="font-size:11.5px;color:#7591ab;font-weight:600;">{{ f.label }}</div>
+                    <div style="font-size:13.5px;font-weight:700;color:#1a3352;margin-top:3px;">{{ f.value }}</div>
+                  </div>
+                </sc-for>
+              </div>
+            </div>
+
+            <div style="background:#fff;border:1px solid #dce8f4;border-radius:16px;padding:20px;">
+              <h2 style="margin:0 0 14px;font-size:15px;font-weight:800;color:#1a3352;">Lộ trình & hạn nộp</h2>
+              <div style="display:flex;flex-direction:column;gap:0;border-left:2px solid #e6eef6;padding-left:16px;">
+                <sc-for list="{{ selDeadlines }}" as="d" hint-placeholder-count="3">
+                  <div style="position:relative;padding-bottom:16px;">
+                    <span style="position:absolute;left:-23px;top:2px;width:12px;height:12px;border-radius:999px;background:#2f6fe0;border:2px solid #fff;box-shadow:0 0 0 2px #cfe0f2;"></span>
+                    <div style="display:flex;flex-wrap:wrap;align-items:baseline;gap:8px;">
+                      <span style="font-size:13.5px;font-weight:700;color:#1a3352;">{{ d.type }}</span>
+                      <span style="font-size:12.5px;color:#7591ab;">{{ d.date }}</span>
+                      <span style="font-size:11.5px;font-weight:700;color:{{ d.color }};">· {{ d.text }}</span>
+                    </div>
+                  </div>
+                </sc-for>
+              </div>
+            </div>
+
+            <sc-if value="{{ selHasProfs }}" hint-placeholder-val="{{ false }}">
+              <div style="background:#fff;border:1px solid #dce8f4;border-radius:16px;padding:20px;">
+                <h2 style="margin:0 0 4px;font-size:15px;font-weight:800;color:#1a3352;">Người hướng dẫn tiềm năng</h2>
+                <p style="margin:0 0 12px;font-size:12.5px;color:#7591ab;">Học bổng này cần liên hệ người hướng dẫn trước. Gợi ý một số người phù hợp:</p>
+                <div style="display:flex;flex-direction:column;gap:9px;">
+                  <sc-for list="{{ selProfList }}" as="p" hint-placeholder-count="1">
+                    <button onClick="{{ p.onOpen }}" style="text-align:left;cursor:pointer;display:flex;align-items:center;justify-content:space-between;gap:12px;background:#faf8fe;border:1px solid #ece7f6;border-radius:12px;padding:13px 15px;font-family:inherit;">
+                      <div style="min-width:0;">
+                        <div style="font-size:14px;font-weight:700;color:#1a3352;">{{ p.name }}</div>
+                        <div style="font-size:12px;color:#7591ab;margin-top:2px;">{{ p.uni }} · {{ p.kw }}</div>
+                      </div>
+                      <span style="flex-shrink:0;font-size:12px;font-weight:700;color:#7c3aed;">Xem hồ sơ →</span>
+                    </button>
+                  </sc-for>
+                </div>
+              </div>
+            </sc-if>
+
+            <div style="background:#fff;border:1px solid #dce8f4;border-radius:16px;padding:20px;">
+              <div style="display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:12px;">
+                <h2 style="margin:0;font-size:15px;font-weight:800;color:#1a3352;">Checklist giấy tờ</h2>
+                <div style="display:flex;align-items:center;gap:10px;flex:1;max-width:220px;">
+                  <div style="flex:1;height:8px;border-radius:999px;background:#eef3f9;overflow:hidden;"><div style="height:100%;border-radius:999px;width:{{ selProgWidth }};background:#2f6fe0;"></div></div>
+                  <span style="font-size:13px;font-weight:800;color:#2f6fe0;">{{ selProg }}%</span>
+                </div>
+              </div>
+              <div style="display:flex;flex-direction:column;gap:4px;">
+                <sc-for list="{{ selDocs }}" as="d" hint-placeholder-count="6">
+                  <label style="display:flex;align-items:center;gap:11px;padding:9px 10px;border-radius:9px;cursor:pointer;font-size:13.5px;color:#455f78;">
+                    <input type="checkbox" checked="{{ d.checked }}" onChange="{{ d.onToggle }}" style="width:17px;height:17px;accent-color:#2f6fe0;cursor:pointer;">
+                    {{ d.label }}
+                  </label>
+                </sc-for>
+              </div>
+            </div>
+          </div>
+
+          <!-- sidebar -->
+          <aside style="position:sticky;top:82px;display:flex;flex-direction:column;gap:14px;">
+            <div style="background:#fff;border:1px solid #dce8f4;border-radius:16px;padding:16px;">
+              <button onClick="{{ selToggleTrack }}" style="width:100%;padding:12px;border-radius:12px;border:0;cursor:pointer;font-family:inherit;font-size:14px;font-weight:700;color:#fff;background:{{ selTrackBg }};">{{ selTrackLabel }}</button>
+              <button onClick="{{ selToggleCompare }}" style="width:100%;margin-top:9px;padding:11px;border-radius:12px;cursor:pointer;font-family:inherit;font-size:13px;font-weight:700;background:#fff;border:1px solid #cdd6f7;color:#4f46e5;">{{ selCompareLabel }}</button>
+              <button onClick="{{ selOpenDocs }}" style="width:100%;margin-top:9px;padding:11px;border-radius:12px;cursor:pointer;font-family:inherit;font-size:13px;font-weight:700;background:#eef1fd;border:1px solid #cdd6f7;color:#3730a3;display:flex;align-items:center;justify-content:center;gap:7px;">✍️ Trợ lý viết hồ sơ</button>
+              <sc-if value="{{ selIsTracked }}" hint-placeholder-val="{{ false }}">
+                <div style="margin-top:14px;">
+                  <label style="display:block;font-size:11.5px;font-weight:700;color:#7591ab;margin-bottom:6px;">Trạng thái hồ sơ</label>
+                  <select value="{{ selStage }}" onChange="{{ onSelStage }}" style="width:100%;border:1px solid #cfe0f2;background:#fff;border-radius:10px;padding:9px 11px;font-family:inherit;font-size:13px;font-weight:600;color:#1a3352;cursor:pointer;outline:none;">
+                    <sc-for list="{{ selStageOptions }}" as="o" hint-placeholder-count="7"><option value="{{ o.value }}">{{ o.label }}</option></sc-for>
+                  </select>
+                  <label style="display:block;font-size:11.5px;font-weight:700;color:#7591ab;margin:12px 0 6px;">Ghi chú</label>
+                  <textarea value="{{ selNote }}" onInput="{{ onSelNote }}" placeholder="Ghi chú của bạn về học bổng này…" rows="3" style="width:100%;border:1px solid #cfe0f2;border-radius:10px;padding:9px 11px;font-family:inherit;font-size:13px;color:#1a3352;outline:none;resize:vertical;"></textarea>
+                </div>
+              </sc-if>
+              <div style="margin-top:14px;padding-top:14px;border-top:1px solid #eef3f9;">
+                <p style="margin:0;font-size:11.5px;color:#7591ab;font-weight:600;">{{ selDlType }}</p>
+                <p style="margin:3px 0 0;font-size:18px;font-weight:800;color:#1a3352;">{{ selDlDate }}</p>
+                <p style="margin:2px 0 0;font-size:13px;font-weight:700;color:{{ selDlColor }};">{{ selDlText }}</p>
+              </div>
+              <div style="margin-top:14px;padding:11px;border:1px solid #e2e8f0;border-radius:11px;display:flex;align-items:center;justify-content:center;gap:8px;font-size:13px;font-weight:700;color:#5a7794;cursor:pointer;">
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg>
+                Trang chính thức
+              </div>
+            </div>
+            <div style="background:#fff;border:1px solid #dce8f4;border-radius:16px;padding:16px;font-size:12.5px;color:#7591ab;">
+              <div style="display:flex;align-items:center;justify-content:space-between;"><span>Độ tin cậy nguồn</span><span style="font-weight:800;color:#0b7a52;">{{ selTrust }}/100</span></div>
+              <div style="margin-top:8px;display:flex;align-items:center;justify-content:space-between;"><span>Cập nhật</span><span style="font-weight:600;color:#455f78;">{{ selVerified }}</span></div>
+              <p style="margin:12px 0 0;background:#fdf3e0;color:#a9670a;border-radius:9px;padding:9px 11px;font-size:11.5px;line-height:1.5;">⚠️ Dữ liệu minh họa cho demo — luôn kiểm tra tại nguồn chính thức trước khi nộp.</p>
+            </div>
+          </aside>
+        </div>
+      </sc-if>
+    </div>
+  </sc-if>
+  <!-- ============ BOARD ============ -->
+  <sc-if value="{{ isBoard }}" hint-placeholder-val="{{ false }}">
+    <div style="max-width:1200px;margin:0 auto;padding:22px 24px 60px;">
+      <sc-if value="{{ boardEmpty }}" hint-placeholder-val="{{ false }}">
+        <div style="margin-top:30px;border:1.5px dashed #cfe0f2;background:#fff;border-radius:20px;padding:60px 24px;text-align:center;">
+          <div style="margin:0 auto;width:64px;height:64px;border-radius:18px;background:#eef4fb;display:grid;place-items:center;">
+            <svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="#93a7bd" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 7h18M3 12h18M3 17h18"/></svg>
+          </div>
+          <h1 style="margin:16px 0 0;font-size:20px;font-weight:800;color:#1a3352;">Chưa có học bổng nào được theo dõi</h1>
+          <p style="margin:8px 0 0;font-size:14px;color:#7591ab;">Bấm "Theo dõi" ở học bổng bạn quan tâm để quản lý tiến độ tại đây.</p>
+          <button onClick="{{ backHome }}" style="margin-top:18px;background:#2f6fe0;color:#fff;border:0;padding:11px 22px;border-radius:12px;font-family:inherit;font-weight:700;font-size:14px;cursor:pointer;">Tìm học bổng →</button>
+        </div>
+      </sc-if>
+      <sc-if value="{{ boardHas }}" hint-placeholder-val="{{ true }}">
+        <div style="display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:12px;">
+          <h1 style="margin:0;font-size:24px;font-weight:800;letter-spacing:-0.02em;color:#12345c;">Bảng theo dõi hồ sơ</h1>
+          <div style="display:flex;background:#dbe8f7;padding:4px;border-radius:11px;">
+            <button onClick="{{ setTableView }}" style="border:0;cursor:pointer;font-family:inherit;padding:8px 16px;border-radius:8px;font-size:13px;font-weight:700;background:{{ tableBtnBg }};color:{{ tableBtnFg }};">Bảng</button>
+            <button onClick="{{ setKanbanView }}" style="border:0;cursor:pointer;font-family:inherit;padding:8px 16px;border-radius:8px;font-size:13px;font-weight:700;background:{{ kanbanBtnBg }};color:{{ kanbanBtnFg }};">Kanban</button>
+          </div>
+        </div>
+
+        <div style="margin-top:16px;display:grid;grid-template-columns:repeat(4,1fr);gap:12px;">
+          <div style="background:#fff;border:1px solid #dce8f4;border-radius:14px;padding:15px 16px;"><div style="font-size:26px;font-weight:800;color:#1a3352;">{{ boardStats.total }}</div><div style="font-size:12px;color:#7591ab;font-weight:600;">Đang theo dõi</div></div>
+          <div style="background:#fdecee;border:1px solid #f7ccd2;border-radius:14px;padding:15px 16px;"><div style="font-size:26px;font-weight:800;color:#b23343;">{{ boardStats.soon }}</div><div style="font-size:12px;color:#b23343;font-weight:600;">Sắp hết hạn (≤7 ngày)</div></div>
+          <div style="background:#fdf3e0;border:1px solid #f5e0b8;border-radius:14px;padding:15px 16px;"><div style="font-size:26px;font-weight:800;color:#a9670a;">{{ boardStats.urgent }}</div><div style="font-size:12px;color:#a9670a;font-weight:600;">Cần hoàn thiện gấp</div></div>
+          <div style="background:#e9f8f0;border:1px solid #c4ecd8;border-radius:14px;padding:15px 16px;"><div style="font-size:26px;font-weight:800;color:#0b7a52;">{{ boardStats.submitted }}</div><div style="font-size:12px;color:#0b7a52;font-weight:600;">Đã nộp / phỏng vấn</div></div>
+        </div>
+
+        <!-- TABLE -->
+        <sc-if value="{{ isTableView }}" hint-placeholder-val="{{ false }}">
+          <div class="sf-scroll" style="margin-top:18px;overflow-x:auto;background:#fff;border:1px solid #dce8f4;border-radius:16px;">
+            <table style="width:100%;min-width:880px;border-collapse:collapse;font-size:13px;">
+              <thead>
+                <tr style="background:#f6f9fd;text-align:left;color:#7591ab;font-size:11px;text-transform:uppercase;letter-spacing:0.04em;">
+                  <th style="padding:12px 14px;font-weight:700;">Học bổng</th>
+                  <th style="padding:12px 14px;font-weight:700;">Match</th>
+                  <th style="padding:12px 14px;font-weight:700;">Deadline</th>
+                  <th style="padding:12px 14px;font-weight:700;">Người hướng dẫn</th>
+                  <th style="padding:12px 14px;font-weight:700;">Giấy tờ</th>
+                  <th style="padding:12px 14px;font-weight:700;">Trạng thái</th>
+                  <th style="padding:12px 14px;"></th>
+                </tr>
+              </thead>
+              <tbody>
+                <sc-for list="{{ boardRows }}" as="r" hint-placeholder-count="3">
+                  <tr style="border-top:1px solid #eef3f9;">
+                    <td style="padding:12px 14px;">
+                      <button onClick="{{ r.onOpen }}" style="text-align:left;background:none;border:0;cursor:pointer;font-family:inherit;font-size:13.5px;font-weight:700;color:#1a3352;padding:0;">{{ r.title }}</button>
+                      <div style="font-size:11.5px;color:#7591ab;margin-top:2px;">{{ r.flag }} {{ r.country }}</div>
+                    </td>
+                    <td style="padding:12px 14px;"><span style="padding:2px 9px;border-radius:8px;font-size:12px;font-weight:800;background:{{ r.matchBg }};color:{{ r.matchFg }};">{{ r.matchPct }}</span></td>
+                    <td style="padding:12px 14px;"><div style="color:#455f78;font-weight:600;">{{ r.dlDate }}</div><div style="font-size:11.5px;font-weight:700;color:{{ r.dlColor }};">{{ r.dlText }}</div></td>
+                    <td style="padding:12px 14px;">
+                      <sc-if value="{{ r.hasProf }}" hint-placeholder-val="{{ false }}"><button onClick="{{ r.onProf }}" style="background:none;border:0;cursor:pointer;font-family:inherit;font-size:13px;font-weight:600;color:#7c3aed;padding:0;">{{ r.profName }}</button></sc-if>
+                    </td>
+                    <td style="padding:12px 14px;"><div style="display:flex;align-items:center;gap:8px;"><div style="width:64px;height:6px;border-radius:999px;background:#eef3f9;overflow:hidden;"><div style="height:100%;background:#2f6fe0;width:{{ r.progWidth }};"></div></div><span style="font-size:11.5px;color:#7591ab;">{{ r.prog }}%</span></div></td>
+                    <td style="padding:12px 14px;"><select value="{{ r.stage }}" onChange="{{ r.onStage }}" style="border:1px solid {{ r.stageBd }};background:{{ r.stageBg }};color:{{ r.stageFg }};border-radius:8px;padding:5px 9px;font-family:inherit;font-size:12px;font-weight:700;cursor:pointer;outline:none;"><sc-for list="{{ r.stageOptions }}" as="o" hint-placeholder-count="7"><option value="{{ o.value }}">{{ o.label }}</option></sc-for></select></td>
+                    <td style="padding:12px 14px;"><button onClick="{{ r.onRemove }}" title="Bỏ theo dõi" style="background:none;border:0;cursor:pointer;color:#c3ccd8;padding:4px;"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M18 6 6 18M6 6l12 12"/></svg></button></td>
+                  </tr>
+                </sc-for>
+              </tbody>
+            </table>
+          </div>
+        </sc-if>
+
+        <!-- KANBAN -->
+        <sc-if value="{{ isKanbanView }}" hint-placeholder-val="{{ true }}">
+          <div class="sf-scroll" style="margin-top:18px;display:flex;gap:12px;overflow-x:auto;padding-bottom:10px;">
+            <sc-for list="{{ boardCols }}" as="col" hint-placeholder-count="7">
+              <div onDragOver="{{ col.onDragOver }}" onDrop="{{ col.onDrop }}" style="width:266px;flex-shrink:0;background:#eff3f9;border-radius:14px;padding:10px;">
+                <div style="display:flex;align-items:center;justify-content:space-between;padding:4px 6px 10px;">
+                  <span style="display:inline-flex;align-items:center;gap:7px;padding:3px 10px;border-radius:999px;font-size:12px;font-weight:700;background:{{ col.bg }};color:{{ col.fg }};border:1px solid {{ col.bd }};"><span style="width:7px;height:7px;border-radius:999px;background:{{ col.dot }};"></span>{{ col.label }}</span>
+                  <span style="font-size:12px;color:#93a7bd;font-weight:700;">{{ col.count }}</span>
+                </div>
+                <div style="display:flex;flex-direction:column;gap:9px;min-height:40px;">
+                  <sc-for list="{{ col.items }}" as="c" hint-placeholder-count="2">
+                    <div draggable="{{ dragTrue }}" onDragStart="{{ c.onDragStart }}" onDragEnd="{{ c.onDragEnd }}" style="cursor:grab;background:#fff;border:1px solid #dce8f4;border-radius:12px;padding:12px;box-shadow:0 1px 2px rgba(23,50,76,0.05);">
+                      <button onClick="{{ c.onOpen }}" style="text-align:left;background:none;border:0;cursor:pointer;font-family:inherit;font-size:13px;font-weight:700;color:#1a3352;padding:0;line-height:1.3;">{{ c.title }}</button>
+                      <div style="margin-top:7px;display:flex;align-items:center;justify-content:space-between;font-size:11.5px;">
+                        <span style="color:#7591ab;">{{ c.flag }} {{ c.country }}</span>
+                        <span style="font-weight:700;color:{{ c.dlColor }};">{{ c.dlText }}</span>
+                      </div>
+                      <div style="margin-top:9px;height:5px;border-radius:999px;background:#eef3f9;overflow:hidden;"><div style="height:100%;background:#2f6fe0;width:{{ c.progWidth }};"></div></div>
+                      <sc-if value="{{ c.hasNote }}" hint-placeholder-val="{{ false }}"><p style="margin:8px 0 0;background:#fdf3e0;color:#a9670a;border-radius:7px;padding:5px 8px;font-size:11px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">📝 {{ c.note }}</p></sc-if>
+                    </div>
+                  </sc-for>
+                  <sc-if value="{{ col.empty }}" hint-placeholder-val="{{ false }}"><p style="margin:0;padding:14px 6px;text-align:center;font-size:11.5px;color:#aebccd;">Kéo thẻ vào đây</p></sc-if>
+                </div>
+              </div>
+            </sc-for>
+          </div>
+        </sc-if>
+
+        <p style="margin-top:14px;font-size:12px;color:#93a7bd;">💡 Ở chế độ Kanban, <b>kéo–thả</b> thẻ giữa các cột để đổi trạng thái hồ sơ.</p>
+      </sc-if>
+    </div>
+  </sc-if>
+  <!-- ============ PROFESSORS LIST ============ -->
+  <sc-if value="{{ isProfessors }}" hint-placeholder-val="{{ false }}">
+    <div style="max-width:1200px;margin:0 auto;padding:22px 24px 60px;">
+      <div style="position:relative;overflow:hidden;border-radius:22px;background:linear-gradient(150deg,#0e1638 0%,#1c2a63 52%,#34459c 100%);padding:34px 32px;color:#fff;">
+        <div style="position:absolute;inset:0;pointer-events:none;background-image:radial-gradient(1.6px 1.6px at 9% 24%,#fff,transparent 60%),radial-gradient(1.3px 1.3px at 20% 62%,rgba(255,255,255,.8),transparent 60%),radial-gradient(1.6px 1.6px at 30% 32%,#fff,transparent 60%),radial-gradient(1.1px 1.1px at 41% 70%,rgba(255,255,255,.7),transparent 60%),radial-gradient(1.5px 1.5px at 52% 20%,#fff,transparent 60%),radial-gradient(1.2px 1.2px at 60% 58%,rgba(255,255,255,.75),transparent 60%),radial-gradient(1.6px 1.6px at 70% 30%,#fff,transparent 60%),radial-gradient(1.1px 1.1px at 82% 64%,rgba(255,255,255,.7),transparent 60%),radial-gradient(1.4px 1.4px at 90% 26%,#fff,transparent 60%),radial-gradient(1px 1px at 16% 84%,rgba(255,255,255,.55),transparent 60%),radial-gradient(1.2px 1.2px at 74% 84%,rgba(255,255,255,.6),transparent 60%);"></div>
+        <div style="position:absolute;top:26px;left:30%;width:3px;height:3px;border-radius:999px;background:#fff;box-shadow:0 0 7px 2px rgba(255,255,255,.7);animation:sf-twinkle 3.4s ease-in-out infinite;"></div>
+        <div style="position:absolute;top:66px;left:58%;width:3px;height:3px;border-radius:999px;background:#cfe0ff;box-shadow:0 0 7px 2px rgba(160,200,255,.7);animation:sf-twinkle 4.4s ease-in-out .7s infinite;"></div>
+        <div style="position:absolute;top:34px;right:38%;width:3px;height:3px;border-radius:999px;background:#ffe9a8;box-shadow:0 0 8px 2px rgba(255,220,140,.7);animation:sf-twinkle 5s ease-in-out .3s infinite;"></div>
+        <div style="position:absolute;top:26px;right:30px;color:#f6efc9;opacity:.9;filter:drop-shadow(0 0 14px rgba(246,239,201,.5));">
+          <svg width="34" height="34" viewBox="0 0 24 24" fill="currentColor"><path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9z"/></svg>
+        </div>
+        <svg style="position:absolute;top:0;right:0;width:56%;height:100%;pointer-events:none;" viewBox="0 0 520 240" fill="none" preserveAspectRatio="xMaxYMin meet"><path d="M8 220 C 160 200, 270 160, 360 100 S 500 40, 520 22" stroke="#8fb3ff" stroke-width="2" stroke-dasharray="1 9" stroke-linecap="round" opacity="0.6" style="animation:sf-dash 24s linear infinite;"/></svg>
+        <div style="position:absolute;top:70px;right:15%;color:#dbe9ff;animation:sf-plane 6s ease-in-out infinite;filter:drop-shadow(0 8px 12px rgba(0,0,0,.35));">
+          <svg width="52" height="52" viewBox="0 0 24 24" fill="currentColor"><path d="M2.5 19h19v2h-19zM22.07 9.64c-.21-.8-1.04-1.28-1.84-1.06L14.92 10 8.46 3.98l-1.93.52 3.87 6.7-4.97 1.34-1.97-1.54-1.45.39 2.59 4.49 17.42-4.67c.81-.23 1.28-1.05 1.06-1.86z"/></svg>
+        </div>
+        <div style="position:relative;">
+          <div style="display:inline-flex;align-items:center;gap:8px;background:rgba(255,255,255,0.1);border:1px solid rgba(255,255,255,0.2);padding:5px 12px;border-radius:999px;font-size:12px;font-weight:600;color:#cdd6f7;margin-bottom:14px;">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M22 10v6M2 10l10-5 10 5-10 5z"/><path d="M6 12v5c3 3 9 3 12 0v-5"/></svg>
+            {{ profResultCount }} người hướng dẫn · theo hướng nghiên cứu
+          </div>
+          <h1 style="margin:0;font-size:27px;font-weight:800;letter-spacing:-0.02em;">Tìm người hướng dẫn</h1>
+          <p style="margin:8px 0 0;max-width:520px;font-size:14.5px;line-height:1.6;color:#c5d2f0;">Với học bổng nghiên cứu, việc liên hệ người hướng dẫn trước khi nộp là chìa khóa. Lọc theo ngành, học hàm, quốc gia và trạng thái tuyển.</p>
+          <div style="margin-top:20px;max-width:520px;position:relative;display:flex;align-items:center;background:#fff;border-radius:13px;box-shadow:0 14px 34px -16px rgba(0,0,0,.5);">
+            <svg style="position:absolute;left:15px;" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#93a7bd" stroke-width="2.2" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><path d="m21 21-4.3-4.3"/></svg>
+            <input value="{{ profQ }}" onInput="{{ onProfSearch }}" placeholder="Tên người hướng dẫn, trường, hướng nghiên cứu…" style="width:100%;border:0;outline:none;background:transparent;padding:13px 14px 13px 42px;font-size:14px;font-family:inherit;color:#1a3352;border-radius:13px;">
+          </div>
+        </div>
+      </div>
+
+      <div style="margin-top:16px;position:relative;z-index:30;display:flex;flex-wrap:wrap;gap:9px;align-items:center;">
+        <span style="display:inline-flex;align-items:center;gap:6px;color:#4f46e5;font-weight:800;font-size:13px;padding-right:2px;"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round"><path d="M22 3H2l8 9.5V19l4 2v-8.5L22 3Z"/></svg>Lọc</span>
+        <sc-for list="{{ profTopFilters }}" as="fd" hint-placeholder-count="4">
+          <div style="position:relative;">
+            <button onClick="{{ fd.toggle }}" style="display:flex;align-items:center;gap:7px;padding:9px 13px;border-radius:11px;font-family:inherit;font-size:13px;font-weight:600;cursor:pointer;background:{{ fd.btnBg }};border:1px solid {{ fd.btnBorder }};color:{{ fd.btnFg }};">
+              {{ fd.label }}
+              <sc-if value="{{ fd.hasCount }}" hint-placeholder-val="{{ false }}"><span style="min-width:18px;height:18px;padding:0 5px;border-radius:999px;background:#4f46e5;color:#fff;font-size:10.5px;font-weight:800;display:inline-flex;align-items:center;justify-content:center;">{{ fd.count }}</span></sc-if>
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" style="transform:{{ fd.chev }};transition:transform .18s;"><path d="m6 9 6 6 6-6"/></svg>
+            </button>
+            <sc-if value="{{ fd.isOpen }}" hint-placeholder-val="{{ false }}">
+              <div class="sf-scroll" style="position:absolute;top:calc(100% + 8px);left:0;z-index:60;width:240px;max-height:290px;overflow-y:auto;overflow-x:hidden;background:#fff;border:1px solid #e2e8f4;border-radius:14px;box-shadow:0 18px 44px -14px rgba(30,42,94,.35);padding:8px;">
+                <sc-for list="{{ fd.options }}" as="op" hint-placeholder-count="4">
+                  <label style="display:flex;align-items:center;gap:10px;padding:9px 10px;border-radius:9px;cursor:pointer;font-size:13px;font-weight:500;color:#3f4a6b;background:{{ op.rowBg }};">
+                    <span style="flex-shrink:0;width:18px;height:18px;border-radius:6px;border:2px solid {{ op.boxBorder }};background:{{ op.boxBg }};display:grid;place-items:center;">
+                      <sc-if value="{{ op.active }}" hint-placeholder-val="{{ false }}"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg></sc-if>
+                    </span>
+                    <input type="checkbox" checked="{{ op.active }}" onChange="{{ op.onClick }}" style="display:none;">
+                    {{ op.label }}
+                  </label>
+                </sc-for>
+              </div>
+            </sc-if>
+          </div>
+        </sc-for>
+        <sc-if value="{{ profHasFilters }}" hint-placeholder-val="{{ false }}">
+          <button onClick="{{ profClearAll }}" style="padding:9px 12px;border-radius:11px;background:#fdf0f1;border:1px solid #f7d0d5;color:#d33a4a;font-family:inherit;font-size:12.5px;font-weight:700;cursor:pointer;">Xóa lọc</button>
+        </sc-if>
+        <p style="margin:0 0 0 auto;font-size:13.5px;color:#5a7794;"><b style="color:#1a3352;">{{ profResultCount }}</b> người hướng dẫn</p>
+      </div>
+
+      <sc-if value="{{ profHasFilters }}" hint-placeholder-val="{{ false }}">
+        <div style="margin-top:11px;display:flex;flex-wrap:wrap;gap:7px;align-items:center;">
+          <sc-for list="{{ profChips }}" as="ac" hint-placeholder-count="2">
+            <button onClick="{{ ac.onRemove }}" style="display:flex;align-items:center;gap:7px;padding:5px 8px 5px 12px;border-radius:999px;background:#eef1fd;border:1px solid #cdd6f7;color:#4338ca;font-family:inherit;font-size:12px;font-weight:600;cursor:pointer;">
+              {{ ac.label }}
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M18 6 6 18M6 6l12 12"/></svg>
+            </button>
+          </sc-for>
+        </div>
+      </sc-if>
+
+      <sc-if value="{{ profEmpty }}" hint-placeholder-val="{{ false }}">
+        <div style="margin-top:18px;border:1.5px dashed #cdd6f7;background:#fff;border-radius:16px;padding:44px;text-align:center;color:#6f7ba0;font-weight:600;">Không tìm thấy người hướng dẫn khớp bộ lọc.</div>
+      </sc-if>
+
+      <div style="margin-top:18px;display:grid;grid-template-columns:repeat(auto-fill,minmax(340px,1fr));gap:16px;">
+        <sc-for list="{{ profResults }}" as="p" hint-placeholder-count="6">
+          <div style="display:flex;flex-direction:column;background:#fff;border:1px solid #e2e8f4;border-radius:18px;padding:18px;box-shadow:0 1px 2px rgba(30,42,94,0.04);">
+            <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:10px;">
+              <div style="min-width:0;">
+                <button onClick="{{ p.onOpen }}" style="text-align:left;background:none;border:0;cursor:pointer;font-family:inherit;font-size:16px;font-weight:800;color:#1e2a5e;padding:0;line-height:1.25;">{{ p.name }}</button>
+                <div style="margin-top:5px;"><span style="display:inline-block;padding:2px 9px;border-radius:999px;font-size:10.5px;font-weight:700;background:{{ p.rankBg }};color:{{ p.rankFg }};border:1px solid {{ p.rankBd }};">{{ p.rankLabel }}</span></div>
+                <p style="margin:5px 0 0;font-size:12.5px;color:#7591ab;">{{ p.flag }} {{ p.uni }}</p>
+              </div>
+              <span style="flex-shrink:0;padding:4px 10px;border-radius:999px;font-size:11px;font-weight:700;background:{{ p.recruitBg }};color:{{ p.recruitFg }};border:1px solid {{ p.recruitBd }};">{{ p.recruitLabel }}</span>
+            </div>
+            <div style="margin-top:12px;display:flex;flex-wrap:wrap;gap:6px;">
+              <sc-for list="{{ p.keywords }}" as="k" hint-placeholder-count="3">
+                <span style="background:#eef1fd;color:#4f46e5;border:1px solid #cdd6f7;padding:3px 9px;border-radius:8px;font-size:11px;font-weight:600;">{{ k }}</span>
+              </sc-for>
+            </div>
+            <p style="margin:11px 0 0;font-size:12.5px;line-height:1.5;color:#7591ab;">{{ p.summary }}</p>
+            <div style="margin-top:13px;display:grid;grid-template-columns:repeat(3,1fr);gap:8px;background:#f3f6fd;border-radius:12px;padding:11px 8px;text-align:center;">
+              <div><div style="font-size:15px;font-weight:800;color:#1e2a5e;">{{ p.pubs }}</div><div style="font-size:10px;color:#6f7ba0;">Công bố</div></div>
+              <div><div style="font-size:15px;font-weight:800;color:#1e2a5e;">{{ p.cites }}</div><div style="font-size:10px;color:#6f7ba0;">Trích dẫn</div></div>
+              <div><div style="font-size:15px;font-weight:800;color:#1e2a5e;">{{ p.h }}</div><div style="font-size:10px;color:#6f7ba0;">h-index</div></div>
+            </div>
+            <div style="flex:1;"></div>
+            <div style="margin-top:14px;display:flex;align-items:center;justify-content:space-between;gap:8px;">
+              <sc-if value="{{ p.hasSch }}" hint-placeholder-val="{{ false }}">
+                <button onClick="{{ p.onSch }}" style="min-width:0;text-align:left;background:none;border:0;cursor:pointer;font-family:inherit;font-size:12px;color:#1c5cc0;padding:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">🎓 {{ p.schTitle }}</button>
+              </sc-if>
+              <button onClick="{{ p.onOpen }}" style="flex-shrink:0;margin-left:auto;background:#4f46e5;color:#fff;border:0;padding:8px 14px;border-radius:10px;font-family:inherit;font-size:12.5px;font-weight:700;cursor:pointer;">Xem hồ sơ →</button>
+            </div>
+          </div>
+        </sc-for>
+      </div>
+      <sc-if value="{{ anyFilterOpen }}" hint-placeholder-val="{{ false }}"><div onClick="{{ closeFilters }}" style="position:fixed;inset:0;z-index:20;"></div></sc-if>
+    </div>
+  </sc-if>
+
+  <!-- ============ PROFESSOR DETAIL ============ -->
+  <sc-if value="{{ isProfessor }}" hint-placeholder-val="{{ false }}">
+    <div style="max-width:1000px;margin:0 auto;padding:20px 24px 60px;">
+      <button onClick="{{ backProfessors }}" style="display:flex;align-items:center;gap:6px;background:none;border:0;color:#6f7ba0;font-family:inherit;font-size:13.5px;font-weight:600;cursor:pointer;padding:6px 0;">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="m15 18-6-6 6-6"/></svg>
+        Danh sách người hướng dẫn
+      </button>
+      <sc-if value="{{ profExists }}" hint-placeholder-val="{{ true }}">
+        <div style="margin-top:10px;background:#fff;border:1px solid #e2e8f4;border-radius:20px;padding:24px;">
+          <div style="display:flex;flex-wrap:wrap;gap:16px;align-items:flex-start;justify-content:space-between;">
+            <div>
+              <h1 style="margin:0;font-size:25px;font-weight:800;letter-spacing:-0.02em;color:#1e2a5e;">{{ pdName }}</h1>
+              <p style="margin:5px 0 0;font-size:14px;color:#5a7794;">{{ pdTitle }}</p>
+              <p style="margin:6px 0 0;font-size:13px;color:#7591ab;">{{ pdFlag }} {{ pdUni }} · {{ pdDept }}</p>
+              <p style="margin:2px 0 0;font-size:13px;color:#7591ab;">Lab: {{ pdLab }}</p>
+            </div>
+            <span style="flex-shrink:0;padding:6px 14px;border-radius:999px;font-size:13px;font-weight:700;background:{{ pdRecruitBg }};color:{{ pdRecruitFg }};">{{ pdRecruitLabel }}</span>
+          </div>
+          <div style="margin-top:16px;display:grid;grid-template-columns:repeat(3,1fr);gap:10px;">
+            <div style="background:#f3f6fd;border-radius:12px;padding:14px;text-align:center;"><div style="font-size:20px;font-weight:800;color:#1e2a5e;">{{ pdPubs }}</div><div style="font-size:11.5px;color:#6f7ba0;">Công bố</div></div>
+            <div style="background:#f3f6fd;border-radius:12px;padding:14px;text-align:center;"><div style="font-size:20px;font-weight:800;color:#1e2a5e;">{{ pdCites }}</div><div style="font-size:11.5px;color:#6f7ba0;">Trích dẫn</div></div>
+            <div style="background:#f3f6fd;border-radius:12px;padding:14px;text-align:center;"><div style="font-size:20px;font-weight:800;color:#1e2a5e;">{{ pdH }}</div><div style="font-size:11.5px;color:#6f7ba0;">h-index</div></div>
+          </div>
+        </div>
+
+        <div style="margin-top:16px;display:grid;grid-template-columns:1fr 320px;gap:16px;align-items:start;">
+          <div style="display:flex;flex-direction:column;gap:14px;">
+            <div style="background:#fff;border:1px solid #e2e8f4;border-radius:16px;padding:20px;">
+              <h2 style="margin:0 0 10px;font-size:15px;font-weight:800;color:#1e2a5e;">Hướng nghiên cứu</h2>
+              <p style="margin:0;font-size:14px;line-height:1.6;color:#455f78;">{{ pdSummary }}</p>
+              <div style="margin-top:12px;display:flex;flex-wrap:wrap;gap:6px;">
+                <sc-for list="{{ pdKeywords }}" as="k" hint-placeholder-count="3"><span style="background:#eef1fd;color:#4f46e5;border:1px solid #cdd6f7;padding:4px 10px;border-radius:999px;font-size:12px;font-weight:600;">{{ k }}</span></sc-for>
+              </div>
+              <div style="margin-top:8px;display:flex;flex-wrap:wrap;gap:6px;">
+                <sc-for list="{{ pdFields }}" as="f" hint-placeholder-count="2"><span style="background:#eef3f9;color:#5a7794;padding:3px 9px;border-radius:8px;font-size:11.5px;font-weight:600;">{{ f }}</span></sc-for>
+              </div>
+            </div>
+            <div style="background:#fff;border:1px solid #e2e8f4;border-radius:16px;padding:20px;">
+              <h2 style="margin:0 0 12px;font-size:15px;font-weight:800;color:#1e2a5e;">Công bố tiêu biểu</h2>
+              <div style="display:flex;flex-direction:column;gap:9px;">
+                <sc-for list="{{ pdPublications }}" as="pub" hint-placeholder-count="2">
+                  <div style="border:1px solid #e8ecf6;border-radius:11px;padding:12px 14px;">
+                    <p style="margin:0;font-size:13.5px;font-weight:700;color:#1a3352;line-height:1.35;">{{ pub.title }}</p>
+                    <p style="margin:3px 0 0;font-size:12px;color:#6f7ba0;">{{ pub.meta }}</p>
+                  </div>
+                </sc-for>
+              </div>
+            </div>
+            <div style="background:#fff;border:1px solid #e2e8f4;border-radius:16px;padding:20px;">
+              <h2 style="margin:0 0 4px;font-size:15px;font-weight:800;color:#1e2a5e;">Mẫu email liên hệ</h2>
+              <p style="margin:0 0 10px;font-size:12.5px;color:#6f7ba0;">Cá nhân hóa trước khi gửi — nhắc đúng công bố và hướng nghiên cứu của người hướng dẫn.</p>
+              <pre class="sf-scroll" style="margin:0;max-height:280px;overflow:auto;white-space:pre-wrap;word-break:break-word;background:#161d33;color:#e6eaf6;border-radius:12px;padding:16px;font-family:'Be Vietnam Pro',monospace;font-size:12.5px;line-height:1.6;">{{ pdEmailTpl }}</pre>
+              <button onClick="{{ pdCopy }}" style="margin-top:10px;background:#4f46e5;color:#fff;border:0;padding:10px 18px;border-radius:11px;font-family:inherit;font-size:13px;font-weight:700;cursor:pointer;">Sao chép mẫu email</button>
+            </div>
+          </div>
+          <aside style="position:sticky;top:82px;display:flex;flex-direction:column;gap:14px;">
+            <div style="background:#fff;border:1px solid #e2e8f4;border-radius:16px;padding:18px;">
+              <h2 style="margin:0 0 12px;font-size:14px;font-weight:800;color:#1e2a5e;">Liên hệ</h2>
+              <div style="display:flex;align-items:center;justify-content:space-between;gap:8px;font-size:13px;"><span style="color:#6f7ba0;">Email</span><span style="color:#4f46e5;font-weight:600;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">{{ pdEmail }}</span></div>
+              <p style="margin:12px 0 0;background:#fdf3e0;color:#a9670a;border-radius:9px;padding:9px 11px;font-size:11.5px;line-height:1.5;">⚠️ Email minh họa cho demo. Luôn dùng email chính thức trên trang trường.</p>
+            </div>
+            <sc-if value="{{ pdHasRelated }}" hint-placeholder-val="{{ false }}">
+              <div style="background:#fff;border:1px solid #e2e8f4;border-radius:16px;padding:18px;">
+                <h2 style="margin:0 0 12px;font-size:14px;font-weight:800;color:#1e2a5e;">Học bổng áp dụng</h2>
+                <div style="display:flex;flex-direction:column;gap:9px;">
+                  <sc-for list="{{ pdRelated }}" as="s" hint-placeholder-count="1">
+                    <button onClick="{{ s.onOpen }}" style="text-align:left;cursor:pointer;background:#f6f9fd;border:1px solid #e6eef6;border-radius:11px;padding:11px 13px;font-family:inherit;">
+                      <div style="font-size:13px;font-weight:700;color:#1a3352;">{{ s.title }}</div>
+                      <div style="font-size:11.5px;color:#7591ab;margin-top:2px;">{{ s.flag }} {{ s.country }}</div>
+                    </button>
+                  </sc-for>
+                </div>
+              </div>
+            </sc-if>
+          </aside>
+        </div>
+      </sc-if>
+    </div>
+  </sc-if>
+  <!-- ============ COMPARE ============ -->
+  <sc-if value="{{ isCompare }}" hint-placeholder-val="{{ false }}">
+    <div style="max-width:1200px;margin:0 auto;padding:22px 24px 60px;">
+      <sc-if value="{{ cmpNotEnough }}" hint-placeholder-val="{{ true }}">
+        <div style="margin-top:30px;border:1.5px dashed #cfe0f2;background:#fff;border-radius:20px;padding:56px 24px;text-align:center;">
+          <div style="margin:0 auto;width:60px;height:60px;border-radius:16px;background:#eef4fb;display:grid;place-items:center;color:#93a7bd;">
+            <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m17 3 4 4-4 4"/><path d="M21 7H9a4 4 0 0 0-4 4"/><path d="m7 21-4-4 4-4"/><path d="M3 17h12a4 4 0 0 0 4-4"/></svg>
+          </div>
+          <h1 style="margin:16px 0 0;font-size:20px;font-weight:800;color:#1a3352;">Chọn ít nhất 2 học bổng để so sánh</h1>
+          <p style="margin:8px 0 0;font-size:14px;color:#7591ab;">Bấm nút <b>⇄</b> trên thẻ học bổng ở trang tìm kiếm để thêm vào so sánh (tối đa 4).</p>
+          <button onClick="{{ backHome }}" style="margin-top:18px;background:#2f6fe0;color:#fff;border:0;padding:11px 22px;border-radius:12px;font-family:inherit;font-weight:700;font-size:14px;cursor:pointer;">Tìm học bổng →</button>
+        </div>
+      </sc-if>
+      <sc-if value="{{ cmpEnough }}" hint-placeholder-val="{{ false }}">
+        <div style="display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:12px;">
+          <h1 style="margin:0;font-size:24px;font-weight:800;letter-spacing:-0.02em;color:#12345c;">So sánh {{ cmpCount }} học bổng</h1>
+          <button onClick="{{ clearCompare }}" style="padding:9px 15px;border-radius:11px;background:#fff0f1;border:1px solid #f7d0d5;color:#d33a4a;font-family:inherit;font-size:13px;font-weight:700;cursor:pointer;">Xóa tất cả</button>
+        </div>
+        <div class="sf-scroll" style="margin-top:16px;overflow-x:auto;background:#fff;border:1px solid #dce8f4;border-radius:16px;">
+          <table style="width:100%;border-collapse:collapse;font-size:13px;">
+            <thead>
+              <tr>
+                <th style="position:sticky;left:0;z-index:2;background:#f6f9fd;width:150px;min-width:150px;padding:14px;text-align:left;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:0.04em;color:#93a7bd;border-bottom:1px solid #e6eef6;">Tiêu chí</th>
+                <sc-for list="{{ cmpCols }}" as="col" hint-placeholder-count="3">
+                  <th style="min-width:210px;background:#f6f9fd;padding:14px;text-align:left;vertical-align:top;border-left:1px solid #eef3f9;border-bottom:1px solid #e6eef6;">
+                    <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:8px;">
+                      <div style="min-width:0;">
+                        <div style="font-size:11.5px;font-weight:500;color:#7591ab;">{{ col.flag }} {{ col.country }} · QS #{{ col.qs }}</div>
+                        <button onClick="{{ col.onOpen }}" style="margin-top:3px;text-align:left;background:none;border:0;cursor:pointer;font-family:inherit;font-size:13.5px;font-weight:800;color:#1a3352;padding:0;line-height:1.3;">{{ col.title }}</button>
+                      </div>
+                      <button onClick="{{ col.onRemove }}" title="Bỏ" style="flex-shrink:0;background:none;border:0;cursor:pointer;color:#c3ccd8;padding:2px;"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M18 6 6 18M6 6l12 12"/></svg></button>
+                    </div>
+                  </th>
+                </sc-for>
+              </tr>
+            </thead>
+            <tbody>
+              <sc-for list="{{ cmpRows }}" as="row" hint-placeholder-count="10">
+                <tr>
+                  <th style="position:sticky;left:0;z-index:1;background:#fff;padding:12px 14px;text-align:left;font-size:12px;font-weight:700;color:#5a7794;border-top:1px solid #eef3f9;">{{ row.label }}</th>
+                  <sc-for list="{{ row.cells }}" as="cell" hint-placeholder-count="3">
+                    <td style="padding:12px 14px;border-left:1px solid #eef3f9;border-top:1px solid #eef3f9;vertical-align:top;">
+                      <div style="font-size:13px;font-weight:700;color:{{ cell.color }};">{{ cell.main }}</div>
+                      <sc-if value="{{ cell.sub }}" hint-placeholder-val="{{ false }}"><div style="font-size:11.5px;color:#7591ab;margin-top:2px;">{{ cell.sub }}</div></sc-if>
+                    </td>
+                  </sc-for>
+                </tr>
+              </sc-for>
+              <tr>
+                <th style="position:sticky;left:0;z-index:1;background:#fff;border-top:1px solid #eef3f9;"></th>
+                <sc-for list="{{ cmpActions }}" as="a" hint-placeholder-count="3">
+                  <td style="padding:12px 14px;border-left:1px solid #eef3f9;border-top:1px solid #eef3f9;">
+                    <div style="display:flex;flex-direction:column;gap:7px;">
+                      <button onClick="{{ a.onTrack }}" style="padding:8px;border-radius:10px;cursor:pointer;font-family:inherit;font-size:12px;font-weight:700;background:{{ a.trackBg }};color:{{ a.trackFg }};border:1px solid {{ a.trackBorder }};">{{ a.trackLabel }}</button>
+                      <button onClick="{{ a.onOpen }}" style="padding:8px;border-radius:10px;cursor:pointer;font-family:inherit;font-size:12px;font-weight:700;background:#1a3352;color:#fff;border:0;">Chi tiết →</button>
+                    </div>
+                  </td>
+                </sc-for>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+        <p style="margin-top:12px;font-size:12px;color:#93a7bd;">💡 Ô <b style="color:#0b7a52;">màu xanh</b> là lợi thế (dễ đạt / hạng cao / phù hợp nhất). 👑 = mức phù hợp cao nhất.</p>
+      </sc-if>
+    </div>
+  </sc-if>
+  <!-- ============ PROFILE ============ -->
+  <sc-if value="{{ isProfile }}" hint-placeholder-val="{{ false }}">
+    <div style="max-width:900px;margin:0 auto;padding:22px 24px 60px;">
+      <div style="background:linear-gradient(150deg,#0a1230,#1e3a8a);border-radius:20px;padding:26px;color:#fff;display:flex;flex-wrap:wrap;align-items:center;gap:18px;">
+        <div style="width:64px;height:64px;border-radius:999px;background:linear-gradient(135deg,#0f9d6b,#34c88a);display:grid;place-items:center;font-size:22px;font-weight:800;">{{ pfInitials }}</div>
+        <div style="flex:1;min-width:0;">
+          <h1 style="margin:0;font-size:23px;font-weight:800;letter-spacing:-0.02em;">{{ pfName }}</h1>
+          <p style="margin:4px 0 0;font-size:13.5px;color:rgba(255,255,255,.7);">{{ pfEmail }}</p>
+        </div>
+        <button onClick="{{ navLogin }}" style="background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.24);color:#fff;padding:9px 16px;border-radius:11px;font-family:inherit;font-size:13px;font-weight:700;cursor:pointer;">Đăng xuất</button>
+      </div>
+
+      <div style="margin-top:14px;display:grid;grid-template-columns:repeat(3,1fr);gap:12px;">
+        <div style="background:#fff;border:1px solid #dce8f4;border-radius:14px;padding:16px;text-align:center;"><div style="font-size:24px;font-weight:800;color:#1a3352;">{{ pfStatTracked }}</div><div style="font-size:12px;color:#7591ab;font-weight:600;">Đang theo dõi</div></div>
+        <div style="background:#fff;border:1px solid #dce8f4;border-radius:14px;padding:16px;text-align:center;"><div style="font-size:24px;font-weight:800;color:#7c3aed;">{{ pfStatCompare }}</div><div style="font-size:12px;color:#7591ab;font-weight:600;">Đang so sánh</div></div>
+        <div style="background:#fff;border:1px solid #dce8f4;border-radius:14px;padding:16px;text-align:center;"><div style="font-size:24px;font-weight:800;color:#0b7a52;">{{ pfStatAvg }}</div><div style="font-size:12px;color:#7591ab;font-weight:600;">Mức phù hợp TB</div></div>
+      </div>
+
+      <div style="margin-top:14px;background:#fff;border:1px solid #dce8f4;border-radius:18px;padding:22px;">
+        <h2 style="margin:0 0 4px;font-size:16px;font-weight:800;color:#1a3352;">Hồ sơ học tập</h2>
+        <p style="margin:0 0 18px;font-size:13px;color:#7591ab;">Dùng để chấm mức độ phù hợp của học bổng. Cập nhật để kết quả chính xác hơn.</p>
+
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:20px;">
+          <div>
+            <label style="display:block;font-size:12.5px;font-weight:700;color:#5a7794;margin-bottom:8px;">Bậc học mong muốn</label>
+            <div style="display:flex;background:#eef3f9;padding:4px;border-radius:11px;">
+              <sc-for list="{{ pfLevelSeg }}" as="o" hint-placeholder-count="3">
+                <button onClick="{{ o.onClick }}" style="flex:1;border:0;cursor:pointer;font-family:inherit;padding:8px;border-radius:8px;font-size:12.5px;font-weight:700;background:{{ o.bg }};color:{{ o.fg }};">{{ o.label }}</button>
+              </sc-for>
+            </div>
+            <label style="display:block;font-size:12.5px;font-weight:700;color:#5a7794;margin:18px 0 8px;">Nhu cầu tài chính</label>
+            <div style="display:flex;background:#eef3f9;padding:4px;border-radius:11px;">
+              <sc-for list="{{ pfFundSeg }}" as="o" hint-placeholder-count="3">
+                <button onClick="{{ o.onClick }}" style="flex:1;border:0;cursor:pointer;font-family:inherit;padding:8px;border-radius:8px;font-size:12.5px;font-weight:700;background:{{ o.bg }};color:{{ o.fg }};">{{ o.label }}</button>
+              </sc-for>
+            </div>
+          </div>
+          <div>
+            <div style="display:flex;align-items:baseline;justify-content:space-between;"><label style="font-size:12.5px;font-weight:700;color:#5a7794;">GPA (thang 4.0)</label><span style="font-size:18px;font-weight:800;color:#2f6fe0;">{{ pfGpaLabel }}</span></div>
+            <input type="range" min="0" max="4" step="0.1" value="{{ pfGpaVal }}" onInput="{{ onPfGpa }}" style="margin-top:8px;width:100%;accent-color:#2f6fe0;cursor:pointer;">
+            <div style="display:flex;align-items:baseline;justify-content:space-between;margin-top:16px;"><label style="font-size:12.5px;font-weight:700;color:#5a7794;">IELTS</label><span style="font-size:18px;font-weight:800;color:#2f6fe0;">{{ pfIeltsLabel }}</span></div>
+            <input type="range" min="0" max="9" step="0.5" value="{{ pfIeltsVal }}" onInput="{{ onPfIelts }}" style="margin-top:8px;width:100%;accent-color:#2f6fe0;cursor:pointer;">
+          </div>
+        </div>
+
+        <label style="display:block;font-size:12.5px;font-weight:700;color:#5a7794;margin:20px 0 9px;">Ngành quan tâm</label>
+        <div style="display:flex;flex-wrap:wrap;gap:8px;">
+          <sc-for list="{{ pfFieldChips }}" as="f" hint-placeholder-count="12">
+            <button onClick="{{ f.onClick }}" style="display:flex;align-items:center;gap:7px;cursor:pointer;padding:7px 13px;border-radius:999px;font-family:inherit;font-size:12.5px;font-weight:600;background:{{ f.bg }};border:1px solid {{ f.border }};color:{{ f.fg }};"><span style="width:8px;height:8px;border-radius:999px;background:{{ f.dot }};"></span>{{ f.label }}</button>
+          </sc-for>
+        </div>
+
+        <label style="display:block;font-size:12.5px;font-weight:700;color:#5a7794;margin:20px 0 9px;">Quốc gia ưu tiên</label>
+        <div style="display:flex;flex-wrap:wrap;gap:8px;">
+          <sc-for list="{{ pfCountryChips }}" as="c" hint-placeholder-count="13">
+            <button onClick="{{ c.onClick }}" style="display:flex;align-items:center;gap:7px;cursor:pointer;padding:7px 13px;border-radius:999px;font-family:inherit;font-size:12.5px;font-weight:600;background:{{ c.bg }};border:1px solid {{ c.border }};color:{{ c.fg }};">{{ c.flag }} {{ c.name }}</button>
+          </sc-for>
+        </div>
+      </div>
+    </div>
+  </sc-if>
+
+  <!-- ============ LOGIN ============ -->
+  <sc-if value="{{ isLogin }}" hint-placeholder-val="{{ false }}">
+    <div style="min-height:calc(100vh - 66px);position:relative;overflow:hidden;background:linear-gradient(160deg,#0a1230 0%,#152159 52%,#243a86 100%);display:grid;place-items:center;padding:40px 24px;">
+      <div style="position:absolute;inset:0;pointer-events:none;background-image:radial-gradient(1.6px 1.6px at 12% 22%,#fff,transparent 60%),radial-gradient(1.3px 1.3px at 26% 60%,rgba(255,255,255,.8),transparent 60%),radial-gradient(1.6px 1.6px at 44% 30%,#fff,transparent 60%),radial-gradient(1.2px 1.2px at 62% 66%,rgba(255,255,255,.75),transparent 60%),radial-gradient(1.5px 1.5px at 78% 26%,#fff,transparent 60%),radial-gradient(1.2px 1.2px at 88% 60%,rgba(255,255,255,.7),transparent 60%),radial-gradient(1.3px 1.3px at 34% 82%,rgba(255,255,255,.65),transparent 60%),radial-gradient(1.4px 1.4px at 68% 86%,#fff,transparent 60%);"></div>
+      <div style="position:absolute;top:8%;right:14%;color:#dbe9ff;opacity:.9;animation:sf-plane 6s ease-in-out infinite;"><svg width="56" height="56" viewBox="0 0 24 24" fill="currentColor"><path d="M2.5 19h19v2h-19zM22.07 9.64c-.21-.8-1.04-1.28-1.84-1.06L14.92 10 8.46 3.98l-1.93.52 3.87 6.7-4.97 1.34-1.97-1.54-1.45.39 2.59 4.49 17.42-4.67c.81-.23 1.28-1.05 1.06-1.86z"/></svg></div>
+      <div style="position:relative;width:100%;max-width:390px;background:#fff;border-radius:22px;padding:32px;box-shadow:0 30px 70px -20px rgba(0,0,0,.6);">
+        <div style="display:flex;align-items:center;gap:11px;justify-content:center;">
+          <div style="width:40px;height:40px;border-radius:12px;background:linear-gradient(135deg,#1e3a8a,#3b82f6);display:grid;place-items:center;">
+            <svg width="21" height="21" viewBox="0 0 24 24" fill="#fff"><path d="M2.5 19h19v2h-19zM22.07 9.64c-.21-.8-1.04-1.28-1.84-1.06L14.92 10 8.46 3.98l-1.93.52 3.87 6.7-4.97 1.34-1.97-1.54-1.45.39 2.59 4.49 17.42-4.67c.81-.23 1.28-1.05 1.06-1.86z"/></svg>
+          </div>
+          <span style="font-weight:800;font-size:20px;letter-spacing:-0.02em;color:#1a3352;">Scholar<span style="color:#2f6fe0;">Finder</span></span>
+        </div>
+        <h1 style="margin:20px 0 4px;font-size:20px;font-weight:800;color:#12345c;text-align:center;">Chào mừng trở lại</h1>
+        <p style="margin:0 0 20px;font-size:13px;color:#7591ab;text-align:center;">Đăng nhập để lưu học bổng và theo dõi hồ sơ.</p>
+        <label style="display:block;font-size:12px;font-weight:700;color:#5a7794;margin-bottom:6px;">Email</label>
+        <input placeholder="ban@email.com" style="width:100%;border:1px solid #cfe0f2;border-radius:11px;padding:12px 14px;font-family:inherit;font-size:14px;color:#1a3352;outline:none;margin-bottom:14px;">
+        <label style="display:block;font-size:12px;font-weight:700;color:#5a7794;margin-bottom:6px;">Mật khẩu</label>
+        <input type="password" placeholder="••••••••" style="width:100%;border:1px solid #cfe0f2;border-radius:11px;padding:12px 14px;font-family:inherit;font-size:14px;color:#1a3352;outline:none;margin-bottom:18px;">
+        <button onClick="{{ loginSubmit }}" style="width:100%;background:linear-gradient(135deg,#2f6fe0,#5aa2ff);color:#fff;border:0;padding:13px;border-radius:12px;font-family:inherit;font-size:14.5px;font-weight:800;cursor:pointer;box-shadow:0 12px 26px -12px rgba(47,111,224,.9);">Đăng nhập</button>
+        <div style="display:flex;align-items:center;gap:12px;margin:18px 0;"><div style="flex:1;height:1px;background:#e6eef6;"></div><span style="font-size:11.5px;color:#93a7bd;">hoặc</span><div style="flex:1;height:1px;background:#e6eef6;"></div></div>
+        <button onClick="{{ loginSubmit }}" style="width:100%;background:#fff;border:1px solid #dce8f4;color:#1a3352;padding:12px;border-radius:12px;font-family:inherit;font-size:14px;font-weight:700;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:10px;">
+          <svg width="18" height="18" viewBox="0 0 24 24"><path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92a5.06 5.06 0 0 1-2.2 3.32v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.1z"/><path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84A11 11 0 0 0 12 23z"/><path fill="#FBBC05" d="M5.84 14.1a6.6 6.6 0 0 1 0-4.2V7.06H2.18a11 11 0 0 0 0 9.88z"/><path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15A10.98 10.98 0 0 0 12 1 11 11 0 0 0 2.18 7.06l3.66 2.84C6.71 7.3 9.14 5.38 12 5.38z"/></svg>
+          Tiếp tục với Google
+        </button>
+        <p style="margin:18px 0 0;font-size:12px;color:#93a7bd;text-align:center;">Chưa có tài khoản? <span style="color:#2f6fe0;font-weight:700;cursor:pointer;">Đăng ký</span></p>
+      </div>
+    </div>
+  </sc-if>
+  <!-- ============ DOCUMENTS (draft assistant) ============ -->
+  <sc-if value="{{ isDocuments }}" hint-placeholder-val="{{ false }}">
+    <div style="max-width:900px;margin:0 auto;padding:20px 24px 60px;">
+      <button onClick="{{ docBackDetail }}" style="display:flex;align-items:center;gap:6px;background:none;border:0;color:#5a7794;font-family:inherit;font-size:13.5px;font-weight:600;cursor:pointer;padding:6px 0;">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="m15 18-6-6 6-6"/></svg>
+        Về chi tiết học bổng
+      </button>
+      <sc-if value="{{ docExists }}" hint-placeholder-val="{{ true }}">
+        <div style="position:relative;overflow:hidden;margin-top:10px;border-radius:20px;background:linear-gradient(150deg,#0e1638 0%,#1c2a63 52%,#34459c 100%);padding:28px 30px;color:#fff;">
+          <div style="position:absolute;top:-30px;right:-20px;width:180px;height:180px;border-radius:999px;background:radial-gradient(circle,rgba(90,120,255,.4),transparent 70%);"></div>
+          <div style="position:relative;">
+            <p style="margin:0;font-size:11px;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;color:#aebbe8;">✍️ Trợ lý viết hồ sơ</p>
+            <h1 style="margin:6px 0 0;font-size:23px;font-weight:800;letter-spacing:-0.02em;">Bản nháp giấy tờ cần nộp</h1>
+            <p style="margin:8px 0 0;font-size:13.5px;color:#c5d2f0;">Cho: <b style="color:#fff;">{{ docFlag }} {{ docTitle }}</b></p>
+          </div>
+        </div>
+
+        <p style="margin:14px 0 0;background:#eef1fd;color:#3730a3;border-radius:12px;padding:11px 14px;font-size:12.5px;line-height:1.5;">📝 Bản nháp viết bằng <b>tiếng Anh</b> (ngôn ngữ nộp phổ biến), đã cá nhân hóa theo hồ sơ của bạn. Phần trong <b>[ngoặc vuông]</b> là chỗ bạn cần tự điền.</p>
+
+        <div style="margin-top:14px;display:flex;flex-wrap:wrap;align-items:center;gap:8px;">
+          <sc-for list="{{ docJump }}" as="j" hint-placeholder-count="4">
+            <button onClick="{{ j.onClick }}" style="background:#fff;border:1px solid #dce8f4;color:#5a7794;padding:6px 12px;border-radius:999px;font-family:inherit;font-size:12px;font-weight:600;cursor:pointer;">{{ j.label }}</button>
+          </sc-for>
+          <button onClick="{{ onCopyAll }}" style="margin-left:auto;background:#1a3352;color:#fff;border:0;padding:8px 14px;border-radius:999px;font-family:inherit;font-size:12px;font-weight:700;cursor:pointer;">{{ docCopyAllLabel }}</button>
+        </div>
+
+        <div style="margin-top:14px;display:flex;flex-direction:column;gap:16px;">
+          <sc-for list="{{ docDrafts }}" as="d" hint-placeholder-count="4">
+            <section id="doc-{{ d.id }}" style="scroll-margin-top:70px;background:#fff;border:1px solid #dce8f4;border-radius:16px;padding:20px;box-shadow:0 1px 2px rgba(23,50,76,0.04);">
+              <div style="display:flex;flex-wrap:wrap;align-items:flex-start;justify-content:space-between;gap:8px;">
+                <div style="min-width:0;">
+                  <div style="display:flex;align-items:center;gap:9px;flex-wrap:wrap;">
+                    <h2 style="margin:0;font-size:16px;font-weight:800;color:#1a3352;">{{ d.title }}</h2>
+                    <span style="padding:2px 9px;border-radius:999px;font-size:10px;font-weight:800;background:{{ d.badgeBg }};color:{{ d.badgeFg }};">{{ d.badge }}</span>
+                  </div>
+                  <p style="margin:4px 0 0;font-size:12px;color:#7591ab;">{{ d.hint }}</p>
+                </div>
+              </div>
+              <textarea value="{{ d.text }}" onInput="{{ d.onInput }}" spellcheck="false" style="margin-top:12px;width:100%;min-height:220px;border:1px solid #e2e8f0;background:#f8fafd;border-radius:12px;padding:15px;font-family:'Be Vietnam Pro',ui-monospace,monospace;font-size:13px;line-height:1.65;color:#2a3a4f;outline:none;resize:vertical;white-space:pre-wrap;"></textarea>
+              <div style="margin-top:10px;display:flex;flex-wrap:wrap;align-items:center;gap:8px;">
+                <span style="font-size:11.5px;color:#93a7bd;">{{ d.words }}</span>
+                <div style="margin-left:auto;display:flex;gap:8px;">
+                  <button onClick="{{ d.onCopy }}" style="background:#2f6fe0;color:#fff;border:0;padding:8px 14px;border-radius:10px;font-family:inherit;font-size:12.5px;font-weight:700;cursor:pointer;">📋 {{ d.copyLabel }}</button>
+                  <sc-if value="{{ d.isEdited }}" hint-placeholder-val="{{ false }}">
+                    <button onClick="{{ d.onReset }}" style="background:#fff;border:1px solid #e2e8f0;color:#7591ab;padding:8px 12px;border-radius:10px;font-family:inherit;font-size:12.5px;font-weight:600;cursor:pointer;">↺ Khôi phục</button>
+                  </sc-if>
+                </div>
+              </div>
+            </section>
+          </sc-for>
+        </div>
+
+        <p style="margin-top:16px;background:#fdf3e0;color:#a9670a;border-radius:12px;padding:11px 14px;font-size:11.5px;line-height:1.5;">⚠️ Đây là bản nháp mẫu theo khung có sẵn (không phải AI), dùng để bạn điền nhanh rồi tự hoàn thiện. Luôn rà soát kỹ và tuân theo yêu cầu chính thức của học bổng trước khi nộp.</p>
+      </sc-if>
+    </div>
+  </sc-if>
+  <!-- ============ FLOATING COMPARE BAR ============ -->
+  <sc-if value="{{ showCompareBar }}" hint-placeholder-val="{{ false }}">
+    <div style="position:fixed;inset-inline:0;bottom:16px;z-index:50;padding:0 16px;pointer-events:none;">
+      <div style="pointer-events:auto;margin:0 auto;max-width:820px;display:flex;flex-wrap:wrap;align-items:center;gap:12px;background:rgba(16,25,54,0.96);backdrop-filter:blur(10px);border:1px solid rgba(120,150,220,0.35);border-radius:18px;padding:12px 14px;box-shadow:0 20px 50px -18px rgba(0,0,0,0.7);">
+        <div style="display:flex;min-width:0;flex:1;flex-wrap:wrap;align-items:center;gap:8px;">
+          <span style="flex-shrink:0;display:inline-flex;align-items:center;gap:6px;font-size:13px;font-weight:700;color:#c5d2f0;">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m17 3 4 4-4 4"/><path d="M21 7H9a4 4 0 0 0-4 4"/><path d="m7 21-4-4 4-4"/><path d="M3 17h12a4 4 0 0 0 4-4"/></svg>
+            So sánh
+          </span>
+          <sc-for list="{{ compareBarItems }}" as="ci" hint-placeholder-count="2">
+            <span style="display:flex;max-width:190px;align-items:center;gap:6px;background:rgba(255,255,255,0.1);border:1px solid rgba(255,255,255,0.2);border-radius:999px;padding:4px 6px 4px 10px;font-size:12px;color:#e6eaf6;">
+              <span>{{ ci.flag }}</span>
+              <span style="min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">{{ ci.title }}</span>
+              <button onClick="{{ ci.onRemove }}" title="Bỏ" style="flex-shrink:0;background:none;border:0;cursor:pointer;color:#8b98b0;padding:0;display:grid;place-items:center;"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"><path d="M18 6 6 18M6 6l12 12"/></svg></button>
+            </span>
+          </sc-for>
+        </div>
+        <div style="flex-shrink:0;display:flex;align-items:center;gap:10px;">
+          <button onClick="{{ clearCompare }}" style="background:none;border:0;cursor:pointer;font-family:inherit;font-size:12px;font-weight:600;color:#8b98b0;">Xóa hết</button>
+          <button onClick="{{ goCompareBar }}" style="border:0;cursor:pointer;font-family:inherit;font-size:13px;font-weight:800;padding:9px 16px;border-radius:12px;background:{{ compareBarGoBg }};color:{{ compareBarGoFg }};">{{ compareBarGoLabel }}</button>
+        </div>
+      </div>
+    </div>
+  </sc-if>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script>
+class Component extends DCLogic {
+  constructor(props){
+    super(props);
+    this.today = new Date('2026-07-02');
+    this.state = {
+      screen:'home', wizardOpen:false, wizardStep:0,
+      profile: { level:'Master', fields:['Data Science/AI','Computer Science'], countries:['DE','JP','SG','CA','GB'], gpa:3.4, ielts:7.0, fundingNeed:'Full' },
+      q:'', regions:[], countries:[], levels:[], fields:[], funding:[], providerTypes:[], maxRank:0, supervisor:'any', gre:'any', intakes:[], eligibleOnly:false,
+      sort:'match', openFilter:null,
+      openSec:{ country:true, ptype:false, rank:false, sup:false, gre:false, intake:false },
+      tracked:{}, compare:[], selId:null, selProf:null, boardView:'kanban', noteOpen:null,
+      profQ:'', profFields:[], profRanks:[], profCountries:[], profRecruiting:[],
+      docsEdited:{}, docsCopied:null,
+    };
+    this.EN={ DE:'Germany', JP:'Japan', GB:'the UK', NL:'the Netherlands', AU:'Australia', US:'the USA', CA:'Canada', FR:'France', CN:'China', KR:'South Korea', SG:'Singapore', SE:'Sweden', CH:'Switzerland' };
+    this.DEGREE_EN={ Bachelor:"Bachelor's", Master:"Master's", PhD:'PhD' };
+    this.LEVEL_VI = { Bachelor:'Cử nhân', Master:'Thạc sĩ', PhD:'Tiến sĩ' };
+    this.FUND_VI = { Full:'Toàn phần', Partial:'Bán phần', TuitionOnly:'Chỉ học phí' };
+    this.PTYPE_VI = { Government:'Chính phủ', University:'Trường đại học', Org:'Tổ chức / Quỹ', Corporate:'Doanh nghiệp' };
+    this.FLAGS = { DE:'🇩🇪', JP:'🇯🇵', GB:'🇬🇧', NL:'🇳🇱', AU:'🇦🇺', US:'🇺🇸', CA:'🇨🇦', FR:'🇫🇷', CN:'🇨🇳', KR:'🇰🇷', SG:'🇸🇬', SE:'🇸🇪', CH:'🇨🇭' };
+    this.REGIONS = ['Châu Âu','Bắc Mỹ','Châu Á','Châu Đại Dương'];
+    this.LEVELS = ['Bachelor','Master','PhD'];
+    this.FUNDS = ['Full','Partial','TuitionOnly'];
+    this.FIELDS = ['Data Science/AI','Computer Science','Engineering','Business','Economics','Medicine/Health','Environment','Physics','Materials','Social Sciences','Law','Education'];
+    this.FIELD_DOT = { 'Data Science/AI':'#3b82f6','Computer Science':'#6366f1','Engineering':'#f59e0b','Business':'#10b981','Economics':'#14b8a6','Medicine/Health':'#ef4444','Environment':'#22c55e','Physics':'#8b5cf6','Materials':'#f97316','Social Sciences':'#ec4899','Law':'#64748b','Education':'#06b6d4' };
+    this.SCH = [
+      { id:'daad-epos', title:'DAAD EPOS — Development-Related Postgraduate Courses', provider:'DAAD (Chính phủ Đức)', providerType:'Government', university:'Technical University of Munich', cc:'DE', country:'Đức', region:'Châu Âu', city:'Munich', levels:['Master'], fields:['Engineering','Data Science/AI','Environment'], funding:'Full', language:'Tiếng Anh', sup:false, proposal:false, minGpa:3.0, minIelts:6.5, gre:false, docs:7, intake:'Fall 2027', qs:28, deadlines:[{type:'Mở đơn',date:'2026-08-01'},{type:'Hạn học bổng',date:'2026-10-15'},{type:'Kết quả (dự kiến)',date:'2027-02-28'}] },
+      { id:'mext-univ', title:'MEXT — Học bổng Chính phủ Nhật (Đại học tiến cử)', provider:'MEXT (Chính phủ Nhật Bản)', providerType:'Government', university:'University of Tokyo', cc:'JP', country:'Nhật Bản', region:'Châu Á', city:'Tokyo', levels:['Master','PhD'], fields:['Data Science/AI','Computer Science','Engineering'], funding:'Full', language:'Anh / Nhật', sup:true, proposal:true, minGpa:3.2, minIelts:6.5, gre:false, docs:7, intake:'Fall 2027', qs:32, deadlines:[{type:'Liên hệ giáo sư',date:'2026-07-15'},{type:'Mở đơn',date:'2026-09-01'},{type:'Hạn nộp hồ sơ',date:'2026-12-05'},{type:'Kết quả (dự kiến)',date:'2027-05-30'}] },
+      { id:'chevening', title:'Chevening Scholarship', provider:'FCDO (Chính phủ Anh)', providerType:'Government', university:'University of Oxford', cc:'GB', country:'Anh', region:'Châu Âu', city:'Oxford', levels:['Master'], fields:['Business','Economics','Social Sciences','Law'], funding:'Full', language:'Tiếng Anh', sup:false, proposal:false, minGpa:3.0, minIelts:6.5, gre:false, docs:6, intake:'Fall 2027', qs:3, deadlines:[{type:'Mở đơn',date:'2026-08-06'},{type:'Hạn nộp',date:'2026-11-05'},{type:'Phỏng vấn (dự kiến)',date:'2027-03-15'}] },
+      { id:'erasmus-mundus', title:'Erasmus Mundus Joint Master (EMJM)', provider:'Ủy ban châu Âu (EU)', providerType:'Government', university:'TU Delft', cc:'NL', country:'Liên minh châu Âu', region:'Châu Âu', city:'Delft (+ luân chuyển)', levels:['Master'], fields:['Data Science/AI','Engineering','Environment','Computer Science'], funding:'Full', language:'Tiếng Anh', sup:false, proposal:false, minGpa:3.2, minIelts:6.5, gre:false, docs:6, intake:'Fall 2027', qs:49, deadlines:[{type:'Mở đơn',date:'2026-10-01'},{type:'Hạn học bổng',date:'2027-01-10'},{type:'Kết quả (dự kiến)',date:'2027-04-30'}] },
+      { id:'australia-awards', title:'Australia Awards Scholarship', provider:'DFAT (Chính phủ Úc)', providerType:'Government', university:'University of Melbourne', cc:'AU', country:'Úc', region:'Châu Đại Dương', city:'Melbourne', levels:['Master'], fields:['Environment','Economics','Medicine/Health','Education'], funding:'Full', language:'Tiếng Anh', sup:false, proposal:false, minGpa:2.8, minIelts:6.5, gre:false, docs:6, intake:'2028', qs:13, deadlines:[{type:'Mở đơn',date:'2026-08-01'},{type:'Hạn nộp',date:'2026-10-30'},{type:'Kết quả (dự kiến)',date:'2027-06-30'}] },
+      { id:'fulbright', title:'Fulbright Vietnamese Student Program', provider:'Bộ Ngoại giao Hoa Kỳ', providerType:'Government', university:'Harvard University', cc:'US', country:'Mỹ', region:'Bắc Mỹ', city:'Cambridge, MA', levels:['Master'], fields:['Social Sciences','Economics','Education','Law'], funding:'Full', language:'Tiếng Anh', sup:false, proposal:false, minGpa:3.0, minIelts:7.0, gre:true, docs:6, intake:'Fall 2028', qs:4, deadlines:[{type:'Mở đơn',date:'2026-12-01'},{type:'Hạn nộp',date:'2027-04-15'},{type:'Phỏng vấn (dự kiến)',date:'2027-07-30'}] },
+      { id:'vanier', title:'Vanier Canada Graduate Scholarship', provider:'Chính phủ Canada', providerType:'Government', university:'University of Toronto', cc:'CA', country:'Canada', region:'Bắc Mỹ', city:'Toronto', levels:['PhD'], fields:['Medicine/Health','Engineering','Social Sciences','Data Science/AI'], funding:'Full', language:'Tiếng Anh', sup:true, proposal:true, minGpa:3.7, minIelts:7.0, gre:false, docs:6, intake:'Fall 2027', qs:25, deadlines:[{type:'Liên hệ giáo sư',date:'2026-07-10'},{type:'Hạn nội bộ trường',date:'2026-09-20'},{type:'Kết quả (dự kiến)',date:'2027-04-10'}] },
+      { id:'eiffel', title:'Eiffel Excellence Scholarship', provider:'Bộ châu Âu & Ngoại giao Pháp', providerType:'Government', university:'Sorbonne University', cc:'FR', country:'Pháp', region:'Châu Âu', city:'Paris', levels:['Master','PhD'], fields:['Environment','Physics','Economics','Law'], funding:'Partial', language:'Anh / Pháp', sup:false, proposal:false, minGpa:3.3, minIelts:6.5, gre:false, docs:4, intake:'Fall 2027', qs:59, deadlines:[{type:'Liên hệ trường để đề cử',date:'2026-09-01'},{type:'Hạn trường nộp',date:'2027-01-09'},{type:'Kết quả (dự kiến)',date:'2027-03-31'}] },
+      { id:'csc', title:'Chinese Government Scholarship (CSC)', provider:'China Scholarship Council', providerType:'Government', university:'Tsinghua University', cc:'CN', country:'Trung Quốc', region:'Châu Á', city:'Beijing', levels:['Master','PhD'], fields:['Materials','Engineering','Business','Medicine/Health'], funding:'Full', language:'Anh / Trung', sup:true, proposal:true, minGpa:3.0, minIelts:6.0, gre:false, docs:5, intake:'Fall 2027', qs:20, deadlines:[{type:'Liên hệ giáo sư',date:'2026-11-01'},{type:'Hạn nộp',date:'2027-03-15'},{type:'Kết quả (dự kiến)',date:'2027-07-01'}] },
+      { id:'gks', title:'Global Korea Scholarship (GKS)', provider:'NIIED (Chính phủ Hàn Quốc)', providerType:'Government', university:'Seoul National University', cc:'KR', country:'Hàn Quốc', region:'Châu Á', city:'Seoul', levels:['Bachelor','Master'], fields:['Business','Engineering','Social Sciences','Computer Science'], funding:'Full', language:'Anh / Hàn', sup:false, proposal:false, minGpa:3.0, minIelts:5.5, gre:false, docs:6, intake:'Fall 2027', qs:31, deadlines:[{type:'Mở đơn (Embassy)',date:'2026-09-15'},{type:'Hạn nộp',date:'2026-11-01'},{type:'Kết quả (dự kiến)',date:'2027-06-15'}] },
+      { id:'nus-rs', title:'NUS Research Scholarship', provider:'National University of Singapore', providerType:'University', university:'National University of Singapore', cc:'SG', country:'Singapore', region:'Châu Á', city:'Singapore', levels:['Master','PhD'], fields:['Data Science/AI','Computer Science','Engineering'], funding:'Full', language:'Tiếng Anh', sup:true, proposal:true, minGpa:3.5, minIelts:6.5, gre:true, docs:6, intake:'August 2027', qs:8, deadlines:[{type:'Liên hệ giáo sư',date:'2026-08-01'},{type:'Hạn nộp (kỳ T8)',date:'2026-11-15'},{type:'Kết quả (dự kiến)',date:'2027-04-01'}] },
+      { id:'gates-cambridge', title:'Gates Cambridge Scholarship', provider:'Gates Cambridge Trust', providerType:'Org', university:'University of Cambridge', cc:'GB', country:'Anh', region:'Châu Âu', city:'Cambridge', levels:['Master','PhD'], fields:['Medicine/Health','Data Science/AI','Social Sciences','Physics'], funding:'Full', language:'Tiếng Anh', sup:true, proposal:true, minGpa:3.7, minIelts:7.5, gre:false, docs:6, intake:'Fall 2027', qs:5, deadlines:[{type:'Liên hệ giáo sư',date:'2026-09-01'},{type:'Hạn nộp',date:'2026-12-03'},{type:'Phỏng vấn (dự kiến)',date:'2027-03-20'}] },
+      { id:'si-sweden', title:'Swedish Institute Scholarships (Global Professionals)', provider:'Swedish Institute', providerType:'Government', university:'KTH Royal Institute of Technology', cc:'SE', country:'Thụy Điển', region:'Châu Âu', city:'Stockholm', levels:['Master'], fields:['Engineering','Environment','Data Science/AI'], funding:'Full', language:'Tiếng Anh', sup:false, proposal:false, minGpa:3.2, minIelts:6.5, gre:false, docs:5, intake:'Fall 2027', qs:73, deadlines:[{type:'Nộp đơn vào trường',date:'2026-08-15'},{type:'Hạn học bổng SI',date:'2027-02-10'},{type:'Kết quả (dự kiến)',date:'2027-04-30'}] },
+      { id:'ethz-excellence', title:'ETH Excellence Scholarship (ESOP)', provider:'ETH Zurich', providerType:'University', university:'ETH Zurich', cc:'CH', country:'Thụy Sĩ', region:'Châu Âu', city:'Zurich', levels:['Master'], fields:['Computer Science','Data Science/AI','Physics','Engineering'], funding:'Full', language:'Tiếng Anh', sup:false, proposal:false, minGpa:3.7, minIelts:7.0, gre:false, docs:6, intake:'Fall 2027', qs:7, deadlines:[{type:'Mở đơn',date:'2026-11-01'},{type:'Hạn nộp',date:'2026-12-15'},{type:'Kết quả (dự kiến)',date:'2027-03-31'}] },
+      { id:'holland', title:'Holland Scholarship', provider:'Bộ Giáo dục Hà Lan + các trường', providerType:'Government', university:'TU Delft', cc:'NL', country:'Hà Lan', region:'Châu Âu', city:'Delft', levels:['Bachelor','Master'], fields:['Engineering','Computer Science','Business'], funding:'Partial', language:'Tiếng Anh', sup:false, proposal:false, minGpa:3.0, minIelts:6.5, gre:false, docs:5, intake:'Fall 2027', qs:49, deadlines:[{type:'Mở đơn',date:'2026-10-01'},{type:'Hạn nộp',date:'2027-02-01'},{type:'Kết quả (dự kiến)',date:'2027-04-15'}] },
+    ];
+    this.COUNTRIES = [];
+    const seen = {};
+    this.SCH.forEach(s=>{ if(!seen[s.cc]){ seen[s.cc]=1; this.COUNTRIES.push({ code:s.cc, name:s.country }); } });
+    this.PTYPES_PRESENT = [];
+    const ps={}; this.SCH.forEach(s=>{ if(!ps[s.providerType]){ ps[s.providerType]=1; this.PTYPES_PRESENT.push(s.providerType); } });
+    this.INTAKES = [];
+    const is={}; this.SCH.forEach(s=>{ if(!is[s.intake]){ is[s.intake]=1; this.INTAKES.push(s.intake); } });
+    this.STAGES = [
+      { id:'quan_tam', label:'Quan tâm', bg:'#f1f5f9', fg:'#475569', bd:'#cbd5e1', dot:'#94a3b8' },
+      { id:'nghien_cuu', label:'Nghiên cứu', bg:'#e0f2fe', fg:'#0369a1', bd:'#bae6fd', dot:'#0ea5e9' },
+      { id:'lien_he_gs', label:'Liên hệ GS', bg:'#f3e8ff', fg:'#7c3aed', bd:'#e9d5ff', dot:'#a855f7' },
+      { id:'chuan_bi', label:'Chuẩn bị', bg:'#fef3c7', fg:'#b45309', bd:'#fde68a', dot:'#f59e0b' },
+      { id:'da_nop', label:'Đã nộp', bg:'#dbeafe', fg:'#1d4ed8', bd:'#bfdbfe', dot:'#3b82f6' },
+      { id:'phong_van', label:'Phỏng vấn', bg:'#ffedd5', fg:'#c2410c', bd:'#fed7aa', dot:'#f97316' },
+      { id:'ket_qua', label:'Kết quả', bg:'#d1fae5', fg:'#047857', bd:'#a7f3d0', dot:'#10b981' },
+    ];
+    this.DOCS = {
+      'daad-epos':['CV','Motivation Letter','2 Thư giới thiệu','Bảng điểm (dịch công chứng)','Bằng tốt nghiệp','IELTS/TOEFL','Kinh nghiệm làm việc ≥ 2 năm'],
+      'mext-univ':['CV','Research Proposal','Thư đồng ý hướng dẫn của giáo sư','Bảng điểm','Bằng tốt nghiệp','IELTS/TOEFL','Field of Study & Study Program'],
+      'chevening':['4 Bài luận Chevening','2 Thư giới thiệu','Bảng điểm & bằng','IELTS','Kinh nghiệm làm việc ≥ 2 năm','Thư mời nhập học'],
+      'erasmus-mundus':['CV (Europass)','Motivation Letter','2 Thư giới thiệu','Bảng điểm & bằng','IELTS/TOEFL','Portfolio (tùy ngành)'],
+      'australia-awards':['CV','Bài luận nguyện vọng','Bảng điểm & bằng','IELTS','Kinh nghiệm làm việc','Cam kết về nước ≥ 2 năm'],
+      'fulbright':['Study Objective','Personal Statement','3 Thư giới thiệu','Bảng điểm & bằng','TOEFL/IELTS','GRE (tùy ngành)'],
+      'vanier':['Research Proposal','CV học thuật','Thư đề cử của trường','2-3 Thư giới thiệu','Bảng điểm','Minh chứng nghiên cứu'],
+      'eiffel':['Do trường Pháp đề cử','CV','Motivation Letter','Bảng điểm & bằng'],
+      'csc':['Study Plan / Research Proposal','Pre-admission letter (giáo sư)','2 Thư giới thiệu','Bảng điểm & bằng','Giấy khám sức khỏe'],
+      'gks':['Personal Statement','Study Plan','2 Thư giới thiệu','Bảng điểm & bằng','Giấy khám sức khỏe','TOPIK/IELTS (nếu có)'],
+      'nus-rs':['Research Proposal','CV học thuật','Liên hệ giáo sư hướng dẫn','2 Thư giới thiệu','Bảng điểm','GRE (khuyến khích)'],
+      'gates-cambridge':['Research Proposal','Personal Statement','CV','Thư giới thiệu học thuật','Bảng điểm','IELTS 7.5+'],
+      'si-sweden':['CV (mẫu SI)','Motivation Letter','2 Thư giới thiệu','Kinh nghiệm ≥ 3.000 giờ','Đơn nhập học đã nộp'],
+      'ethz-excellence':['CV','Motivation Letter','Research Statement','2 Thư giới thiệu','Bảng điểm (top ~10%)','Đơn nhập học Master'],
+      'holland':['CV','Motivation Letter','Bảng điểm & bằng','IELTS/TOEFL','Đơn nhập học chương trình'],
+    };
+    this.BENEFITS = {
+      'daad-epos':['Trợ cấp ~934 EUR/tháng','Miễn học phí','Bảo hiểm y tế','Vé máy bay khứ hồi','Học phần tiếng Đức'],
+      'mext-univ':['Trợ cấp ~144.000 JPY/tháng','Miễn học phí','Vé máy bay khứ hồi','Không yêu cầu hoàn trả'],
+      'chevening':['Toàn bộ học phí','Sinh hoạt phí','Vé máy bay khứ hồi','Phụ cấp ổn định'],
+      'erasmus-mundus':['Học phí','Sinh hoạt phí ~1.400 EUR/tháng','Phụ cấp đi lại','Học tại 2+ quốc gia'],
+      'australia-awards':['Toàn bộ học phí','Sinh hoạt phí','Vé máy bay','Bảo hiểm OSHC','Khóa dự bị'],
+      'fulbright':['Học phí','Sinh hoạt phí','Vé máy bay','Bảo hiểm','Hỗ trợ nộp hồ sơ'],
+      'vanier':['50.000 CAD/năm × 3 năm','Hỗ trợ nghiên cứu'],
+      'eiffel':['Sinh hoạt phí 1.181 EUR/tháng','Vé máy bay','Bảo hiểm','Không gồm học phí'],
+      'csc':['Miễn học phí','Ký túc xá / trợ cấp nhà ở','Sinh hoạt phí','Bảo hiểm y tế'],
+      'gks':['Miễn học phí','Sinh hoạt phí ~900.000 KRW/tháng','Vé máy bay','1 năm học tiếng Hàn','Bảo hiểm'],
+      'nus-rs':['Miễn học phí','Stipend ~2.700 SGD/tháng','Hỗ trợ nghiên cứu'],
+      'gates-cambridge':['Toàn bộ học phí','Sinh hoạt phí','Vé máy bay','Phụ cấp gia đình/hội thảo'],
+      'si-sweden':['Học phí','Sinh hoạt phí 12.000 SEK/tháng','Bảo hiểm','Trợ cấp đi lại','Mạng lưới alumni SI'],
+      'ethz-excellence':['Học phí + sinh hoạt ~11.000 CHF/kỳ','Ưu tiên cơ hội nghiên cứu'],
+      'holland':['5.000 EUR (năm đầu)','Không gồm toàn bộ học phí'],
+    };
+    this.SUMMARY = {
+      'daad-epos':'Học bổng toàn phần của chính phủ Đức cho học viên từ các nước đang phát triển, ưu tiên ngành phát triển bền vững.',
+      'mext-univ':'Học bổng toàn phần của chính phủ Nhật. Đường Đại học tiến cử cần thư đồng ý của giáo sư trước khi nộp.',
+      'chevening':'Học bổng danh giá của chính phủ Anh cho bậc Thạc sĩ, nhấn mạnh tố chất lãnh đạo và cam kết đóng góp quê hương.',
+      'erasmus-mundus':'Chương trình Thạc sĩ liên kết nhiều trường châu Âu, học bổng toàn phần, học tại ít nhất 2 quốc gia.',
+      'australia-awards':'Học bổng phát triển của chính phủ Úc; yêu cầu cam kết trở về đóng góp sau tốt nghiệp.',
+      'fulbright':'Học bổng Fulbright cho công dân Việt Nam học Thạc sĩ tại Hoa Kỳ; tuyển chọn cạnh tranh cao.',
+      'vanier':'Học bổng Tiến sĩ hàng đầu của Canada; cần được giáo sư/khoa đề cử, yêu cầu thành tích nghiên cứu xuất sắc.',
+      'eiffel':'Học bổng của chính phủ Pháp; ứng viên được trường đại học Pháp đề cử chứ không nộp trực tiếp.',
+      'csc':'Học bổng chính phủ Trung Quốc; lợi thế lớn nếu có thư chấp nhận (pre-admission) từ giáo sư.',
+      'gks':'Học bổng chính phủ Hàn Quốc, gồm 1 năm học tiếng Hàn; có 2 đường nộp qua Đại sứ quán hoặc Đại học.',
+      'nus-rs':'Học bổng nghiên cứu của NUS; nên liên hệ giáo sư phù hợp trước khi nộp để tăng cơ hội.',
+      'gates-cambridge':'Một trong những học bổng danh giá nhất thế giới tại Cambridge; nộp cùng đơn xin học, cực kỳ cạnh tranh.',
+      'si-sweden':'Học bổng của Viện Thụy Điển, chú trọng kinh nghiệm làm việc và lãnh đạo, mạng lưới alumni mạnh.',
+      'ethz-excellence':'Học bổng xuất sắc của ETH Zurich cho bậc Thạc sĩ, dành cho ứng viên thành tích top đầu.',
+      'holland':'Học bổng một lần 5.000 EUR cho sinh viên quốc tế ngoài EU học tại Hà Lan; phù hợp làm học bổng hỗ trợ.',
+    };
+    this.PROFS = [
+      { id:'prof-sato', name:'Prof. Kenji Sato', title:'Giáo sư (Professor)', rank:'professor', uni:'University of Tokyo', dept:'Graduate School of Information Science and Technology', lab:'Machine Perception Laboratory', cc:'JP', fields:['Data Science/AI','Computer Science'], keywords:['computer vision','deep learning','medical imaging'], email:'sato@is.u-tokyo.example.ac.jp', pubs:142, cites:11800, h:48, recruiting:'recruiting', schId:'mext-univ', publications:[{t:'Self-Supervised Representation Learning for Medical Imaging',y:2025,v:'CVPR'},{t:'Robust Vision Transformers under Distribution Shift',y:2024,v:'NeurIPS'},{t:'Weakly-Supervised Segmentation for Radiology',y:2023,v:'MICCAI'}], summary:'Nghiên cứu thị giác máy tính và học sâu ứng dụng trong ảnh y khoa; đang nhận nghiên cứu sinh cho kỳ tới.' },
+      { id:'prof-muller', name:'Prof. Anna Müller', title:'Phó Giáo sư (Associate Professor)', rank:'associate', uni:'Technical University of Munich', dept:'Department of Informatics', lab:'Autonomous Systems Group', cc:'DE', fields:['Engineering','Data Science/AI'], keywords:['robotics','reinforcement learning','autonomous systems'], email:'a.mueller@tum.example.de', pubs:98, cites:7400, h:39, recruiting:'unknown', schId:'daad-epos', publications:[{t:'Sample-Efficient RL for Legged Robots',y:2025,v:'ICRA'},{t:'Safe Exploration in Autonomous Navigation',y:2024,v:'CoRL'}], summary:'Robot học và học tăng cường cho hệ thống tự hành.' },
+      { id:'prof-chen', name:'Prof. Wei Chen', title:'Giáo sư (Professor)', rank:'professor', uni:'Tsinghua University', dept:'School of Materials Science and Engineering', lab:'Energy Materials Lab', cc:'CN', fields:['Materials','Engineering'], keywords:['energy materials','batteries','nanomaterials'], email:'wchen@tsinghua.example.cn', pubs:175, cites:20500, h:61, recruiting:'recruiting', schId:'csc', publications:[{t:'High-Capacity Solid-State Battery Electrodes',y:2025,v:'Nature Energy'},{t:'Scalable Synthesis of Nanostructured Cathodes',y:2024,v:'Advanced Materials'}], summary:'Vật liệu năng lượng và pin thể rắn; nhóm nghiên cứu lớn, thường xuyên tuyển NCS quốc tế.' },
+      { id:'prof-lim', name:'Prof. Sarah Lim', title:'Trợ lý Giáo sư (Assistant Professor)', rank:'assistant', uni:'National University of Singapore', dept:'School of Computing', lab:'NLP & Health AI Lab', cc:'SG', fields:['Data Science/AI','Computer Science'], keywords:['natural language processing','machine learning','healthcare AI'], email:'sarahlim@nus.example.sg', pubs:87, cites:6100, h:34, recruiting:'recruiting', schId:'nus-rs', publications:[{t:'Clinical Language Models with Limited Supervision',y:2025,v:'ACL'},{t:'Fairness in Predictive Healthcare Models',y:2024,v:'EMNLP'}], summary:'Xử lý ngôn ngữ tự nhiên và AI trong y tế.' },
+      { id:'prof-dubois', name:'Prof. Pierre Dubois', title:'Phó Giáo sư (Associate Professor)', rank:'associate', uni:'Sorbonne University', dept:'Institute of Earth Sciences', lab:'Climate & Ocean Dynamics Group', cc:'FR', fields:['Environment','Physics'], keywords:['climate modeling','oceanography','geophysical fluid dynamics'], email:'p.dubois@sorbonne.example.fr', pubs:120, cites:9800, h:45, recruiting:'unknown', schId:'eiffel', publications:[{t:'Ocean Heat Uptake in CMIP6 Models',y:2025,v:'Journal of Climate'},{t:'Mesoscale Eddies and Carbon Transport',y:2023,v:'Nature Geoscience'}], summary:'Mô hình khí hậu và hải dương học.' },
+      { id:'prof-smith', name:'Prof. Emily Smith', title:'Giáo sư (Professor)', rank:'professor', uni:'University of Cambridge', dept:'Department of Genetics', lab:'Computational Genomics Lab', cc:'GB', fields:['Medicine/Health','Data Science/AI'], keywords:['bioinformatics','genomics','single-cell analysis'], email:'e.smith@cam.example.ac.uk', pubs:156, cites:18200, h:57, recruiting:'recruiting', schId:'gates-cambridge', publications:[{t:'Single-Cell Atlas of Human Immune Development',y:2025,v:'Cell'},{t:'Deep Learning for Variant Effect Prediction',y:2024,v:'Nature Methods'}], summary:'Tin sinh học và genomics tính toán; hướng dẫn NCS qua học bổng Gates Cambridge.' },
+    ];
+    this.RECRUIT_VI = { recruiting:'Đang tuyển', unknown:'Chưa rõ', not_recruiting:'Không tuyển' };
+    this.RANKS = ['professor','associate','assistant','dr'];
+    this.RANK_VI = { professor:'Giáo sư', associate:'Phó Giáo sư', assistant:'Trợ lý Giáo sư', dr:'Tiến sĩ / NCV' };
+    this.RANK_CLS = { professor:{bg:'#eef2ff',fg:'#4338ca',bd:'#c7d2fe'}, associate:{bg:'#e0f2fe',fg:'#0369a1',bd:'#bae6fd'}, assistant:{bg:'#e9f8f0',fg:'#0b7a52',bd:'#c4ecd8'}, dr:{bg:'#f1f5f9',fg:'#475569',bd:'#e2e8f0'} };
+  }
+
+  // ---- helpers ----
+  daysLeft(d){ return Math.ceil((new Date(d) - this.today)/86400000); }
+  fmtDate(iso){ const p=iso.split('-'); return p[2]+'/'+p[1]+'/'+p[0]; }
+  nextDeadline(s){
+    const fut = s.deadlines.map(d=>({...d,t:new Date(d.date).getTime()})).filter(d=>d.t>=this.today.getTime()).sort((a,b)=>a.t-b.t);
+    return fut[0] || s.deadlines[s.deadlines.length-1];
+  }
+  matchScore(p, s){
+    let score=0;
+    if(s.levels.includes(p.level)) score+=20;
+    if(p.fields.some(f=>s.fields.includes(f))) score+=20;
+    if(p.countries.includes(s.cc)) score+=15; else score+=4;
+    if(p.gpa>=s.minGpa) score+=15; else if(p.gpa>=s.minGpa-0.3) score+=6;
+    if(p.ielts>=s.minIelts) score+=15; else if(p.ielts>=s.minIelts-0.5) score+=6;
+    if(p.fundingNeed==='Any' || p.fundingNeed===s.funding || (p.fundingNeed==='Partial'&&s.funding==='Full')) score+=10; else score+=3;
+    if(!s.gre) score+=5;
+    score=Math.max(0,Math.min(100,score));
+    let label='Cân nhắc';
+    if(score>=80) label='Rất phù hợp'; else if(score>=60) label='Phù hợp'; else if(score<40) label='Chưa đủ ĐK';
+    return { score, label };
+  }
+  matchColors(score){
+    if(score>=80) return { fg:'#0b7a52', bar:'#10a06d' };
+    if(score>=60) return { fg:'#1c5cc0', bar:'#2f6fe0' };
+    if(score>=40) return { fg:'#a9670a', bar:'#e0921a' };
+    return { fg:'#b23343', bar:'#e14b5a' };
+  }
+  dlStyle(days){
+    if(days<0) return { color:'#93a7bd', text:'đã đóng' };
+    if(days===0) return { color:'#d33a4a', text:'hết hạn hôm nay' };
+    if(days<=7) return { color:'#d33a4a', text:'còn '+days+' ngày' };
+    if(days<=30) return { color:'#c47a00', text:'còn '+days+' ngày' };
+    return { color:'#5a7794', text:'còn '+days+' ngày' };
+  }
+  toggle(key,val){ this.setState(s=>{ const a=s[key]; return { [key]: a.includes(val)? a.filter(x=>x!==val):[...a,val] }; }); }
+  setF(key,val){ this.setState({ [key]:val }); }
+  schById(id){ return this.SCH.find(s=>s.id===id); }
+  profById(id){ return this.PROFS.find(p=>p.id===id); }
+  stageById(id){ return this.STAGES.find(s=>s.id===id); }
+  // ---- navigation ----
+  go(screen){ this.setState({ screen, openFilter:null }); window.scrollTo(0,0); }
+  _nav(st,key,label,badge){ const active=st.screen===key||(key==='professors'&&st.screen==='professor'); return { label, onClick:()=>this.go(key), weight:active?'700':'600', bg:active?'#fff':'transparent', fg:active?'#1a3352':'#5a7794', shadow:active?'0 1px 3px rgba(23,50,76,0.08)':'none', badge, badgeShow:badge!==undefined&&badge>0 }; }
+  openDetail(id){ this.setState({ screen:'detail', selId:id, openFilter:null }); window.scrollTo(0,0); }
+  openProfessor(id){ this.setState({ screen:'professor', selProf:id }); window.scrollTo(0,0); }
+  // ---- tracking model (stage / note / checklist) ----
+  isTracked(id){ return !!this.state.tracked[id]; }
+  toggleTrack(id){ this.setState(s=>{ const n={...s.tracked}; if(n[id]) delete n[id]; else n[id]={ id, stage:'quan_tam', note:'', checklist:{} }; return { tracked:n }; }); }
+  setStage(id,stage){ this.setState(s=>{ const it=s.tracked[id]||{ id, stage:'quan_tam', note:'', checklist:{} }; return { tracked:{...s.tracked,[id]:{...it,stage}} }; }); }
+  setNote(id,note){ this.setState(s=>{ const it=s.tracked[id]; if(!it) return {}; return { tracked:{...s.tracked,[id]:{...it,note}} }; }); }
+  toggleChecklist(id,doc){ this.setState(s=>{ const it=s.tracked[id]||{ id, stage:'chuan_bi', note:'', checklist:{} }; const cl={...it.checklist,[doc]:!it.checklist[doc]}; return { tracked:{...s.tracked,[id]:{...it,checklist:cl}} }; }); }
+  removeTrack(id){ this.setState(s=>{ const n={...s.tracked}; delete n[id]; return { tracked:n }; }); }
+  progress(id){ const it=this.state.tracked[id]; const docs=this.DOCS[id]||[]; if(!it||!docs.length) return 0; const done=docs.filter(d=>it.checklist[d]).length; return Math.round(done/docs.length*100); }
+  toggleCompare(id){ this.setState(s=>{ if(s.compare.includes(id)) return { compare:s.compare.filter(x=>x!==id) }; if(s.compare.length>=4) return {}; return { compare:[...s.compare,id] }; }); }
+  matchReasons(P,s){
+    const L=this.LEVEL_VI, F=this.FUND_VI, r=[];
+    r.push({label:'Nhận ứng viên Việt Nam',status:'ok'});
+    if(s.levels.includes(P.level)) r.push({label:'Đúng bậc học: '+L[P.level],status:'ok'}); else r.push({label:'Không có bậc '+L[P.level]+' (có: '+s.levels.map(l=>L[l]).join(', ')+')',status:'fail'});
+    const ov=P.fields.filter(f=>s.fields.includes(f));
+    if(ov.length) r.push({label:'Khớp ngành: '+ov.join(', '),status:'ok'}); else r.push({label:'Ngành mong muốn không nằm trong phạm vi',status:'warn'});
+    if(P.countries.includes(s.cc)) r.push({label:'Đúng quốc gia mong muốn: '+s.country,status:'ok'}); else r.push({label:'Quốc gia ngoài danh sách ưu tiên: '+s.country,status:'warn'});
+    if(P.gpa>=s.minGpa) r.push({label:'GPA đạt ('+P.gpa.toFixed(1)+' ≥ '+s.minGpa.toFixed(1)+'/4.0)',status:'ok'}); else if(P.gpa>=s.minGpa-0.3) r.push({label:'GPA gần đạt (cần '+s.minGpa.toFixed(1)+'/4.0)',status:'warn'}); else r.push({label:'GPA chưa đạt (cần '+s.minGpa.toFixed(1)+'/4.0)',status:'fail'});
+    if(P.ielts>=s.minIelts) r.push({label:'IELTS đạt ('+P.ielts.toFixed(1)+' ≥ '+s.minIelts.toFixed(1)+')',status:'ok'}); else if(P.ielts>=s.minIelts-0.5) r.push({label:'IELTS gần đạt (cần '+s.minIelts.toFixed(1)+')',status:'warn'}); else r.push({label:'IELTS chưa đạt (cần '+s.minIelts.toFixed(1)+')',status:'fail'});
+    if(P.fundingNeed==='Any'||P.fundingNeed===s.funding||(P.fundingNeed==='Partial'&&s.funding==='Full')) r.push({label:'Mức tài trợ phù hợp ('+F[s.funding]+')',status:'ok'}); else r.push({label:'Bạn cần Toàn phần nhưng học bổng là '+F[s.funding],status:'warn'});
+    if(s.gre) r.push({label:'Yêu cầu GRE/GMAT — cần chuẩn bị thêm',status:'warn'}); else r.push({label:'Không yêu cầu GRE/GMAT',status:'ok'});
+    return r;
+  }
+
+  openDocs(id){ this.setState({ screen:'documents', selId:id, openFilter:null }); window.scrollTo(0,0); }
+  docKey(schId,docId){ return schId+':'+docId; }
+  setDoc(schId,docId,val){ this.setState(s=>({ docsEdited:{...s.docsEdited,[this.docKey(schId,docId)]:val} })); }
+  resetDoc(schId,docId){ this.setState(s=>{ const n={...s.docsEdited}; delete n[this.docKey(schId,docId)]; return { docsEdited:n }; }); }
+  copyDoc(id,text){ try{ navigator.clipboard.writeText(text); }catch(e){} this.setState({docsCopied:id}); clearTimeout(this._copyT); this._copyT=setTimeout(()=>this.setState({docsCopied:null}),1800); }
+  wordCount(t){ return t.trim().split(/\s+/).filter(Boolean).length; }
+  makeDrafts(P,s){
+    const name='[Họ và tên của bạn]';
+    const degree=this.DEGREE_EN[P.level]||'graduate';
+    const field=P.fields[0]||'[ngành của bạn]';
+    const fieldsList=P.fields.join(', ')||'[các ngành của bạn]';
+    const country=this.EN[s.cc]||s.country;
+    const uni=s.university, title=s.title;
+    const gpa=P.gpa>0?P.gpa.toFixed(1):'[GPA]';
+    const ielts=P.ielts>0?P.ielts.toFixed(1):'[IELTS]';
+    const prof=this.PROFS.find(p=>p.schId===s.id)||null;
+    const docsText=(this.DOCS[s.id]||[]).join(' ').toLowerCase();
+    const hasRec=/giới thiệu|recommend|reference|đề cử/.test(docsText);
+    const hasProposal=s.proposal||/proposal|đề cương/.test(docsText);
+    const hasStudyPlan=/study plan|kế hoạch học/.test(docsText);
+    const isChevening=/chevening/.test(s.title.toLowerCase());
+    let sopName='Statement of Purpose (SOP)';
+    if(/study objective/.test(docsText)) sopName='Study Objective';
+    else if(/personal statement/.test(docsText)) sopName='Personal Statement';
+    else if(/motivation/.test(docsText)) sopName='Motivation Letter';
+    const commit=/về nước|cam kết/.test(docsText);
+    const d=[];
+    d.push({ id:'cv', title:'CV / Résumé (học thuật)', hint:'Giữ trong 1–2 trang. Ưu tiên học vấn & nghiên cứu liên quan tới chương trình.', body:
+`${name}
+[Email] · [Điện thoại] · [Thành phố, Quốc gia] · [LinkedIn / portfolio]
+
+OBJECTIVE
+Applicant for the ${degree} program in ${field} at ${uni} (${country}) — ${title}.
+
+EDUCATION
+[Bằng cấp, chuyên ngành], [Trường] — GPA ${gpa}/4.0, [năm tốt nghiệp]
+  • Relevant coursework: [3–5 môn thuộc ${fieldsList}]
+  • Honors / awards: [học bổng, giải thưởng…]
+
+RESEARCH / PROJECTS
+  • [Tên đồ án/luận văn] — [bạn đã làm gì] → [kết quả / số liệu]
+  • [Dự án 2] — [công cụ/phương pháp] → [tác động]
+
+EXPERIENCE
+  • [Vị trí], [Tổ chức] ([bắt đầu]–[kết thúc])
+      – [Thành tựu kèm con số, ví dụ "cải thiện X thêm 20%"]
+
+SKILLS & TESTS
+  • Technical: [công cụ/phương pháp cho ${field}]
+  • English: IELTS ${ielts}${s.gre?' · GRE/GMAT: [điểm]':''}
+  • Languages: [khác]` });
+    d.push({ id:'sop', title:sopName, hint:'≈ 800–1000 từ. Cụ thể: nêu tên lab/môn học/giáo sư và một thành tựu rõ ràng.', body:
+`${sopName} — ${title}
+${uni} (${country}) · Applicant: ${name}
+
+Dear Selection Committee,
+
+I am applying for the ${degree} program in ${field} at ${uni} under the ${title}. [Mở đầu bằng một khoảnh khắc/vấn đề cụ thể đưa bạn đến với ${field} — 1–2 câu, tránh sáo rỗng.]
+
+Academically, I hold [bằng cấp của bạn] with a GPA of ${gpa}/4.0. [Mô tả 1–2 môn học hoặc dự án thuộc ${fieldsList} và một kết quả cụ thể — con số, giải thưởng, sản phẩm.] These experiences built the foundation and motivation for my graduate study.
+
+I am applying to ${uni} specifically because [nêu tên lab, môn học, nhóm nghiên cứu hoặc giáo sư — thật cụ thể]. ${prof?`In particular, ${prof.name}'s work on ${prof.keywords.slice(0,2).join(' and ')} aligns closely with the direction I want to pursue.`:'The program\u2019s strengths in [lĩnh vực] match the direction I want to pursue.'} My goal for this program is to [mục tiêu học tập 1–2 năm].
+
+The ${title} would allow me to [điều mà học bổng giúp bạn thực hiện]. After graduation, I plan to [mục tiêu nghề nghiệp].${commit?' In line with the scholarship\u2019s mission, I intend to return and contribute to my community by [kế hoạch cụ thể].':''}
+
+Thank you for considering my application.
+
+Sincerely,
+${name}` });
+    if(isChevening){
+      d.push({ id:'che1', title:'Chevening — Bài luận 1: Leadership & Influence', hint:'~500 từ. Một ví dụ rõ ràng: Bối cảnh → hành động của bạn → kết quả → bài học.', body:
+`Leadership & Influence — ${name}
+
+Situation: [Thách thức và bối cảnh là gì?]
+Action: [BẠN đã làm gì cụ thể? Tập trung vào quyết định của bạn và cách bạn dẫn dắt mọi người.]
+Result: [Điều gì đã thay đổi? Dùng con số hoặc kết quả cụ thể.]
+Reflection: [Bài học về lãnh đạo, và bạn sẽ áp dụng thế nào sau khi học tại Anh?]` });
+      d.push({ id:'che2', title:'Chevening — Bài luận 2: Networking', hint:'~500 từ. Cho thấy bạn xây dựng và sử dụng quan hệ chuyên môn có mục đích.', body:
+`Networking — ${name}
+
+Context: [Bạn kết nối với ai và vì sao?]
+Action: [Bạn xây dựng và duy trì quan hệ đó thế nào?]
+Outcome: [Nó đạt được gì — cho bạn và cho họ?]
+Future: [Bạn sẽ dùng mạng lưới Chevening trong ${field} thế nào để đạt mục tiêu?]` });
+      d.push({ id:'che3', title:'Chevening — Bài luận 3: Studying in the UK', hint:'~500 từ. Vì sao khóa học này, vì sao nước Anh, vì sao lúc này.', body:
+`Studying in the UK — ${name}
+
+I intend to study [tên khóa học] at ${uni}. [Vì sao đúng khóa học & trường này — môn học, giảng viên, danh tiếng trong ${field}.]
+[Vì sao chọn nước Anh cho ${field}?]
+[Vì sao là lúc này, dựa trên nền tảng của bạn (GPA ${gpa}/4.0, [kinh nghiệm])?]
+[Khóa học kết nối trực tiếp với kế hoạch nghề nghiệp của bạn ra sao.]` });
+      d.push({ id:'che4', title:'Chevening — Bài luận 4: Career Plan', hint:'~500 từ. Mục tiêu ngắn hạn (sau khóa học) và dài hạn; cụ thể và khả thi.', body:
+`Career Plan — ${name}
+
+Short term (0–2 năm sau khóa học): [Vị trí/lĩnh vực cụ thể trong ${field} và tác động bạn nhắm tới.]
+Long term (5–10 năm): [Mục tiêu lãnh đạo và thay đổi bạn muốn tạo ra ở cộng đồng/đất nước.]
+How this scholarship helps: [Kỹ năng, mạng lưới và kiến thức từ ${uni} giúp kế hoạch khả thi.]` });
+    }
+    if(hasProposal&&!isChevening){
+      d.push({ id:'proposal', title:'Research Proposal (dàn ý)', hint:'2–5 trang. Đặt tiêu đề cụ thể, có thể nghiên cứu được; trích dẫn công bố của giáo sư.', body:
+`Research Proposal — ${title}
+Applicant: ${name} · Target: ${degree} in ${field}, ${uni} (${country})
+${prof?`Proposed supervisor: ${prof.name} (${prof.uni})`:'Proposed supervisor: [nêu tên một giáo sư phù hợp tại '+uni+']'}
+
+1. WORKING TITLE
+   [Một tiêu đề cụ thể, nghiên cứu được, trong ${field}]
+
+2. BACKGROUND & MOTIVATION
+   [2–4 câu: vấn đề, vì sao quan trọng, khoảng trống trong nghiên cứu hiện tại.]
+   ${prof?`Building on ${prof.name}'s work on ${prof.keywords.slice(0,2).join(', ')}, `:''}[nêu khoảng trống bạn sẽ giải quyết.]
+
+3. RESEARCH QUESTIONS / OBJECTIVES
+   RQ1: [câu hỏi]
+   RQ2: [câu hỏi]
+
+4. METHODOLOGY
+   [Dữ liệu/vật liệu, phương pháp, công cụ. Cụ thể cách trả lời từng RQ.]
+
+5. TIMELINE
+   Year 1: [tổng quan tài liệu, chuẩn bị]
+   Year 2: [thí nghiệm / khảo sát]
+   Year 3: [phân tích, viết] (điều chỉnh theo ${degree})
+
+6. EXPECTED CONTRIBUTIONS
+   [Kiến thức/ứng dụng mới, và ai hưởng lợi.]
+
+7. REFERENCES${prof&&prof.publications[0]?`\n   • ${prof.name} et al., "${prof.publications[0].t}", ${prof.publications[0].v} ${prof.publications[0].y}.`:'\n   [3–6 tài liệu tham khảo]'}` });
+    }
+    if(hasStudyPlan&&!hasProposal){
+      d.push({ id:'studyplan', title:'Study Plan', hint:'Mục tiêu rõ ràng cho trước, trong và sau chương trình.', body:
+`Study Plan — ${name}
+${degree} in ${field}, ${uni} (${country}) — ${title}
+
+1. Motivation: [Vì sao ${field}, vì sao ${country}?]
+2. Before arrival: [chuẩn bị ngôn ngữ, đọc nền tảng, kỹ năng cần xây]
+3. During the program: [môn/học phần tập trung, nghiên cứu hoặc dự án, mốc theo học kỳ]
+4. After graduation: [cách áp dụng tấm bằng; đóng góp cho cộng đồng]` });
+    }
+    if(hasRec){
+      d.push({ id:'lor', title:'Thư giới thiệu (bản nháp cho người giới thiệu)', hint:'Đưa bản nháp này cho giáo sư/quản lý điều chỉnh — đừng tự nộp nguyên văn.', body:
+`RECOMMENDATION LETTER (bản nháp — người giới thiệu nên cá nhân hóa)
+Re: ${name} — application for ${title}, ${uni}
+
+To the Selection Committee,
+
+I am [Tên người giới thiệu, chức danh] at [Đơn vị]. I have known ${name} for [thời gian] as their [giáo sư/quản lý] in [môn học/dự án].
+
+[Đoạn 1 — năng lực: một ví dụ cụ thể về thế mạnh của ${name} trong ${field}: một dự án, một kết quả, một vấn đề đã giải quyết.]
+
+[Đoạn 2 — phẩm chất: chủ động, làm việc nhóm hoặc kiên trì, kèm ví dụ ngắn gọn.]
+
+Among [nhóm, ví dụ "các sinh viên tôi đã dạy trong 5 năm"], ${name} ranks in the [top X%]. I recommend ${name} without reservation for the ${title}.
+
+Sincerely,
+[Tên người giới thiệu] · [Chức danh] · [Email] · [Đơn vị]
+
+──────────────────────────────
+EMAIL NGẮN NHỜ NGƯỜI GIỚI THIỆU
+Subject: Reference letter request — ${title} (deadline [ngày])
+
+Dear [Thầy/Cô/Anh/Chị],
+
+Em đang ứng tuyển ${title} tại ${uni}. Dựa trên [môn học/dự án chúng ta đã làm], không biết Thầy/Cô có thể viết giúp em một thư giới thiệu trước [ngày] không ạ? Em có đính kèm CV và một bản nháp để Thầy/Cô tham khảo hoặc điều chỉnh. Em cảm ơn rất nhiều ạ.
+
+Trân trọng,
+${name}` });
+    }
+    return d;
+  }
+
+  screenData(st,P){
+    const L=this.LEVEL_VI, F=this.FUND_VI, PT=this.PTYPE_VI, FL=this.FLAGS;
+    const statusIcon=(s)=>s==='ok'?'#10a06d':s==='warn'?'#e0921a':'#e14b5a';
+
+    // ===== DETAIL =====
+    let D={ selExists:false };
+    if(st.selId){
+      const s=this.schById(st.selId);
+      if(s){
+        const m=this.matchScore(P,s), mc=this.matchColors(m.score);
+        const nd=this.nextDeadline(s), ndl=this.dlStyle(this.daysLeft(nd.date));
+        const it=st.tracked[s.id], isT=!!it;
+        const docs=this.DOCS[s.id]||[];
+        D={
+          selExists:true,
+          selTitle:s.title, selProvider:s.provider, selFlag:FL[s.cc], selCountry:s.country, selUni:s.university, selCity:s.city, selQs:s.qs, selProviderType:PT[s.providerType],
+          selMatch:m.score, selMatchPct:m.score+'%', selMatchLabel:m.label, selMatchFg:mc.fg, selMatchBar:mc.bar, selMatchWidth:m.score+'%',
+          selFundLabel:F[s.funding], selLevels:s.levels.map(l=>L[l]).join(' · '), selLang:s.language, selIntake:s.intake, selSummary:this.SUMMARY[s.id]||'',
+          selReqSup:s.sup, selReqProposal:s.proposal,
+          selReasons:this.matchReasons(P,s).map(r=>({label:r.label, color:statusIcon(r.status), textColor:r.status==='fail'?'#b23343':r.status==='warn'?'#a9670a':'#324a63'})),
+          selBenefits:(this.BENEFITS[s.id]||[]),
+          selFacts:[
+            {label:'GPA tối thiểu', value:s.minGpa.toFixed(1)+' / 4.0'},
+            {label:'Ngôn ngữ', value:'IELTS ≥ '+s.minIelts.toFixed(1)},
+            {label:'GRE/GMAT', value:s.gre?'Có thể cần':'Không yêu cầu'},
+            {label:'Nhận ứng viên VN', value:'Có'},
+            {label:'Ngành', value:s.fields.join(', ')},
+            {label:'Kỳ nhập học', value:s.intake},
+          ],
+          selDeadlines:s.deadlines.map(d=>{ const dd=this.dlStyle(this.daysLeft(d.date)); return { type:d.type, date:this.fmtDate(d.date), text:dd.text, color:dd.color }; }),
+          selProfs:s.professorIds ? [] : [],
+          selProfList:this.PROFS.filter(p=>p.schId===s.id).map(p=>({ id:p.id, name:p.name, uni:p.uni, kw:p.keywords.slice(0,3).join(', '), recruiting:p.recruiting==='recruiting', onOpen:()=>this.openProfessor(p.id) })),
+          selHasProfs:this.PROFS.some(p=>p.schId===s.id),
+          selDocs:docs.map(d=>({ label:d, checked:!!(it&&it.checklist[d]), onToggle:()=>this.toggleChecklist(s.id,d) })),
+          selProg:this.progress(s.id), selProgWidth:this.progress(s.id)+'%',
+          selIsTracked:isT, selTrackLabel:isT?'✓ Đang theo dõi':'+ Theo dõi', selTrackBg:isT?'#0f9d6b':'#2f6fe0',
+          selToggleTrack:()=>this.toggleTrack(s.id),
+          selCompared:st.compare.includes(s.id), selCompareLabel:st.compare.includes(s.id)?'✓ Đang so sánh':'⇄ Thêm vào so sánh', selToggleCompare:()=>this.toggleCompare(s.id),
+          selOpenDocs:()=>this.openDocs(s.id),
+          selStage:(it&&it.stage)||'quan_tam', selStageOptions:this.STAGES.map(x=>({value:x.id,label:x.label})), onSelStage:(e)=>this.setStage(s.id,e.target.value),
+          selNote:(it&&it.note)||'', onSelNote:(e)=>this.setNote(s.id,e.target.value),
+          selDlType:nd.type, selDlDate:this.fmtDate(nd.date), selDlText:ndl.text, selDlColor:ndl.color,
+          selTrust:s.trustScore||92, selVerified:'20/06/2026',
+        };
+      }
+    }
+
+    // ===== BOARD =====
+    const boardItems=Object.values(st.tracked).map(it=>{ const s=this.schById(it.id); if(!s) return null; const m=this.matchScore(P,s); const nd=this.nextDeadline(s); const days=this.daysLeft(nd.date); const dd=this.dlStyle(days); const prof=this.PROFS.find(p=>p.schId===s.id); return { it, s, m, nd, days, dd, prof, prog:this.progress(s.id) }; }).filter(Boolean).sort((a,b)=>a.days-b.days);
+    const bStats={ total:boardItems.length, soon:boardItems.filter(r=>r.days>=0&&r.days<=7).length, urgent:boardItems.filter(r=>r.days>=0&&r.days<=30&&r.prog<100).length, submitted:boardItems.filter(r=>['da_nop','phong_van','ket_qua'].includes(r.it.stage)).length };
+    const rowVM=(r)=>{ const stg=this.stageById(r.it.stage); const mc=this.matchColors(r.m.score); return {
+      id:r.s.id, title:r.s.title, flag:FL[r.s.cc], country:r.s.country,
+      match:r.m.score, matchPct:r.m.score+'%', matchFg:mc.fg, matchBg:r.m.score>=80?'#e9f8f0':r.m.score>=60?'#e7f2ff':r.m.score>=40?'#fdf3e0':'#fdecee',
+      dlDate:this.fmtDate(r.nd.date), dlText:r.dd.text, dlColor:r.dd.color,
+      profName:r.prof?r.prof.name:'—', hasProf:!!r.prof, onProf:r.prof?(()=>this.openProfessor(r.prof.id)):(()=>{}),
+      prog:r.prog, progWidth:r.prog+'%',
+      stage:r.it.stage, stageLabel:stg.label, stageBg:stg.bg, stageFg:stg.fg, stageBd:stg.bd, stageDot:stg.dot,
+      note:r.it.note, hasNote:!!r.it.note, noteOpen:st.noteOpen===r.s.id,
+      onToggleNote:()=>this.setState(x=>({noteOpen:x.noteOpen===r.s.id?null:r.s.id})), onNote:(e)=>this.setNote(r.s.id,e.target.value),
+      onStage:(e)=>this.setStage(r.s.id,e.target.value), stageOptions:this.STAGES.map(x=>({value:x.id,label:x.label})),
+      onOpen:()=>this.openDetail(r.s.id), onRemove:()=>this.removeTrack(r.s.id),
+      onDragStart:()=>{ this._drag=r.s.id; }, onDragEnd:()=>{ this._drag=null; },
+    }; };
+    const boardRows=boardItems.map(rowVM);
+    const boardCols=this.STAGES.map(stg=>{ const its=boardItems.filter(r=>r.it.stage===stg.id); return { id:stg.id, label:stg.label, bg:stg.bg, fg:stg.fg, bd:stg.bd, dot:stg.dot, items:its.map(rowVM), count:its.length, empty:its.length===0, onDrop:()=>{ if(this._drag){ this.setStage(this._drag,stg.id); this._drag=null; } }, onDragOver:(e)=>e.preventDefault() }; });
+
+    // ===== PROFESSORS LIST =====
+    let profList=[...this.PROFS];
+    if(st.profQ.trim()){ const k=st.profQ.toLowerCase(); profList=profList.filter(p=>p.name.toLowerCase().includes(k)||p.uni.toLowerCase().includes(k)||p.dept.toLowerCase().includes(k)||p.keywords.some(w=>w.toLowerCase().includes(k))||p.fields.some(f=>f.toLowerCase().includes(k))); }
+    if(st.profFields.length) profList=profList.filter(p=>p.fields.some(f=>st.profFields.includes(f)));
+    if(st.profRanks.length) profList=profList.filter(p=>st.profRanks.includes(p.rank));
+    if(st.profCountries.length) profList=profList.filter(p=>st.profCountries.includes(p.cc));
+    if(st.profRecruiting.length) profList=profList.filter(p=>st.profRecruiting.includes(p.recruiting));
+    const rord={recruiting:0,unknown:1,not_recruiting:2};
+    profList.sort((a,b)=>rord[a.recruiting]-rord[b.recruiting]||b.h-a.h);
+    const recruitColor=(r)=>r==='recruiting'?{bg:'#e9f8f0',fg:'#0b7a52',bd:'#c4ecd8'}:r==='unknown'?{bg:'#f1f5f9',fg:'#64748b',bd:'#e2e8f0'}:{bg:'#fdecee',fg:'#b23343',bd:'#f7ccd2'};
+    const profResults=profList.map(p=>{ const rc=recruitColor(p.recruiting); const rk=this.RANK_CLS[p.rank]||this.RANK_CLS.dr; const sch=this.schById(p.schId); return {
+      id:p.id, name:p.name, title:p.title, uni:p.uni, flag:FL[p.cc], summary:p.summary,
+      rankLabel:this.RANK_VI[p.rank]||'NCV', rankBg:rk.bg, rankFg:rk.fg, rankBd:rk.bd,
+      recruitLabel:this.RECRUIT_VI[p.recruiting], recruitBg:rc.bg, recruitFg:rc.fg, recruitBd:rc.bd,
+      keywords:p.keywords.slice(0,3), pubs:p.pubs, cites:p.cites.toLocaleString('en-US'), h:p.h,
+      schTitle:sch?(sch.title.length>26?sch.title.slice(0,26)+'…':sch.title):'', hasSch:!!sch, onSch:sch?(()=>this.openDetail(sch.id)):(()=>{}),
+      onOpen:()=>this.openProfessor(p.id),
+    }; });
+    const profFieldsAll=[...new Set(this.PROFS.flatMap(p=>p.fields))].sort();
+    const profRanksAll=this.RANKS.filter(r=>this.PROFS.some(p=>p.rank===r));
+    const profCountriesAll=[...new Set(this.PROFS.map(p=>p.cc))];
+    const mkProfChecks=(arr,key,labelFn)=>arr.map(v=>{ const active=st[key].includes(v); return { label:labelFn(v), active, rowBg:active?'#eef1fd':'transparent', boxBorder:active?'#4f46e5':'#cbd8e6', boxBg:active?'#4f46e5':'#fff', boxRadius:'6px', onClick:()=>this.toggle(key,v) }; });
+    const profDef=(key,label,options)=>{ const cnt=st[key].length; return { label, options, count:cnt, hasCount:cnt>0, isOpen:st.openFilter==='p_'+key, chev:st.openFilter==='p_'+key?'rotate(180deg)':'rotate(0deg)', btnBg:cnt>0?'#eef1fd':'#f4f6fd', btnBorder:cnt>0?'#cdd6f7':'#e6eaf4', btnFg:cnt>0?'#4f46e5':'#414a6b', toggle:()=>this.setState(x=>({openFilter:x.openFilter==='p_'+key?null:'p_'+key})) }; };
+    const profTopFilters=[
+      profDef('profFields','Ngành nghiên cứu', mkProfChecks(profFieldsAll,'profFields',v=>v)),
+      profDef('profRanks','Học hàm', mkProfChecks(profRanksAll,'profRanks',v=>this.RANK_VI[v])),
+      profDef('profCountries','Quốc gia', mkProfChecks(profCountriesAll,'profCountries',v=>FL[v]+' '+((this.COUNTRIES.find(c=>c.code===v)||{}).name||v))),
+      profDef('profRecruiting','Trạng thái tuyển', mkProfChecks(['recruiting','unknown','not_recruiting'],'profRecruiting',v=>this.RECRUIT_VI[v])),
+    ];
+    const profActive=st.profFields.length+st.profRanks.length+st.profCountries.length+st.profRecruiting.length;
+    const profChips=[];
+    st.profFields.forEach(v=>profChips.push({label:v,onRemove:()=>this.toggle('profFields',v)}));
+    st.profRanks.forEach(v=>profChips.push({label:this.RANK_VI[v],onRemove:()=>this.toggle('profRanks',v)}));
+    st.profCountries.forEach(v=>profChips.push({label:FL[v]+' '+((this.COUNTRIES.find(c=>c.code===v)||{}).name||v),onRemove:()=>this.toggle('profCountries',v)}));
+    st.profRecruiting.forEach(v=>profChips.push({label:this.RECRUIT_VI[v],onRemove:()=>this.toggle('profRecruiting',v)}));
+
+    // ===== PROFESSOR DETAIL =====
+    let PD={ profExists:false };
+    if(st.selProf){
+      const p=this.profById(st.selProf);
+      if(p){
+        const rc=recruitColor(p.recruiting);
+        const rel=this.SCH.filter(s=>s.id===p.schId).map(s=>({ id:s.id, title:s.title, flag:FL[s.cc], country:s.country, onOpen:()=>this.openDetail(s.id) }));
+        const tpl='Kính gửi '+p.name+',\n\nEm là sinh viên Việt Nam đang quan tâm tới hướng nghiên cứu '+p.keywords.slice(0,2).join(' và ')+' của Giáo sư tại '+p.uni+'. Em đặc biệt ấn tượng với công bố "'+p.publications[0].t+'" ('+p.publications[0].v+', '+p.publications[0].y+').\n\nEm dự định ứng tuyển bậc '+L[P.level]+' và mong có cơ hội được Giáo sư nhận hướng dẫn cho kỳ nhập học tới. Em xin đính kèm CV và bảng điểm để Giáo sư tham khảo.\n\nEm rất mong nhận được phản hồi từ Giáo sư. Em xin chân thành cảm ơn!\n\nTrân trọng,\n[Họ và tên của bạn]';
+        PD={
+          profExists:true,
+          pdName:p.name, pdTitle:p.title, pdUni:p.uni, pdFlag:FL[p.cc], pdDept:p.dept, pdLab:p.lab, pdSummary:p.summary,
+          pdRecruitLabel:this.RECRUIT_VI[p.recruiting], pdRecruitBg:rc.bg, pdRecruitFg:rc.fg,
+          pdPubs:p.pubs, pdCites:p.cites.toLocaleString('en-US'), pdH:p.h,
+          pdKeywords:p.keywords, pdFields:p.fields, pdEmail:p.email, pdEmailTpl:tpl,
+          pdPublications:p.publications.map(x=>({ title:x.t, meta:x.v+' · '+x.y })),
+          pdRelated:rel, pdHasRelated:rel.length>0, pdCopy:()=>{ try{ navigator.clipboard.writeText(tpl); }catch(e){} },
+        };
+      }
+    }
+
+    // ===== COMPARE =====
+    const cmpItems=st.compare.map(id=>this.schById(id)).filter(Boolean);
+    let CM={ cmpEnough:cmpItems.length>=2, cmpNotEnough:cmpItems.length<2, cmpCount:cmpItems.length };
+    if(cmpItems.length>=2){
+      const matches=cmpItems.map(s=>this.matchScore(P,s));
+      const minGpa=Math.min(...cmpItems.map(s=>s.minGpa)), minIe=Math.min(...cmpItems.map(s=>s.minIelts)), bestQs=Math.min(...cmpItems.map(s=>s.qs)), bestM=Math.max(...matches.map(m=>m.score));
+      CM.cmpCols=cmpItems.map((s,i)=>({ id:s.id, flag:FL[s.cc], country:s.country, qs:s.qs, title:s.title, onOpen:()=>this.openDetail(s.id), onRemove:()=>this.toggleCompare(s.id) }));
+      const cell=(main,sub,color)=>({main,sub:sub||'',color:color||'#1a3352'});
+      CM.cmpRows=[
+        { label:'Mức phù hợp', cells:cmpItems.map((s,i)=>cell(matches[i].score+'%'+(matches[i].score===bestM?' 👑':''), matches[i].label, matches[i].score>=80?'#0b7a52':matches[i].score>=60?'#1c5cc0':matches[i].score>=40?'#a9670a':'#b23343')) },
+        { label:'Mức tài trợ', cells:cmpItems.map(s=>cell(F[s.funding],'',s.funding==='Full'?'#0b7a52':'#a9670a')) },
+        { label:'Bậc học', cells:cmpItems.map(s=>cell(s.levels.map(l=>L[l]).join(', '))) },
+        { label:'Ngành', cells:cmpItems.map(s=>cell(s.fields.join(', '))) },
+        { label:'GPA tối thiểu', cells:cmpItems.map(s=>cell(s.minGpa.toFixed(1)+'/4.0', s.minGpa===minGpa?'Dễ nhất':'', s.minGpa===minGpa?'#0b7a52':'#1a3352')) },
+        { label:'IELTS tối thiểu', cells:cmpItems.map(s=>cell(s.minIelts.toFixed(1), s.minIelts===minIe?'Dễ nhất':'', s.minIelts===minIe?'#0b7a52':'#1a3352')) },
+        { label:'GRE/GMAT', cells:cmpItems.map(s=>cell(s.gre?'Có thể cần':'Không cần','',s.gre?'#a9670a':'#0b7a52')) },
+        { label:'Cần người hướng dẫn', cells:cmpItems.map(s=>cell(s.sup?'Có':'Không','',s.sup?'#7c3aed':'#5a7794')) },
+        { label:'Deadline', cells:cmpItems.map(s=>{ const nd=this.nextDeadline(s); const dd=this.dlStyle(this.daysLeft(nd.date)); return cell(this.fmtDate(nd.date), dd.text, dd.color); }) },
+        { label:'Kỳ nhập học', cells:cmpItems.map(s=>cell(s.intake)) },
+        { label:'Trường (QS)', cells:cmpItems.map(s=>cell(s.university, 'QS #'+s.qs+(s.qs===bestQs?' • tốt nhất':''), s.qs===bestQs?'#0b7a52':'#1a3352')) },
+        { label:'Loại học bổng', cells:cmpItems.map(s=>cell(PT[s.providerType], s.provider)) },
+        { label:'Số giấy tờ', cells:cmpItems.map(s=>cell(s.docs+' giấy tờ')) },
+        { label:'Độ tin cậy', cells:cmpItems.map(s=>cell((s.trustScore||92)+'/100','','#0b7a52')) },
+      ];
+      CM.cmpActions=cmpItems.map(s=>{ const t=!!st.tracked[s.id]; return { id:s.id, isT:t, trackLabel:t?'✓ Đang theo dõi':'+ Theo dõi', trackBg:t?'#0f9d6b':'#fff', trackFg:t?'#fff':'#1c5cc0', trackBorder:t?'#0f9d6b':'#bcdcfb', onTrack:()=>this.toggleTrack(s.id), onOpen:()=>this.openDetail(s.id) }; });
+    }
+
+    // ===== PROFILE =====
+    const seg=(cur,opts,setter)=>opts.map(o=>({ label:o.l, value:o.v, active:cur===o.v, onClick:()=>setter(o.v) }));
+    const trackedList=Object.keys(st.tracked);
+    const avgMatch= trackedList.length? Math.round(trackedList.map(id=>this.matchScore(P,this.schById(id)).score).reduce((a,b)=>a+b,0)/trackedList.length) : 0;
+    const pf={
+      pfName:'Minh Hoàng', pfInitials:'MH', pfEmail:'minhhoang@gmail.com',
+      pfLevelSeg:seg(P.level,[{v:'Bachelor',l:'Cử nhân'},{v:'Master',l:'Thạc sĩ'},{v:'PhD',l:'Tiến sĩ'}],(v)=>this.setState(s=>({profile:{...s.profile,level:v}}))),
+      pfFundSeg:seg(P.fundingNeed,[{v:'Full',l:'Toàn phần'},{v:'Partial',l:'Bán phần'},{v:'Any',l:'Bất kỳ'}],(v)=>this.setState(s=>({profile:{...s.profile,fundingNeed:v}}))),
+      pfGpaVal:P.gpa, pfGpaLabel:P.gpa.toFixed(1), onPfGpa:(e)=>this.setState(s=>({profile:{...s.profile,gpa:parseFloat(e.target.value)}})),
+      pfIeltsVal:P.ielts, pfIeltsLabel:P.ielts.toFixed(1), onPfIelts:(e)=>this.setState(s=>({profile:{...s.profile,ielts:parseFloat(e.target.value)}})),
+      pfFieldChips:this.FIELDS.map(f=>{ const active=P.fields.includes(f); return { label:f, dot:this.FIELD_DOT[f], active, bg:active?'#eaf1fd':'#fff', fg:active?'#1c5cc0':'#54708c', border:active?'#bcdcfb':'#e2e8f0', onClick:()=>this.setState(s=>({profile:{...s.profile,fields:s.profile.fields.includes(f)?s.profile.fields.filter(x=>x!==f):[...s.profile.fields,f]}})) }; }),
+      pfCountryChips:this.COUNTRIES.map(c=>{ const active=P.countries.includes(c.code); return { flag:FL[c.code], name:c.name, active, bg:active?'#eaf1fd':'#fff', fg:active?'#1c5cc0':'#54708c', border:active?'#bcdcfb':'#e2e8f0', onClick:()=>this.setState(s=>({profile:{...s.profile,countries:s.profile.countries.includes(c.code)?s.profile.countries.filter(x=>x!==c.code):[...s.profile.countries,c.code]}})) }; }),
+      pfStatTracked:trackedList.length, pfStatCompare:st.compare.length, pfStatAvg:avgMatch+'%',
+    };
+
+    // ===== DOCUMENTS (draft assistant) =====
+    let DOC={ docExists:false };
+    if(st.selId){ const s=this.schById(st.selId); if(s){
+      const drafts=this.makeDrafts(P,s).map(dr=>{ const key=this.docKey(s.id,dr.id); const isEd=st.docsEdited[key]!==undefined; const text=isEd?st.docsEdited[key]:dr.body; const cp=st.docsCopied===dr.id; return { id:dr.id, title:dr.title, hint:dr.hint, text, isEdited:isEd, badge:isEd?'Đã sửa':'Bản nháp mẫu', badgeBg:isEd?'#fdf3e0':'#eef1fd', badgeFg:isEd?'#a9670a':'#4f46e5', words:this.wordCount(text)+' từ', copied:cp, copyLabel:cp?'✓ Đã chép':'Sao chép', onInput:(e)=>this.setDoc(s.id,dr.id,e.target.value), onCopy:()=>this.copyDoc(dr.id,text), onReset:()=>this.resetDoc(s.id,dr.id) }; });
+      const allText=drafts.map(x=>'### '+x.title+'\n\n'+x.text).join('\n\n──────────\n\n');
+      const ca=st.docsCopied==='__all__';
+      DOC={ docExists:true, docTitle:s.title, docCountry:this.EN[s.cc]||s.country, docFlag:this.FLAGS[s.cc], docDrafts:drafts, docCount:drafts.length, docCopyAllLabel:ca?'✓ Đã chép tất cả':'📋 Sao chép tất cả', onCopyAll:()=>this.copyDoc('__all__',allText), docBackDetail:()=>this.openDetail(s.id), docJump:drafts.map(dr=>({ label:dr.title, onClick:()=>{ const el=document.getElementById('doc-'+dr.id); if(el) window.scrollTo(0, el.getBoundingClientRect().top+window.scrollY-70); } })) };
+    } }
+
+    return { ...D, ...DOC, boardEmpty:boardItems.length===0, boardHas:boardItems.length>0, boardRows, boardCols, boardStats:bStats, dragTrue:true,
+      tableBtnBg:st.boardView==='table'?'#fff':'transparent', tableBtnFg:st.boardView==='table'?'#1a3352':'#5a7794', kanbanBtnBg:st.boardView==='kanban'?'#fff':'transparent', kanbanBtnFg:st.boardView==='kanban'?'#1a3352':'#5a7794', isTableView:st.boardView==='table', isKanbanView:st.boardView==='kanban', setTableView:()=>this.setF('boardView','table'), setKanbanView:()=>this.setF('boardView','kanban'),
+      profResults, profResultCount:profResults.length, profEmpty:profResults.length===0, profHas:profResults.length>0, profTopFilters, profChips, profActiveCount:profActive, profHasFilters:profActive>0, profQ:st.profQ, onProfSearch:(e)=>this.setState({profQ:e.target.value}), profClearAll:()=>this.setState({profFields:[],profRanks:[],profCountries:[],profRecruiting:[],profQ:'',openFilter:null}),
+      ...PD, ...CM, ...pf, backHome:()=>this.go('home'), backProfessors:()=>this.go('professors') };
+  }
+
+  renderVals(){
+    const st=this.state, P=st.profile;
+
+    // ---------- filtering ----------
+    let list=this.SCH.map(s=>({ s, m:this.matchScore(P,s) }));
+    if(st.q.trim()){ const k=st.q.toLowerCase(); list=list.filter(({s})=> s.title.toLowerCase().includes(k)||s.university.toLowerCase().includes(k)||s.country.toLowerCase().includes(k)||s.provider.toLowerCase().includes(k)||s.fields.some(f=>f.toLowerCase().includes(k))); }
+    if(st.regions.length) list=list.filter(({s})=>st.regions.includes(s.region));
+    if(st.countries.length) list=list.filter(({s})=>st.countries.includes(s.cc));
+    if(st.levels.length) list=list.filter(({s})=>s.levels.some(l=>st.levels.includes(l)));
+    if(st.fields.length) list=list.filter(({s})=>s.fields.some(f=>st.fields.includes(f)));
+    if(st.funding.length) list=list.filter(({s})=>st.funding.includes(s.funding));
+    if(st.providerTypes.length) list=list.filter(({s})=>st.providerTypes.includes(s.providerType));
+    if(st.maxRank>0) list=list.filter(({s})=>s.qs<=st.maxRank);
+    if(st.supervisor!=='any') list=list.filter(({s})=> st.supervisor==='yes'? s.sup : !s.sup);
+    if(st.gre!=='any') list=list.filter(({s})=> st.gre==='yes'? s.gre : !s.gre);
+    if(st.intakes.length) list=list.filter(({s})=>st.intakes.includes(s.intake));
+    if(st.eligibleOnly) list=list.filter(({m})=>m.score>=40);
+
+    list.sort((a,b)=>{
+      if(st.sort==='match') return b.m.score-a.m.score;
+      if(st.sort==='qs') return a.s.qs-b.s.qs;
+      if(st.sort==='funding'){ const o={Full:0,Partial:1,TuitionOnly:2}; return o[a.s.funding]-o[b.s.funding]; }
+      return new Date(this.nextDeadline(a.s).date)-new Date(this.nextDeadline(b.s).date);
+    });
+
+    const results=list.map(({s,m})=>{
+      const mc=this.matchColors(m.score);
+      const nd=this.nextDeadline(s);
+      const dl=this.dlStyle(this.daysLeft(nd.date));
+      const isT=!!st.tracked[s.id];
+      return {
+        onOpen:()=>this.openDetail(s.id), compared:st.compare.includes(s.id), onCompare:()=>this.toggleCompare(s.id),
+        cmpBg:st.compare.includes(s.id)?'#f2ecfe':'#fff', cmpFg:st.compare.includes(s.id)?'#7c3aed':'#7591ab', cmpBorder:st.compare.includes(s.id)?'#ddd0fb':'#dce8f4',
+        flag:this.FLAGS[s.cc], country:s.country, city:s.city, qs:s.qs, uni:s.university, title:s.title,
+        match:m.score, matchPct:m.score+'%', matchLabel:m.label, matchFg:mc.fg, matchRing:`conic-gradient(${mc.bar} ${m.score}%, #e6eef6 0)`,
+        fundingLabel:this.FUND_VI[s.funding], levelsLabel:s.levels.map(l=>this.LEVEL_VI[l]).join(' · '), language:s.language, intake:s.intake,
+        docLabel:s.docs+' giấy tờ', reqSupervisor:s.sup, reqGre:s.gre, reqProposal:s.proposal,
+        dlType:nd.type, dlDate:this.fmtDate(nd.date), dlText:dl.text, dlColor:dl.color,
+        trackLabel:isT?'Đang theo dõi':'Theo dõi', trackBg:isT?'#0f9d6b':'#fff', trackFg:isT?'#fff':'#1c5cc0', trackBorder:isT?'#0f9d6b':'#bcdcfb', trackIconFill:isT?'#fff':'none',
+        onTrack:()=>this.toggleTrack(s.id),
+      };
+    });
+
+    // ---------- top horizontal filter dropdowns ----------
+    const mkChecks=(arr,key,labelFn)=> arr.map(v=>{ const active=st[key].includes(v); return { label:labelFn(v), active, rowBg:active?'#f0f6ff':'transparent', boxBorder:active?'#2f6fe0':'#cbd8e6', boxBg:active?'#2f6fe0':'#fff', boxRadius:'6px', onClick:()=>this.toggle(key,v) }; });
+    const defOf=(key,label,options)=>{ const cnt=st[key].length; return { label, options, count:cnt, hasCount:cnt>0, isOpen:st.openFilter===key, chev:st.openFilter===key?'rotate(180deg)':'rotate(0deg)', btnBg:(cnt>0||st.openFilter===key)?'#eaf1fd':'#f6f9fd', btnBorder:(cnt>0)?'#c8dcfa':'#e4ecf5', btnFg:(cnt>0)?'#1c5cc0':'#324a63', toggle:()=>this.setState(s=>({ openFilter:s.openFilter===key?null:key })) }; };
+    const topFilters=[
+      defOf('regions','Khu vực', mkChecks(this.REGIONS,'regions',v=>v)),
+      defOf('levels','Bậc học', mkChecks(this.LEVELS,'levels',v=>this.LEVEL_VI[v])),
+      defOf('fields','Ngành', mkChecks(this.FIELDS,'fields',v=>v)),
+      defOf('funding','Mức tài trợ', mkChecks(this.FUNDS,'funding',v=>this.FUND_VI[v])),
+    ];
+
+    // ---------- sidebar accordion sections ----------
+    const ICON={ globe:['M12 2a10 10 0 1 0 0 20 10 10 0 0 0 0-20z','M2 12h20M12 2a15 15 0 0 1 0 20 15 15 0 0 1 0-20z'],
+      bank:['M3 21h18M4 10h16M5 10 12 4l7 6M6 10v11M18 10v11M10 10v11M14 10v11',''],
+      trophy:['M8 21h8M12 17v4M7 4h10v5a5 5 0 0 1-10 0z','M17 5h3v2a3 3 0 0 1-3 3M7 5H4v2a3 3 0 0 0 3 3'],
+      user:['M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2','M12 11a4 4 0 1 0 0-8 4 4 0 0 0 0 8z'],
+      clip:['M15 2H9a1 1 0 0 0-1 1v2a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1V3a1 1 0 0 0-1-1z','M8 4H6a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V6a2 2 0 0 0-2-2h-2'],
+      cal:['M3 10h18M8 2v4M16 2v4','M5 4h14a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2z'] };
+    const mkSideChecks=(arr,key,labelFn,radius)=> arr.map(v=>{ const active=st[key].includes(v); return { label:labelFn(v), active, rowBg:active?'#f0f6ff':'transparent', boxBorder:active?'#2f6fe0':'#cbd8e6', boxBg:active?'#2f6fe0':'#fff', boxRadius:radius||'6px', onClick:()=>this.toggle(key,v) }; });
+    // rank as single-select radio
+    const rankOpts=[{v:0,l:'Mọi hạng'},{v:10,l:'Top 10'},{v:30,l:'Top 30'},{v:50,l:'Top 50'},{v:100,l:'Top 100'}].map(o=>{ const active=st.maxRank===o.v; return { label:o.l, active, rowBg:active?'#f0f6ff':'transparent', boxBorder:active?'#2f6fe0':'#cbd8e6', boxBg:active?'#2f6fe0':'#fff', boxRadius:'999px', onClick:()=>this.setF('maxRank',o.v) }; });
+    const supOpts=[{v:'any',l:'Bất kỳ'},{v:'yes',l:'Có — cần liên hệ người hướng dẫn'},{v:'no',l:'Không cần'}].map(o=>{ const active=st.supervisor===o.v; return { label:o.l, active, rowBg:active?'#f0f6ff':'transparent', boxBorder:active?'#2f6fe0':'#cbd8e6', boxBg:active?'#2f6fe0':'#fff', boxRadius:'999px', onClick:()=>this.setF('supervisor',o.v) }; });
+    const greOpts=[{v:'any',l:'Bất kỳ'},{v:'no',l:'Không cần GRE/GMAT'},{v:'yes',l:'Có yêu cầu GRE/GMAT'}].map(o=>{ const active=st.gre===o.v; return { label:o.l, active, rowBg:active?'#f0f6ff':'transparent', boxBorder:active?'#2f6fe0':'#cbd8e6', boxBg:active?'#2f6fe0':'#fff', boxRadius:'999px', onClick:()=>this.setF('gre',o.v) }; });
+    const mkSec=(key,label,icon,iconBg,iconFg,options,count)=>({ label, icon1:icon[0], icon2:icon[1], iconBg, iconFg, options, count, hasCount:count>0, open:st.openSec[key], chev:st.openSec[key]?'rotate(180deg)':'rotate(0deg)', toggle:()=>this.setState(s=>({ openSec:{...s.openSec,[key]:!s.openSec[key]} })) });
+    const sideSections=[
+      mkSec('country','Quốc gia', ICON.globe,'#eaf4fe','#2f8fe6', mkSideChecks(this.COUNTRIES.map(c=>c.code),'countries', code=>this.FLAGS[code]+' '+this.COUNTRIES.find(c=>c.code===code).name), st.countries.length),
+      mkSec('ptype','Loại học bổng', ICON.bank,'#f2ecfe','#7c3aed', mkSideChecks(this.PTYPES_PRESENT,'providerTypes', v=>this.PTYPE_VI[v]), st.providerTypes.length),
+      mkSec('rank','Hạng trường (QS)', ICON.trophy,'#fdf3e0','#d9880e', rankOpts, st.maxRank>0?1:0),
+      mkSec('sup','Cần liên hệ người hướng dẫn?', ICON.user,'#e9f8f0','#0f9d6b', supOpts, st.supervisor!=='any'?1:0),
+      mkSec('gre','Yêu cầu GRE/GMAT', ICON.clip,'#eef1fb','#5566d6', greOpts, st.gre!=='any'?1:0),
+      mkSec('intake','Kỳ nhập học', ICON.cal,'#fdeef0','#d9556a', mkSideChecks(this.INTAKES,'intakes',v=>v), st.intakes.length),
+    ];
+
+    // ---------- applied chips ----------
+    const chips=[];
+    st.regions.forEach(v=>chips.push({label:v,onRemove:()=>this.toggle('regions',v)}));
+    st.countries.forEach(v=>chips.push({label:this.FLAGS[v]+' '+this.COUNTRIES.find(c=>c.code===v).name,onRemove:()=>this.toggle('countries',v)}));
+    st.levels.forEach(v=>chips.push({label:this.LEVEL_VI[v],onRemove:()=>this.toggle('levels',v)}));
+    st.fields.forEach(v=>chips.push({label:v,onRemove:()=>this.toggle('fields',v)}));
+    st.funding.forEach(v=>chips.push({label:this.FUND_VI[v],onRemove:()=>this.toggle('funding',v)}));
+    st.providerTypes.forEach(v=>chips.push({label:this.PTYPE_VI[v],onRemove:()=>this.toggle('providerTypes',v)}));
+    st.intakes.forEach(v=>chips.push({label:'Nhập học '+v,onRemove:()=>this.toggle('intakes',v)}));
+    if(st.maxRank>0) chips.push({label:'Top '+st.maxRank+' QS',onRemove:()=>this.setF('maxRank',0)});
+    if(st.supervisor!=='any') chips.push({label:st.supervisor==='yes'?'Cần người hướng dẫn':'Không cần người hướng dẫn',onRemove:()=>this.setF('supervisor','any')});
+    if(st.gre!=='any') chips.push({label:st.gre==='yes'?'Cần GRE':'Không cần GRE',onRemove:()=>this.setF('gre','any')});
+    if(st.eligibleOnly) chips.push({label:'Chỉ đủ điều kiện',onRemove:()=>this.setF('eligibleOnly',false)});
+
+    const activeCount=st.regions.length+st.countries.length+st.levels.length+st.fields.length+st.funding.length+st.providerTypes.length+st.intakes.length+(st.maxRank>0?1:0)+(st.supervisor!=='any'?1:0)+(st.gre!=='any'?1:0)+(st.eligibleOnly?1:0);
+
+    // ---------- wizard ----------
+    const step=st.wizardStep;
+    const levelCards=this.LEVELS.map(l=>{ const active=P.level===l; const desc={Bachelor:'Đại học 3–4 năm',Master:'Sau đại học 1–2 năm',PhD:'Nghiên cứu 3–5 năm'}[l]; return { title:this.LEVEL_VI[l], desc, onClick:()=>this.setState(s=>({profile:{...s.profile,level:l}})), bg:active?'rgba(90,162,255,.16)':'rgba(255,255,255,.06)', border:active?'#5aa2ff':'rgba(255,255,255,.16)', fg:'#fff', iconBg:active?'#5aa2ff':'rgba(255,255,255,.12)', iconFg:active?'#0a1230':'#a5cbff' }; });
+    const fieldCards=this.FIELDS.map(f=>{ const active=P.fields.includes(f); return { label:f, dot:this.FIELD_DOT[f], onClick:()=>this.setState(s=>({profile:{...s.profile,fields:s.profile.fields.includes(f)?s.profile.fields.filter(x=>x!==f):[...s.profile.fields,f]}})), bg:active?'rgba(90,162,255,.18)':'rgba(255,255,255,.06)', border:active?'#5aa2ff':'rgba(255,255,255,.16)', fg:active?'#fff':'rgba(255,255,255,.85)' }; });
+    const inRegion=(reg)=> this.COUNTRIES.filter(c=> this.SCH.find(s=>s.cc===c.code).region===reg).map(c=>c.code);
+    const regionCards=this.REGIONS.map(r=>{ const codes=inRegion(r); const active=codes.length>0 && codes.every(c=>P.countries.includes(c)); return { label:r, onClick:()=>this.setState(s=>{ const all=codes.every(c=>s.profile.countries.includes(c)); const set=new Set(s.profile.countries); codes.forEach(c=> all? set.delete(c): set.add(c)); return {profile:{...s.profile,countries:[...set]}}; }), bg:active?'rgba(90,162,255,.2)':'rgba(255,255,255,.08)', border:active?'#5aa2ff':'rgba(255,255,255,.18)', fg:'#fff' }; });
+    const countryCards=this.COUNTRIES.map(c=>{ const active=P.countries.includes(c.code); return { flag:this.FLAGS[c.code], name:c.name, onClick:()=>this.setState(s=>({profile:{...s.profile,countries:s.profile.countries.includes(c.code)?s.profile.countries.filter(x=>x!==c.code):[...s.profile.countries,c.code]}})), bg:active?'rgba(90,162,255,.18)':'rgba(255,255,255,.06)', border:active?'#5aa2ff':'rgba(255,255,255,.14)', fg:active?'#fff':'rgba(255,255,255,.85)' }; });
+    const greCards=[{v:'no',l:'Chưa có'},{v:'yes',l:'Đã có'}].map(o=>{ const active=(st.profileGre||'no')===o.v; return { label:o.l, onClick:()=>this.setState({profileGre:o.v}), bg:active?'rgba(90,162,255,.2)':'rgba(255,255,255,.06)', border:active?'#5aa2ff':'rgba(255,255,255,.16)', fg:'#fff' }; });
+    const fundingCards=[{v:'Full',t:'Cần toàn phần',d:'Học phí + sinh hoạt phí + vé máy bay'},{v:'Partial',t:'Bán phần cũng được',d:'Hỗ trợ một phần chi phí là ổn'},{v:'Any',t:'Không quan trọng',d:'Ưu tiên trường/ngành hơn tài chính'}].map(o=>{ const active=P.fundingNeed===o.v; return { title:o.t, desc:o.d, onClick:()=>this.setState(s=>({profile:{...s.profile,fundingNeed:o.v}})), bg:active?'rgba(90,162,255,.16)':'rgba(255,255,255,.06)', border:active?'#5aa2ff':'rgba(255,255,255,.16)', fg:'#fff', iconBg:active?'#5aa2ff':'rgba(255,255,255,.12)', iconFg:active?'#0a1230':'#a5cbff' }; });
+
+    const wizList=this.SCH.map(s=>({s,m:this.matchScore(P,s)})).sort((a,b)=>b.m.score-a.m.score);
+    const wizCount=wizList.filter(x=>x.m.score>=60).length;
+    const wizTop=wizList.slice(0,3).map(({s,m})=>{ const mc=this.matchColors(m.score); return { flag:this.FLAGS[s.cc], title:s.title, uni:s.university, match:m.score, matchPct:m.score+'%', label:m.label, color:m.score>=80?'#4ade80':m.score>=60?'#7cb8ff':'#fbbf24' }; });
+
+    return {
+      // hero / global
+      totalCount:this.SCH.length, trackCount:Object.keys(st.tracked).length, compareCount:st.compare.length, q:st.q,
+      screen:st.screen, isHome:st.screen==='home', isDetail:st.screen==='detail', isBoard:st.screen==='board', isProfessors:st.screen==='professors', isProfessor:st.screen==='professor', isCompare:st.screen==='compare', isProfile:st.screen==='profile', isLogin:st.screen==='login', isDocuments:st.screen==='documents',
+      navHome:()=>this.go('home'), navBoard:()=>this.go('board'), navProfessors:()=>this.go('professors'), navCompare:()=>this.go('compare'), navProfile:()=>this.go('profile'), navLogin:()=>this.go('login'),
+      navItems:[ this._nav(st,'home','Tìm học bổng'), this._nav(st,'board','Bảng theo dõi',Object.keys(st.tracked).length), this._nav(st,'professors','Người hướng dẫn'), this._nav(st,'compare','So sánh',st.compare.length) ],
+      clearCompare:()=>this.setState({compare:[]}), loginSubmit:()=>this.go('home'),
+      showCompareBar: st.compare.length>0 && st.screen!=='compare' && st.screen!=='login',
+      compareBarEnough: st.compare.length>=2,
+      compareBarItems: st.compare.map(id=>{ const s=this.schById(id); return { flag:this.FLAGS[s.cc], title:s.title, onRemove:()=>this.toggleCompare(id) }; }),
+      compareBarGoLabel: st.compare.length>=2 ? 'Xem so sánh →' : 'Cần ≥ 2 để so sánh',
+      compareBarGoBg: st.compare.length>=2 ? '#2f6fe0' : 'rgba(255,255,255,0.12)',
+      compareBarGoFg: st.compare.length>=2 ? '#fff' : '#8b98b0',
+      goCompareBar: ()=>{ if(st.compare.length>=2) this.go('compare'); },
+      ...this.screenData(st,P),
+      onSearch:e=>this.setState({q:e.target.value}),
+      openWizard:()=>this.setState({wizardOpen:true,wizardStep:0}),
+      quickChips:[
+        {label:'Toàn phần',onClick:()=>this.toggle('funding','Full')},
+        {label:'Không cần GRE',onClick:()=>this.setF('gre','no')},
+        {label:'Thạc sĩ',onClick:()=>this.toggle('levels','Master')},
+        {label:'Data Science/AI',onClick:()=>this.toggle('fields','Data Science/AI')},
+      ],
+      // results
+      results, resultCount:results.length, isEmpty:results.length===0, sort:st.sort,
+      onSort:e=>this.setState({sort:e.target.value}),
+      // filters
+      topFilters, sideSections, appliedChips:chips, activeCount, hasFilters:activeCount>0,
+      eligibleOnly:st.eligibleOnly, toggleEligible:()=>this.setState(s=>({eligibleOnly:!s.eligibleOnly})),
+      anyFilterOpen:st.openFilter!==null, closeFilters:()=>this.setState({openFilter:null}),
+      clearAll:()=>this.setState({regions:[],countries:[],levels:[],fields:[],funding:[],providerTypes:[],maxRank:0,supervisor:'any',gre:'any',intakes:[],eligibleOnly:false,q:'',openFilter:null}),
+      // wizard
+      wizardOpen:st.wizardOpen, wizardStep:step,
+      isStep0:step===0, isStep1:step===1, isStep2:step===2, isStep3:step===3, isStep4:step===4, isStep5:step===5,
+      stepTotal:6, stepHuman:step+1, progressPct:Math.round(((step+1)/6)*100),
+      stepName:['Bậc học','Ngành học','Điểm đến','Học lực','Tài chính','Kết quả'][step],
+      showNext:step<5, backVis:step>0?'visible':'hidden',
+      wizardNext:()=>this.setState(s=>({wizardStep:Math.min(5,s.wizardStep+1)})),
+      wizardBack:()=>this.setState(s=>({wizardStep:Math.max(0,s.wizardStep-1)})),
+      wizardClose:()=>this.setState({wizardOpen:false}),
+      wizardApply:()=>this.setState(s=>({ wizardOpen:false, screen:'home', openFilter:null, sort:'match',
+        levels:[s.profile.level], fields:[...s.profile.fields], countries:[...s.profile.countries],
+        funding: s.profile.fundingNeed==='Full'?['Full']: s.profile.fundingNeed==='Partial'?['Full','Partial']:[],
+        gre: (s.profileGre==='no')?'no':'any' })),
+      levelCards, fieldCards, regionCards, countryCards, greCards, fundingCards,
+      gpaVal:P.gpa, ieltsVal:P.ielts, gpaLabel:P.gpa.toFixed(1), ieltsLabel:P.ielts.toFixed(1),
+      onGpa:e=>this.setState(s=>({profile:{...s.profile,gpa:parseFloat(e.target.value)}})),
+      onIelts:e=>this.setState(s=>({profile:{...s.profile,ielts:parseFloat(e.target.value)}})),
+      wizCount, wizTop,
+    };
+  }
+}
+</script>
+</body>
+</html>

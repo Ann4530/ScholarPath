@@ -66,18 +66,18 @@ export default function FilterDropdown({
       <button
         type="button"
         onClick={toggleOpen}
-        className={`flex items-center gap-1.5 whitespace-nowrap rounded-full border px-3.5 py-2 text-sm font-medium transition ${
+        className={`flex items-center gap-1.5 whitespace-nowrap rounded-[11px] border px-3 py-2 text-[13px] font-semibold transition ${
           active
-            ? "border-indigo-600 bg-indigo-600 text-white shadow-sm"
+            ? "border-[#c8dcfa] bg-[#eaf1fd] text-[#2f6fe0]"
             : open
-              ? "border-indigo-400 bg-white text-slate-800 ring-2 ring-indigo-100"
-              : "border-slate-300 bg-white text-slate-700 hover:border-indigo-400 hover:text-indigo-700"
+              ? "border-[#9cc1f5] bg-white text-[#1a3352]"
+              : "border-[#dce8f4] bg-white text-[#5a7794] hover:border-[#9cc1f5] hover:text-[#2f6fe0]"
         }`}
       >
         {icon && <span className="text-base leading-none">{icon}</span>}
         {label}
         {active && (
-          <span className="grid h-5 min-w-5 place-items-center rounded-full bg-white px-1 text-xs font-bold text-indigo-600">
+          <span className="grid h-[18px] min-w-[18px] place-items-center rounded-full bg-[#2f6fe0] px-1.5 text-[10.5px] font-extrabold text-white">
             {selected.length}
           </span>
         )}
@@ -91,39 +91,48 @@ export default function FilterDropdown({
 
       {open && (
         <div
-          className={`animate-drop absolute z-40 mt-2 w-64 overflow-hidden rounded-xl border border-slate-200 bg-white shadow-xl ${
+          className={`animate-drop absolute z-50 mt-2 w-[246px] overflow-hidden rounded-[14px] border border-[#dce8f4] bg-white shadow-[0_18px_44px_-14px_rgba(23,50,76,0.4)] ${
             align === "right" ? "right-0" : "left-0"
           }`}
         >
           {searchable && (
-            <div className="border-b border-slate-100 p-2">
+            <div className="border-b border-[#eef3f9] p-2">
               <input
                 autoFocus
                 value={q}
                 onChange={(e) => setQ(e.target.value)}
                 placeholder="Tìm nhanh…"
-                className="w-full rounded-lg border border-slate-200 bg-slate-50 px-3 py-1.5 text-sm outline-none focus:border-indigo-400 focus:bg-white"
+                className="w-full rounded-lg border border-[#cfe0f2] bg-[#f6f9fd] px-3 py-1.5 text-sm text-[#1a3352] outline-none focus:border-[#2f6fe0] focus:bg-white"
               />
             </div>
           )}
-          <div className="thin-scroll max-h-64 overflow-y-auto p-2">
+          <div className="sf-scroll max-h-[290px] overflow-y-auto p-2">
             {shown.length === 0 ? (
-              <p className="px-2 py-3 text-center text-xs text-slate-400">Không có mục nào</p>
+              <p className="px-2 py-3 text-center text-xs text-[#93a7bd]">Không có mục nào</p>
             ) : (
               shown.map((o) => {
                 const checked = selected.includes(o.value);
                 return (
                   <label
                     key={o.value}
-                    className={`flex cursor-pointer items-center gap-2.5 rounded-lg px-2.5 py-2 text-sm transition ${
-                      checked ? "bg-indigo-50 font-medium text-indigo-800" : "text-slate-700 hover:bg-slate-50"
+                    className={`flex cursor-pointer items-center gap-2.5 rounded-[9px] px-2.5 py-2 text-[13px] font-medium transition ${
+                      checked ? "bg-[#eaf1fd] text-[#1c5cc0]" : "text-[#324a63] hover:bg-[#f6f9fd]"
                     }`}
                   >
+                    <span
+                      className={`grid h-[18px] w-[18px] shrink-0 place-items-center rounded-md border-2 ${
+                        checked ? "border-[#2f6fe0] bg-[#2f6fe0]" : "border-[#cfe0f2] bg-white"
+                      }`}
+                    >
+                      {checked && (
+                        <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="#fff" strokeWidth="3.2" strokeLinecap="round" strokeLinejoin="round"><path d="M20 6 9 17l-5-5" /></svg>
+                      )}
+                    </span>
                     <input
                       type="checkbox"
                       checked={checked}
                       onChange={() => onToggle(o.value)}
-                      className="h-4 w-4 accent-indigo-600"
+                      className="hidden"
                     />
                     <span className="flex-1">{o.label}</span>
                   </label>
@@ -131,19 +140,19 @@ export default function FilterDropdown({
               })
             )}
           </div>
-          <div className="flex items-center justify-between border-t border-slate-100 bg-slate-50/60 px-3 py-2">
+          <div className="flex items-center justify-between border-t border-[#eef3f9] bg-[#f6f9fd] px-3 py-2">
             <button
               type="button"
               onClick={onClear}
               disabled={!active}
-              className="text-xs font-medium text-slate-400 enabled:text-slate-500 enabled:hover:text-rose-600 disabled:cursor-not-allowed"
+              className="text-xs font-semibold text-[#93a7bd] enabled:text-[#5a7794] enabled:hover:text-[#d33a4a] disabled:cursor-not-allowed"
             >
               Bỏ chọn
             </button>
             <button
               type="button"
               onClick={() => setOpen(false)}
-              className="rounded-lg bg-indigo-600 px-3 py-1 text-xs font-semibold text-white hover:bg-indigo-700"
+              className="rounded-lg bg-[#2f6fe0] px-3 py-1 text-xs font-bold text-white hover:brightness-105"
             >
               Xong
             </button>

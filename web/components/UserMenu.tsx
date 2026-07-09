@@ -10,7 +10,7 @@ export default async function UserMenu() {
     <div className="flex items-center gap-2">
       <Link
         href="/profile"
-        className="hidden max-w-[180px] truncate text-sm text-slate-500 hover:text-indigo-600 sm:inline"
+        className="hidden max-w-[180px] truncate text-sm text-[#5a7794] hover:text-[#2f6fe0] sm:inline"
         title={session.user.email ?? ""}
       >
         {session.user.email}

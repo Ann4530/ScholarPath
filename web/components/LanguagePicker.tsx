@@ -41,19 +41,19 @@ export default function LanguagePicker() {
         type="button"
         onClick={() => setOpen((v) => !v)}
         title={current.label}
-        className={`flex items-center gap-1.5 rounded-lg border px-2.5 py-1.5 text-sm font-medium transition ${
-          open ? "border-indigo-400 bg-white ring-2 ring-indigo-100" : "border-slate-300 bg-white text-slate-600 hover:border-indigo-400"
+        className={`flex items-center gap-1.5 rounded-[10px] border px-2.5 py-1.5 text-sm font-semibold transition ${
+          open ? "border-[#9cc1f5] bg-white ring-2 ring-[#dbe8f7]" : "border-[#dce8f4] bg-white text-[#5a7794] hover:border-[#9cc1f5]"
         }`}
       >
         <span className="text-base leading-none">{current.flag}</span>
         <span className="uppercase">{current.code}</span>
-        <svg className={`h-3 w-3 text-slate-400 transition-transform ${open ? "rotate-180" : ""}`} viewBox="0 0 20 20" fill="currentColor">
+        <svg className={`h-3 w-3 text-[#93a7bd] transition-transform ${open ? "rotate-180" : ""}`} viewBox="0 0 20 20" fill="currentColor">
           <path fillRule="evenodd" d="M5.23 7.21a.75.75 0 011.06.02L10 11.17l3.71-3.94a.75.75 0 111.08 1.04l-4.25 4.5a.75.75 0 01-1.08 0l-4.25-4.5a.75.75 0 01.02-1.06z" clipRule="evenodd" />
         </svg>
       </button>
 
       {open && (
-        <div className="animate-drop absolute right-0 z-40 mt-2 w-52 overflow-hidden rounded-xl border border-slate-200 bg-white shadow-xl">
+        <div className="animate-drop absolute right-0 z-50 mt-2 w-52 overflow-hidden rounded-[14px] border border-[#dce8f4] bg-white shadow-[0_18px_44px_-14px_rgba(23,50,76,0.4)]">
           {SUPPORTED_LANGUAGES.map((l) => {
             const active = l.code === i18n.language;
             return (
@@ -61,15 +61,15 @@ export default function LanguagePicker() {
                 key={l.code}
                 onClick={() => choose(l.code)}
                 className={`flex w-full items-center gap-2.5 px-3 py-2.5 text-left transition ${
-                  active ? "bg-indigo-50" : "hover:bg-slate-50"
+                  active ? "bg-[#eaf1fd]" : "hover:bg-[#f6f9fd]"
                 }`}
               >
                 <span className="text-lg leading-none">{l.flag}</span>
                 <span className="flex-1">
-                  <span className={`block text-sm font-semibold ${active ? "text-indigo-700" : "text-slate-800"}`}>{l.label}</span>
-                  <span className="block text-[11px] text-slate-400">{l.english}</span>
+                  <span className={`block text-sm font-semibold ${active ? "text-[#1c5cc0]" : "text-[#1a3352]"}`}>{l.label}</span>
+                  <span className="block text-[11px] text-[#93a7bd]">{l.english}</span>
                 </span>
-                {active && <span className="text-indigo-600">✓</span>}
+                {active && <span className="text-[#2f6fe0]">✓</span>}
               </button>
             );
           })}

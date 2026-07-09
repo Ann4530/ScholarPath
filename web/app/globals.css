@@ -1,8 +1,31 @@
 @import "tailwindcss";
 
 :root {
-  --background: #f8fafc;
-  --foreground: #0f172a;
+  --background: #eef4fb;
+  --foreground: #1a3352;
+
+  /* Bảng màu thiết kế "Starry Blue" — dùng chung cho toàn app */
+  --sf-bg: #eef4fb;
+  --sf-text: #1a3352;
+  --sf-heading: #12345c;
+  --sf-muted: #5a7794;
+  --sf-muted-2: #7591ab;
+  --sf-faint: #93a7bd;
+  --sf-body: #455f78;
+  --sf-card: #ffffff;
+  --sf-border: #dce8f4;
+  --sf-border-2: #d9e6f3;
+  --sf-divider: #eef3f9;
+  --sf-primary: #2f6fe0;
+  --sf-primary-deep: #1c5cc0;
+  --sf-primary-light: #5aa2ff;
+  --sf-success: #0b7a52;
+  --sf-success-bar: #10a06d;
+  --sf-warning: #a9670a;
+  --sf-warning-bar: #e0921a;
+  --sf-purple: #7c3aed;
+  --sf-indigo: #4f46e5;
+  --sf-danger: #d33a4a;
 }
 
 @theme inline {
@@ -14,8 +37,14 @@ html,
 body {
   background: var(--background);
   color: var(--foreground);
-  font-family: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue",
-    Arial, "Noto Sans", sans-serif;
+}
+
+::selection {
+  background: #bcdcff;
+}
+input::placeholder,
+textarea::placeholder {
+  color: #93a7bd;
 }
 
 /* Thanh cuộn gọn cho khu vực Kanban */
@@ -26,6 +55,39 @@ body {
 .thin-scroll::-webkit-scrollbar-thumb {
   background: #cbd5e1;
   border-radius: 9999px;
+}
+
+/* Thanh cuộn gọn theo phong cách "starry" (dropdown, bảng, lịch…) */
+.sf-scroll::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+.sf-scroll::-webkit-scrollbar-thumb {
+  background: #cbdcef;
+  border-radius: 999px;
+}
+.sf-scroll::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+/* Nền sao dùng lại cho mọi hero nền tối — đặt lên <div class="starfield"> phủ inset-0 */
+.starfield {
+  background-image: radial-gradient(1.6px 1.6px at 8% 22%, #fff, transparent 60%),
+    radial-gradient(1.4px 1.4px at 18% 58%, rgba(255, 255, 255, 0.85), transparent 60%),
+    radial-gradient(1px 1px at 27% 30%, rgba(255, 255, 255, 0.7), transparent 60%),
+    radial-gradient(1.8px 1.8px at 33% 76%, #fff, transparent 60%),
+    radial-gradient(1px 1px at 41% 44%, rgba(255, 255, 255, 0.55), transparent 60%),
+    radial-gradient(1.5px 1.5px at 47% 18%, #fff, transparent 60%),
+    radial-gradient(1.2px 1.2px at 54% 64%, rgba(255, 255, 255, 0.8), transparent 60%),
+    radial-gradient(1px 1px at 61% 36%, rgba(255, 255, 255, 0.55), transparent 60%),
+    radial-gradient(1.7px 1.7px at 67% 78%, #fff, transparent 60%),
+    radial-gradient(1.1px 1.1px at 73% 24%, rgba(255, 255, 255, 0.7), transparent 60%),
+    radial-gradient(1.4px 1.4px at 80% 58%, #fff, transparent 60%),
+    radial-gradient(1px 1px at 86% 34%, rgba(255, 255, 255, 0.55), transparent 60%),
+    radial-gradient(1.6px 1.6px at 91% 72%, #fff, transparent 60%),
+    radial-gradient(1px 1px at 14% 84%, rgba(255, 255, 255, 0.5), transparent 60%),
+    radial-gradient(1.3px 1.3px at 57% 88%, rgba(255, 255, 255, 0.65), transparent 60%),
+    radial-gradient(1px 1px at 77% 90%, rgba(255, 255, 255, 0.5), transparent 60%);
 }
 
 /* Animation dùng chung: panel dropdown xổ xuống & khối trồi lên */
@@ -54,6 +116,66 @@ body {
 }
 .animate-rise {
   animation: riseIn 0.28s ease-out both;
+}
+
+/* Hiệu ứng nền sao / máy bay / cung bay — theo mockup */
+@keyframes sf-twinkle {
+  0%,
+  100% {
+    opacity: 0.25;
+    transform: scale(0.7);
+  }
+  50% {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+@keyframes sf-plane {
+  0% {
+    transform: translate(0, 0) rotate(0deg);
+  }
+  50% {
+    transform: translate(10px, -8px) rotate(-2deg);
+  }
+  100% {
+    transform: translate(0, 0) rotate(0deg);
+  }
+}
+@keyframes sf-dash {
+  to {
+    stroke-dashoffset: -600;
+  }
+}
+@keyframes sf-floaty {
+  0%,
+  100% {
+    transform: translateY(0) rotate(-4deg);
+  }
+  50% {
+    transform: translateY(-12px) rotate(2deg);
+  }
+}
+@keyframes sf-rise {
+  from {
+    opacity: 0;
+    transform: translateY(14px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+.animate-twinkle {
+  animation: sf-twinkle 3.5s ease-in-out infinite;
+}
+.animate-plane {
+  animation: sf-plane 6s ease-in-out infinite;
+}
+.animate-dash {
+  animation: sf-dash 26s linear infinite;
+}
+.animate-floaty {
+  animation: sf-floaty 4s ease-in-out infinite;
 }
 
 /* Giới hạn 2 dòng (mô tả trên card) */

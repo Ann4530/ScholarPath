@@ -13,16 +13,16 @@ const PROF_FIELDS = Array.from(new Set(professors.flatMap((p) => p.fields))).sor
 const PROF_COUNTRIES = Array.from(new Set(professors.map((p) => p.countryCode)));
 const RANKS = ["professor", "associate", "assistant", "dr"] as const;
 const RANK_CLS: Record<string, string> = {
-  professor: "bg-indigo-50 text-indigo-700 ring-indigo-200",
-  associate: "bg-sky-50 text-sky-700 ring-sky-200",
-  assistant: "bg-teal-50 text-teal-700 ring-teal-200",
-  dr: "bg-slate-100 text-slate-600 ring-slate-200",
+  professor: "bg-[#eef2ff] text-[#4338ca] ring-[#c7d2fe]",
+  associate: "bg-[#e0f2fe] text-[#0369a1] ring-[#bae6fd]",
+  assistant: "bg-[#e9f8f0] text-[#0b7a52] ring-[#c4ecd8]",
+  dr: "bg-[#f1f5f9] text-[#475569] ring-[#e2e8f0]",
 };
 
 const RECRUITING_CLS: Record<string, string> = {
-  recruiting: "bg-emerald-100 text-emerald-700 ring-emerald-200",
-  unknown: "bg-slate-100 text-slate-600 ring-slate-200",
-  not_recruiting: "bg-rose-100 text-rose-700 ring-rose-200",
+  recruiting: "bg-[#e9f8f0] text-[#0b7a52] ring-[#c4ecd8]",
+  unknown: "bg-[#f1f5f9] text-[#475569] ring-[#e2e8f0]",
+  not_recruiting: "bg-[#fdecee] text-[#b23343] ring-[#f7ccd2]",
 };
 const RECRUITING_KEY: Record<string, string> = {
   recruiting: "professors.recruiting",
@@ -68,20 +68,32 @@ export default function ProfessorsPage() {
   const active = fields.length + ranks.length + countries.length + recruiting.length;
 
   return (
-    <div className="mx-auto max-w-7xl px-4 py-6">
+    <div className="mx-auto max-w-[1200px] px-6 py-6">
       {/* Hero */}
-      <section className="relative overflow-hidden rounded-3xl bg-gradient-to-br from-violet-700 via-purple-700 to-indigo-700 p-6 text-white sm:p-8">
-        <div className="pointer-events-none absolute -right-16 -top-20 h-64 w-64 rounded-full bg-white/10 blur-2xl" />
-        <h1 className="text-2xl font-bold sm:text-3xl">{t("professors.title")}</h1>
-        <p className="mt-2 max-w-2xl text-violet-100">{t("professors.desc")}</p>
-        <div className="relative mt-4 max-w-xl">
-          <span className="pointer-events-none absolute left-4 top-1/2 -translate-y-1/2 text-slate-400">🔍</span>
-          <input
-            value={q}
-            onChange={(e) => setQ(e.target.value)}
-            placeholder={t("professors.searchPh")}
-            className="w-full rounded-xl border-0 py-3 pl-11 pr-4 text-slate-800 shadow-lg outline-none ring-2 ring-transparent focus:ring-amber-300"
-          />
+      <section className="relative overflow-hidden rounded-[22px] bg-[linear-gradient(150deg,#0e1638_0%,#1c2a63_52%,#34459c_100%)] px-8 py-9 text-white">
+        <div className="starfield pointer-events-none absolute inset-0" />
+        <div className="pointer-events-none absolute right-8 top-6 text-[#f6efc9] opacity-90 drop-shadow-[0_0_14px_rgba(246,239,201,0.5)]">
+          <svg width="34" height="34" viewBox="0 0 24 24" fill="currentColor"><path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9z" /></svg>
+        </div>
+        <div className="animate-plane pointer-events-none absolute right-[15%] top-[70px] text-[#dbe9ff] drop-shadow-[0_8px_12px_rgba(0,0,0,0.35)]">
+          <svg width="52" height="52" viewBox="0 0 24 24" fill="currentColor"><path d="M2.5 19h19v2h-19zM22.07 9.64c-.21-.8-1.04-1.28-1.84-1.06L14.92 10 8.46 3.98l-1.93.52 3.87 6.7-4.97 1.34-1.97-1.54-1.45.39 2.59 4.49 17.42-4.67c.81-.23 1.28-1.05 1.06-1.86z" /></svg>
+        </div>
+        <div className="relative">
+          <div className="mb-3.5 inline-flex items-center gap-2 rounded-full border border-white/20 bg-white/10 px-3 py-1.5 text-xs font-semibold text-[#cdd6f7]">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><path d="M22 10v6M2 10l10-5 10 5-10 5z" /><path d="M6 12v5c3 3 9 3 12 0v-5" /></svg>
+            {t("professors.count", { n: results.length })}
+          </div>
+          <h1 className="text-[27px] font-extrabold tracking-tight">{t("professors.title")}</h1>
+          <p className="mt-2 max-w-[520px] text-[14.5px] leading-relaxed text-[#c5d2f0]">{t("professors.desc")}</p>
+          <div className="relative mt-5 flex max-w-[520px] items-center rounded-[13px] bg-white shadow-[0_14px_34px_-16px_rgba(0,0,0,0.5)]">
+            <svg className="absolute left-4" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#93a7bd" strokeWidth="2.2" strokeLinecap="round"><circle cx="11" cy="11" r="7" /><path d="m21 21-4.3-4.3" /></svg>
+            <input
+              value={q}
+              onChange={(e) => setQ(e.target.value)}
+              placeholder={t("professors.searchPh")}
+              className="w-full rounded-[13px] border-0 bg-transparent py-3 pl-11 pr-4 text-[14px] text-[#1a3352] outline-none"
+            />
+          </div>
         </div>
       </section>
 
@@ -118,64 +130,64 @@ export default function ProfessorsPage() {
         {active > 0 && (
           <button
             onClick={() => { setFields([]); setRanks([]); setCountries([]); setRecruiting([]); }}
-            className="text-xs font-medium text-slate-400 hover:text-rose-600"
+            className="flex items-center gap-1.5 rounded-[11px] border border-[#f7d0d5] bg-[#fff0f1] px-3 py-2 text-xs font-bold text-[#d33a4a]"
           >
             {t("professors.clearFilters", { n: active })}
           </button>
         )}
-        <p className="ml-auto text-sm text-slate-500">
-          <b className="text-slate-900">{t("professors.count", { n: results.length })}</b>
+        <p className="ml-auto text-sm text-[#5a7794]">
+          <b className="text-[21px] font-extrabold text-[#1a3352]">{results.length}</b>
         </p>
       </div>
 
       {/* Kết quả */}
       {results.length === 0 ? (
-        <div className="mt-6 rounded-2xl border border-dashed border-slate-300 bg-white p-12 text-center text-slate-500">
+        <div className="mt-6 rounded-[18px] border border-dashed border-[#cfe0f2] bg-white p-12 text-center text-[#5a7794]">
           {t("professors.empty")}
         </div>
       ) : (
-        <div className="mt-5 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+        <div className="mt-5 grid gap-4 [grid-template-columns:repeat(auto-fill,minmax(340px,1fr))]">
           {results.map((p) => {
             const sch = p.scholarshipIds[0] ? scholarshipById(p.scholarshipIds[0]) : null;
             return (
-              <div key={p.id} className="flex flex-col rounded-2xl border border-slate-200 bg-white p-4 shadow-sm transition hover:-translate-y-0.5 hover:shadow-md">
+              <div key={p.id} className="flex flex-col rounded-[18px] border border-[#e2e8f4] bg-white p-[18px] shadow-[0_1px_2px_rgba(23,50,76,0.04)] transition hover:-translate-y-0.5 hover:shadow-md">
                 <div className="flex items-start justify-between gap-2">
-                  <div>
-                    <Link href={`/professors/${p.id}`} className="font-bold text-slate-900 hover:text-violet-600">
+                  <div className="min-w-0">
+                    <Link href={`/professors/${p.id}`} className="text-[16px] font-extrabold text-[#1a3352] hover:text-[#4f46e5]">
                       {p.name}
                     </Link>
                     <p className="mt-1">
-                      <span className={`rounded-md px-1.5 py-0.5 text-[11px] font-medium ring-1 ${RANK_CLS[p.rank]}`}>{t(`rank.${p.rank}`)}</span>
+                      <span className={`rounded-md px-1.5 py-0.5 text-[11px] font-semibold ring-1 ${RANK_CLS[p.rank]}`}>{t(`rank.${p.rank}`)}</span>
                     </p>
-                    <p className="mt-1 text-xs text-slate-500">{flagEmoji(p.countryCode)} {p.university}</p>
+                    <p className="mt-1 text-xs text-[#7591ab]">{flagEmoji(p.countryCode)} {p.university}</p>
                   </div>
-                  <span className={`shrink-0 rounded-full px-2.5 py-1 text-[11px] font-medium ring-1 ${RECRUITING_CLS[p.recruiting]}`}>
+                  <span className={`shrink-0 rounded-full px-2.5 py-1 text-[11px] font-semibold ring-1 ${RECRUITING_CLS[p.recruiting]}`}>
                     {t(RECRUITING_KEY[p.recruiting])}
                   </span>
                 </div>
 
                 <div className="mt-3 flex flex-wrap gap-1.5">
                   {p.keywords.slice(0, 3).map((k) => (
-                    <span key={k} className="rounded-full bg-violet-50 px-2.5 py-0.5 text-[11px] text-violet-700 ring-1 ring-violet-200">{k}</span>
+                    <span key={k} className="rounded-full bg-[#eef1fd] px-2.5 py-0.5 text-[11px] font-semibold text-[#4f46e5] ring-1 ring-[#dbe0fb]">{k}</span>
                   ))}
                 </div>
 
-                <p className="mt-2 line-clamp-2 text-xs leading-relaxed text-slate-500">{p.summary}</p>
+                <p className="mt-2 line-clamp-2 text-xs leading-relaxed text-[#7591ab]">{p.summary}</p>
 
-                <div className="mt-3 grid grid-cols-3 gap-2 rounded-xl bg-slate-50 p-2 text-center">
-                  <div><p className="text-sm font-bold text-slate-800">{p.metrics.publications}</p><p className="text-[10px] text-slate-400">{t("professors.pubs")}</p></div>
+                <div className="mt-3 grid grid-cols-3 gap-2 rounded-xl bg-[#f3f6fd] p-2 text-center">
+                  <div><p className="text-sm font-extrabold text-[#1a3352]">{p.metrics.publications}</p><p className="text-[10px] text-[#93a7bd]">{t("professors.pubs")}</p></div>
                   {/* Locale cố định để server/client render giống nhau (tránh hydration mismatch) */}
-                  <div><p className="text-sm font-bold text-slate-800">{p.metrics.citations.toLocaleString("en-US")}</p><p className="text-[10px] text-slate-400">{t("professors.cites")}</p></div>
-                  <div><p className="text-sm font-bold text-slate-800">{p.metrics.hIndex}</p><p className="text-[10px] text-slate-400">{t("professors.hIndex")}</p></div>
+                  <div><p className="text-sm font-extrabold text-[#1a3352]">{p.metrics.citations.toLocaleString("en-US")}</p><p className="text-[10px] text-[#93a7bd]">{t("professors.cites")}</p></div>
+                  <div><p className="text-sm font-extrabold text-[#1a3352]">{p.metrics.hIndex}</p><p className="text-[10px] text-[#93a7bd]">{t("professors.hIndex")}</p></div>
                 </div>
 
                 <div className="mt-auto flex items-center justify-between pt-3">
                   {sch ? (
-                    <Link href={`/scholarships/${sch.id}`} className="truncate text-xs text-indigo-600 hover:underline" title={sch.title}>
+                    <Link href={`/scholarships/${sch.id}`} className="truncate text-xs text-[#2f6fe0] hover:underline" title={sch.title}>
                       🎓 {sch.title.length > 24 ? sch.title.slice(0, 24) + "…" : sch.title}
                     </Link>
                   ) : <span />}
-                  <Link href={`/professors/${p.id}`} className="shrink-0 rounded-lg bg-violet-600 px-3 py-1.5 text-xs font-semibold text-white hover:bg-violet-700">
+                  <Link href={`/professors/${p.id}`} className="shrink-0 rounded-[10px] bg-[#4f46e5] px-3 py-1.5 text-xs font-bold text-white hover:brightness-110">
                     {t("professors.cta")} →
                   </Link>
                 </div>
@@ -185,8 +197,8 @@ export default function ProfessorsPage() {
         </div>
       )}
 
-      <p className="mt-6 text-center text-xs text-slate-400">
-        💡 {t("professors.tipPre")} <b>{t("professors.tipBold")}</b> {t("professors.tipPost")}
+      <p className="mt-6 text-center text-xs text-[#93a7bd]">
+        💡 {t("professors.tipPre")} <b className="text-[#5a7794]">{t("professors.tipBold")}</b> {t("professors.tipPost")}
       </p>
     </div>
   );

@@ -86,8 +86,8 @@ export default function NotificationBell() {
         onClick={() => setOpen((v) => !v)}
         title={t("notif.aria")}
         aria-label={t("notif.aria")}
-        className={`relative grid h-9 w-9 place-items-center rounded-lg border text-base transition ${
-          open ? "border-indigo-400 bg-white ring-2 ring-indigo-100" : "border-slate-300 bg-white hover:border-indigo-400"
+        className={`relative grid h-9 w-9 place-items-center rounded-[10px] border text-base transition ${
+          open ? "border-[#9cc1f5] bg-white ring-2 ring-[#dbe8f7]" : "border-[#dce8f4] bg-white hover:border-[#9cc1f5]"
         }`}
       >
         🔔
@@ -99,23 +99,23 @@ export default function NotificationBell() {
       </button>
 
       {open && (
-        <div className="animate-drop absolute right-0 z-40 mt-2 w-80 overflow-hidden rounded-xl border border-slate-200 bg-white shadow-xl">
-          <p className="border-b border-slate-100 px-3.5 py-2.5 text-sm font-bold text-slate-800">🔔 {t("notif.title")}</p>
+        <div className="animate-drop absolute right-0 z-50 mt-2 w-80 overflow-hidden rounded-[14px] border border-[#dce8f4] bg-white shadow-[0_18px_44px_-14px_rgba(23,50,76,0.4)]">
+          <p className="border-b border-[#eef3f9] px-3.5 py-2.5 text-sm font-bold text-[#1a3352]">🔔 {t("notif.title")}</p>
           {items.length === 0 ? (
-            <p className="px-3.5 py-6 text-center text-sm text-slate-400">{t("notif.empty")}</p>
+            <p className="px-3.5 py-6 text-center text-sm text-[#93a7bd]">{t("notif.empty")}</p>
           ) : (
-            <ul className="thin-scroll max-h-80 overflow-y-auto">
+            <ul className="sf-scroll max-h-80 overflow-y-auto">
               {items.map((n) => (
                 <li key={n.id + n.href}>
                   <Link href={n.href} onClick={() => setOpen(false)}
-                    className="flex items-start gap-2.5 border-b border-slate-50 px-3.5 py-2.5 transition hover:bg-indigo-50/50">
-                    <span className={`mt-1.5 h-2 w-2 shrink-0 rounded-full ${n.overdue ? "bg-slate-400" : n.days <= 7 ? "bg-rose-500" : "bg-amber-400"}`} />
+                    className="flex items-start gap-2.5 border-b border-[#f3f7fb] px-3.5 py-2.5 transition hover:bg-[#f6f9fd]">
+                    <span className={`mt-1.5 h-2 w-2 shrink-0 rounded-full ${n.overdue ? "bg-[#93a7bd]" : n.days <= 7 ? "bg-[#d33a4a]" : "bg-[#e0921a]"}`} />
                     <span className="min-w-0">
-                      <span className="block truncate text-sm font-medium text-slate-800">
+                      <span className="block truncate text-sm font-semibold text-[#1a3352]">
                         {flagEmoji(n.countryCode)} {n.title}
                       </span>
                       <span className={`block text-xs ${deadlineColor(n.days)}`}>
-                        {n.overdue && <b className="mr-1 rounded bg-slate-200 px-1 text-[10px] uppercase text-slate-600">{t("notif.overdueTag")}</b>}
+                        {n.overdue && <b className="mr-1 rounded bg-[#eef3f9] px-1 text-[10px] uppercase text-[#5a7794]">{t("notif.overdueTag")}</b>}
                         {n.message}
                       </span>
                     </span>
@@ -125,7 +125,7 @@ export default function NotificationBell() {
             </ul>
           )}
           <Link href="/profile" onClick={() => setOpen(false)}
-            className="block bg-slate-50 px-3.5 py-2.5 text-center text-xs font-semibold text-indigo-600 hover:bg-slate-100">
+            className="block bg-[#f6f9fd] px-3.5 py-2.5 text-center text-xs font-bold text-[#2f6fe0] hover:bg-[#eef4fb]">
             {t("notif.viewProfile")}
           </Link>
         </div>

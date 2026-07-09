@@ -10,6 +10,7 @@
     "next": "Tiếp tục",
     "edit": "Chỉnh",
     "clearAll": "Xóa tất cả",
+    "quickPick": "Chọn nhanh",
     "and": " và "
   },
   "nav": {
@@ -149,6 +150,7 @@
     "countries": "Quốc gia ưu tiên"
   },
   "filter": {
+    "title": "Lọc",
     "region": "Khu vực",
     "country": "Quốc gia",
     "level": "Bậc học",
@@ -193,6 +195,8 @@
   },
   "results": {
     "count": "{{n}} học bổng phù hợp",
+    "matchWord": "học bổng phù hợp",
+    "suggestCta": "Chưa biết chọn gì? Để tôi gợi ý",
     "filtersOn": "· {{n}} bộ lọc đang áp dụng",
     "emptyTitle": "Không có học bổng khớp bộ lọc",
     "tryPre": "Thử",
@@ -207,6 +211,7 @@
   },
   "card": {
     "needSupervisor": "Cần giáo sư",
+    "needProposal": "Cần đề cương NC",
     "track": "+ Theo dõi",
     "tracking": "✓ Đang theo dõi",
     "compareAdd": "Thêm vào so sánh (tối đa 4)",

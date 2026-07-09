@@ -106,19 +106,26 @@ export default function StartWizard() {
   const pct = Math.round((step / (STEP_IDS.length - 1)) * 100);
 
   return (
-    <div className="relative min-h-[calc(100vh-3.5rem)] overflow-hidden bg-gradient-to-br from-indigo-700 via-violet-700 to-fuchsia-700 py-8">
-      {/* Trang trí nền */}
-      <div className="pointer-events-none absolute -left-24 top-10 h-96 w-96 rounded-full bg-white/10 blur-3xl" />
-      <div className="pointer-events-none absolute -right-24 bottom-0 h-96 w-96 rounded-full bg-amber-300/10 blur-3xl" />
+    <div className="relative min-h-[calc(100vh-3.5rem)] overflow-hidden bg-[linear-gradient(165deg,#0a1230_0%,#152159_52%,#233a86_100%)] py-8">
+      {/* Nền sao */}
+      <div className="starfield pointer-events-none absolute inset-0" />
+      <div className="animate-plane pointer-events-none absolute right-[12%] top-[6%] text-[#dbe9ff] opacity-90">
+        <svg width="52" height="52" viewBox="0 0 24 24" fill="currentColor"><path d="M2.5 19h19v2h-19zM22.07 9.64c-.21-.8-1.04-1.28-1.84-1.06L14.92 10 8.46 3.98l-1.93.52 3.87 6.7-4.97 1.34-1.97-1.54-1.45.39 2.59 4.49 17.42-4.67c.81-.23 1.28-1.05 1.06-1.86z" /></svg>
+      </div>
 
       <div className="relative mx-auto max-w-3xl px-4">
         {/* Đầu trang */}
         <div className="flex items-center justify-between text-white">
-          <div>
-            <p className="text-xs font-semibold uppercase tracking-widest text-indigo-200">{t("wizard.eyebrow")}</p>
-            <h1 className="mt-0.5 text-2xl font-bold">{t("wizard.title")}</h1>
+          <div className="flex items-center gap-3">
+            <span className="grid h-9 w-9 place-items-center rounded-[11px] bg-gradient-to-br from-[#3b82f6] to-[#7cb8ff] text-white shadow-[0_6px_18px_-6px_rgba(59,130,246,0.8)]">
+              <svg width="19" height="19" viewBox="0 0 24 24" fill="#fff"><path d="M2.5 19h19v2h-19zM22.07 9.64c-.21-.8-1.04-1.28-1.84-1.06L14.92 10 8.46 3.98l-1.93.52 3.87 6.7-4.97 1.34-1.97-1.54-1.45.39 2.59 4.49 17.42-4.67c.81-.23 1.28-1.05 1.06-1.86z" /></svg>
+            </span>
+            <div>
+              <p className="text-[11px] font-semibold uppercase tracking-widest text-[#cfe0ff]">{t("wizard.eyebrow")}</p>
+              <h1 className="mt-0.5 text-2xl font-extrabold tracking-tight">{t("wizard.title")}</h1>
+            </div>
           </div>
-          <Link href="/" className="text-sm text-indigo-200 hover:text-white">
+          <Link href="/" className="text-sm font-semibold text-[#cfe0ff] hover:text-white">
             {t("wizard.skip")} →
           </Link>
         </div>
@@ -130,16 +137,16 @@ export default function StartWizard() {
               <button
                 key={id}
                 onClick={() => i < step && setStep(i)}
-                className={`flex flex-col items-center gap-1 text-[11px] font-medium transition ${
-                  i < step ? "cursor-pointer text-white" : i === step ? "text-white" : "cursor-default text-indigo-300/60"
+                className={`flex flex-col items-center gap-1 text-[11px] font-semibold transition ${
+                  i < step ? "cursor-pointer text-white" : i === step ? "text-white" : "cursor-default text-white/40"
                 }`}
               >
                 <span
                   className={`grid h-9 w-9 place-items-center rounded-full text-base ring-2 transition ${
                     i < step
-                      ? "bg-emerald-400 text-slate-900 ring-emerald-300"
+                      ? "bg-[#34c88a] text-[#0a1230] ring-[#5fe0aa]"
                       : i === step
-                        ? "bg-white text-indigo-700 ring-amber-300"
+                        ? "bg-white text-[#12345c] ring-[#a5cbff]"
                         : "bg-white/10 ring-white/20"
                   }`}
                 >
@@ -150,12 +157,12 @@ export default function StartWizard() {
             ))}
           </div>
           <div className="mt-3 h-1.5 overflow-hidden rounded-full bg-white/15">
-            <div className="h-full rounded-full bg-gradient-to-r from-amber-300 to-emerald-400 transition-all duration-500" style={{ width: `${pct}%` }} />
+            <div className="h-full rounded-full bg-gradient-to-r from-[#5aa2ff] to-[#a5cbff] transition-all duration-500" style={{ width: `${pct}%` }} />
           </div>
         </div>
 
         {/* Nội dung bước */}
-        <div key={step} className="animate-rise mt-6 rounded-3xl bg-white p-6 shadow-2xl sm:p-8">
+        <div key={step} className="animate-rise mt-6 rounded-[24px] bg-white p-6 shadow-2xl sm:p-8">
           {step === 0 && (
             <StepShell title={t("wizard.s1Title")} desc={t("wizard.s1Desc")}>
               <div className="grid gap-3 sm:grid-cols-3">
@@ -197,7 +204,7 @@ export default function StartWizard() {
                               : Array.from(new Set([...countries, ...group.map((g) => g.code)]))
                           )
                         }
-                        className={`mb-2 text-sm font-bold ${allSelected ? "text-indigo-600" : "text-slate-700 hover:text-indigo-600"}`}
+                        className={`mb-2 text-sm font-bold ${allSelected ? "text-[#2f6fe0]" : "text-[#5a7794] hover:text-[#2f6fe0]"}`}
                       >
                         {t(`region.${REGION_KEY[r]}`)} {allSelected ? t("wizard.s3GroupClear") : t("wizard.s3GroupAll")}
                       </button>
@@ -220,11 +227,11 @@ export default function StartWizard() {
             <StepShell title={t("wizard.s4Title")} desc={t("wizard.s4Desc")}>
               <div className="grid gap-5 sm:grid-cols-2">
                 <div>
-                  <p className="mb-2 text-sm font-semibold text-slate-700">{t("wizard.s4Gpa")}</p>
-                  <div className="mb-2 flex rounded-lg border border-slate-300 p-0.5 text-sm">
+                  <p className="mb-2 text-sm font-bold text-[#5a7794]">{t("wizard.s4Gpa")}</p>
+                  <div className="mb-2 flex rounded-lg border border-[#cfe0f2] p-0.5 text-sm">
                     {(["4", "10"] as const).map((sc) => (
                       <button key={sc} onClick={() => setGpaScale(sc)}
-                        className={`flex-1 rounded-md px-3 py-1.5 font-medium transition ${gpaScale === sc ? "bg-indigo-600 text-white" : "text-slate-600"}`}>
+                        className={`flex-1 rounded-md px-3 py-1.5 font-medium transition ${gpaScale === sc ? "bg-[#2f6fe0] text-white" : "text-[#5a7794]"}`}>
                         {sc === "4" ? t("wizard.s4Scale4") : t("wizard.s4Scale10")}
                       </button>
                     ))}
@@ -236,14 +243,14 @@ export default function StartWizard() {
                     max={gpaScale === "10" ? 10 : 4}
                     value={gpaInput}
                     onChange={(e) => setGpaInput(parseFloat(e.target.value) || 0)}
-                    className="w-full rounded-xl border border-slate-300 px-4 py-3 text-lg font-semibold outline-none focus:border-indigo-500"
+                    className="w-full rounded-xl border border-[#cfe0f2] px-4 py-3 text-lg font-semibold text-[#1a3352] outline-none focus:border-[#2f6fe0]"
                   />
                   {gpaScale === "10" && (
-                    <p className="mt-1.5 text-xs text-slate-500">≈ <b>{gpa4.toFixed(2)}/4.0</b> {t("wizard.s4ApproxNote")}</p>
+                    <p className="mt-1.5 text-xs text-[#7591ab]">≈ <b>{gpa4.toFixed(2)}/4.0</b> {t("wizard.s4ApproxNote")}</p>
                   )}
                 </div>
                 <div>
-                  <p className="mb-2 text-sm font-semibold text-slate-700">{t("wizard.s4Ielts")}</p>
+                  <p className="mb-2 text-sm font-bold text-[#5a7794]">{t("wizard.s4Ielts")}</p>
                   <div className="flex flex-wrap gap-2">
                     {IELTS_OPTIONS.map((v) => (
                       <Chip key={v} selected={ielts === v} onClick={() => setIelts(v)}>
@@ -251,9 +258,9 @@ export default function StartWizard() {
                       </Chip>
                     ))}
                   </div>
-                  <label className="mt-4 flex cursor-pointer items-center gap-2 rounded-xl border border-slate-200 bg-slate-50 px-3 py-2.5 text-sm">
-                    <input type="checkbox" checked={hasGre} onChange={() => setHasGre((v) => !v)} className="h-4 w-4 accent-indigo-600" />
-                    <span className="text-slate-700">{t("wizard.s4HasGre1")} <b>GRE/GMAT</b></span>
+                  <label className="mt-4 flex cursor-pointer items-center gap-2 rounded-xl border border-[#e6eef6] bg-[#f6f9fd] px-3 py-2.5 text-sm">
+                    <input type="checkbox" checked={hasGre} onChange={() => setHasGre((v) => !v)} className="h-4 w-4 accent-[#2f6fe0]" />
+                    <span className="text-[#455f78]">{t("wizard.s4HasGre1")} <b>GRE/GMAT</b></span>
                   </label>
                 </div>
               </div>
@@ -271,7 +278,7 @@ export default function StartWizard() {
                   <BigCard key={o.v} selected={fundingNeed === o.v} onClick={() => setFundingNeed(o.v)} icon={o.icon} title={o.tt} desc={o.d} />
                 ))}
               </div>
-              <p className="mb-2 mt-6 text-sm font-semibold text-slate-700">{t("wizard.s5Provider")} <span className="font-normal text-slate-400">{t("wizard.optional")}</span></p>
+              <p className="mb-2 mt-6 text-sm font-bold text-[#5a7794]">{t("wizard.s5Provider")} <span className="font-normal text-[#93a7bd]">{t("wizard.optional")}</span></p>
               <div className="flex flex-wrap gap-2">
                 {(["Government", "University", "Org", "Corporate"] as ProviderType[]).map((p) => (
                   <Chip key={p} selected={providerTypes.includes(p)} onClick={() => setProviderTypes(toggle(providerTypes, p))}>
@@ -286,7 +293,7 @@ export default function StartWizard() {
             <StepShell title={t("wizard.s6Title")} desc={t("wizard.s6Desc")}>
               <div className="space-y-6">
                 <div>
-                  <p className="mb-2 text-sm font-semibold text-slate-700">🏆 {t("wizard.s6Qs")}</p>
+                  <p className="mb-2 text-sm font-bold text-[#5a7794]">🏆 {t("wizard.s6Qs")}</p>
                   <div className="flex flex-wrap gap-2">
                     {[0, 10, 30, 50, 100].map((v) => (
                       <Chip key={v} selected={maxRank === v} onClick={() => setMaxRank(v)}>
@@ -296,7 +303,7 @@ export default function StartWizard() {
                   </div>
                 </div>
                 <div>
-                  <p className="mb-2 text-sm font-semibold text-slate-700">👨‍🏫 {t("wizard.s6Sup")}</p>
+                  <p className="mb-2 text-sm font-bold text-[#5a7794]">👨‍🏫 {t("wizard.s6Sup")}</p>
                   <div className="grid gap-2 sm:grid-cols-3">
                     {([
                       { v: "both", tt: t("wizard.s6SupBothT"), d: t("wizard.s6SupBothD") },
@@ -305,16 +312,16 @@ export default function StartWizard() {
                     ] as const).map((o) => (
                       <button key={o.v} onClick={() => setSupervisorPref(o.v)}
                         className={`rounded-xl border-2 p-3 text-left transition ${
-                          supervisorPref === o.v ? "border-indigo-600 bg-indigo-50" : "border-slate-200 hover:border-indigo-300"
+                          supervisorPref === o.v ? "border-[#2f6fe0] bg-[#eaf1fd]" : "border-[#e2e8f0] hover:border-[#9cc1f5]"
                         }`}>
-                        <p className="text-sm font-semibold text-slate-800">{o.tt}</p>
-                        <p className="mt-0.5 text-xs text-slate-500">{o.d}</p>
+                        <p className="text-sm font-bold text-[#1a3352]">{o.tt}</p>
+                        <p className="mt-0.5 text-xs text-[#7591ab]">{o.d}</p>
                       </button>
                     ))}
                   </div>
                 </div>
                 <div>
-                  <p className="mb-2 text-sm font-semibold text-slate-700">🗓️ {t("wizard.s6Intake")} <span className="font-normal text-slate-400">{t("wizard.optional")}</span></p>
+                  <p className="mb-2 text-sm font-bold text-[#5a7794]">🗓️ {t("wizard.s6Intake")} <span className="font-normal text-[#93a7bd]">{t("wizard.optional")}</span></p>
                   <div className="flex flex-wrap gap-2">
                     {INTAKES.map((i) => (
                       <Chip key={i} selected={intakes.includes(i)} onClick={() => setIntakes(toggle(intakes, i))}>{i}</Chip>
@@ -327,7 +334,7 @@ export default function StartWizard() {
 
           {step === 6 && (
             <StepShell title={t("wizard.s7Title")} desc={t("wizard.s7Desc")}>
-              <div className="grid gap-2 rounded-2xl bg-slate-50 p-4 text-sm sm:grid-cols-2">
+              <div className="grid gap-2 rounded-2xl bg-[#f6f9fd] p-4 text-sm sm:grid-cols-2">
                 <SummaryRow k={t("wizard.sumLevel")} v={t(`level.${level}`)} />
                 <SummaryRow k={t("wizard.sumGpa")} v={`${gpa4.toFixed(2)}/4.0${gpaScale === "10" ? ` ${t("wizard.sumFrom10", { v: gpaInput })}` : ""}`} />
                 <SummaryRow k={t("wizard.sumIelts")} v={ielts === 0 ? t("wizard.s4NoIelts") : ielts.toFixed(1)} />
@@ -340,15 +347,15 @@ export default function StartWizard() {
                 <SummaryRow k={t("wizard.sumSup")} v={supervisorPref === "both" ? t("wizard.supBoth") : supervisorPref === "yes" ? t("wizard.supYes") : t("wizard.supNo")} />
               </div>
 
-              <div className="mt-5 flex items-center gap-4 rounded-2xl bg-gradient-to-r from-indigo-600 to-violet-600 p-5 text-white">
+              <div className="mt-5 flex items-center gap-4 rounded-2xl bg-gradient-to-r from-[#1e3a8a] to-[#3b82f6] p-5 text-white">
                 <div className="text-4xl">🎯</div>
                 <div>
                   <p className="text-2xl font-bold">{t("wizard.preview", { n: preview.total })}</p>
-                  <p className="text-sm text-indigo-200">{t("wizard.previewSub1")} <b className="text-amber-300">{preview.good}</b> {t("wizard.previewSub2")}</p>
+                  <p className="text-sm text-[#cfe0ff]">{t("wizard.previewSub1")} <b className="text-[#a5cbff]">{preview.good}</b> {t("wizard.previewSub2")}</p>
                 </div>
               </div>
               {preview.total === 0 && (
-                <p className="mt-3 rounded-xl bg-amber-50 p-3 text-sm text-amber-700">
+                <p className="mt-3 rounded-xl bg-[#fdf3e0] p-3 text-sm text-[#a9670a]">
                   ⚠️ {t("wizard.noneWarn")}
                 </p>
               )}
@@ -356,11 +363,11 @@ export default function StartWizard() {
           )}
 
           {/* Điều hướng */}
-          <div className="mt-8 flex items-center justify-between border-t border-slate-100 pt-5">
+          <div className="mt-8 flex items-center justify-between border-t border-[#eef3f9] pt-5">
             <button
               onClick={() => setStep((s) => Math.max(0, s - 1))}
               disabled={step === 0}
-              className="rounded-xl px-4 py-2.5 text-sm font-medium text-slate-500 transition enabled:hover:bg-slate-100 disabled:cursor-not-allowed disabled:opacity-40"
+              className="rounded-xl px-4 py-2.5 text-sm font-semibold text-[#5a7794] transition enabled:hover:bg-[#eef3f9] disabled:cursor-not-allowed disabled:opacity-40"
             >
               ← {t("common.back")}
             </button>
@@ -368,14 +375,14 @@ export default function StartWizard() {
               <button
                 onClick={() => canNext && setStep((s) => s + 1)}
                 disabled={!canNext}
-                className="rounded-xl bg-gradient-to-r from-indigo-600 to-violet-600 px-6 py-2.5 text-sm font-bold text-white shadow-lg transition enabled:hover:from-indigo-500 enabled:hover:to-violet-500 disabled:cursor-not-allowed disabled:opacity-40"
+                className="rounded-xl bg-gradient-to-br from-[#3b82f6] to-[#5aa2ff] px-6 py-2.5 text-sm font-bold text-white shadow-lg transition enabled:hover:brightness-110 disabled:cursor-not-allowed disabled:opacity-40"
               >
                 {t("common.next")} →
               </button>
             ) : (
               <button
                 onClick={finish}
-                className="rounded-xl bg-gradient-to-r from-emerald-500 to-teal-500 px-6 py-2.5 text-sm font-bold text-white shadow-lg transition hover:from-emerald-400 hover:to-teal-400"
+                className="rounded-xl bg-gradient-to-br from-[#0f9d6b] to-[#34c88a] px-6 py-2.5 text-sm font-bold text-white shadow-lg transition hover:brightness-110"
               >
                 {t("wizard.finish", { n: preview.total })} →
               </button>
@@ -388,7 +395,7 @@ export default function StartWizard() {
           )}
         </div>
 
-        <p className="mt-4 text-center text-xs text-indigo-200">{t("wizard.footerNote")}</p>
+        <p className="mt-4 text-center text-xs text-[#cfe0ff]">{t("wizard.footerNote")}</p>
       </div>
     </div>
   );
@@ -398,8 +405,8 @@ export default function StartWizard() {
 function StepShell({ title, desc, children }: { title: string; desc: string; children: React.ReactNode }) {
   return (
     <div>
-      <h2 className="text-xl font-bold text-slate-900">{title}</h2>
-      <p className="mt-1 text-sm text-slate-500">{desc}</p>
+      <h2 className="text-xl font-extrabold text-[#1a3352]">{title}</h2>
+      <p className="mt-1 text-sm text-[#7591ab]">{desc}</p>
       <div className="mt-5">{children}</div>
     </div>
   );
@@ -410,15 +417,15 @@ function BigCard({ selected, onClick, icon, title, desc }: { selected: boolean; 
     <button
       onClick={onClick}
       className={`rounded-2xl border-2 p-4 text-left transition ${
-        selected ? "border-indigo-600 bg-indigo-50 shadow-md" : "border-slate-200 bg-white hover:border-indigo-300 hover:shadow-sm"
+        selected ? "border-[#2f6fe0] bg-[#eaf1fd] shadow-md" : "border-[#e2e8f0] bg-white hover:border-[#9cc1f5] hover:shadow-sm"
       }`}
     >
       <div className="flex items-center justify-between">
         <span className="text-3xl">{icon}</span>
-        <span className={`grid h-5 w-5 place-items-center rounded-full text-xs font-bold ${selected ? "bg-indigo-600 text-white" : "border border-slate-300 text-transparent"}`}>✓</span>
+        <span className={`grid h-5 w-5 place-items-center rounded-full text-xs font-bold ${selected ? "bg-[#2f6fe0] text-white" : "border border-[#cfe0f2] text-transparent"}`}>✓</span>
       </div>
-      <p className="mt-2 font-bold text-slate-900">{title}</p>
-      <p className="mt-1 text-xs leading-relaxed text-slate-500">{desc}</p>
+      <p className="mt-2 font-extrabold text-[#1a3352]">{title}</p>
+      <p className="mt-1 text-xs leading-relaxed text-[#7591ab]">{desc}</p>
     </button>
   );
 }
@@ -428,7 +435,7 @@ function Chip({ selected, onClick, children }: { selected: boolean; onClick: () 
     <button
       onClick={onClick}
       className={`rounded-full px-3.5 py-1.5 text-sm font-medium ring-1 transition ${
-        selected ? "bg-indigo-600 text-white ring-indigo-600 shadow-sm" : "bg-white text-slate-600 ring-slate-300 hover:ring-indigo-400 hover:text-indigo-700"
+        selected ? "bg-[#2f6fe0] text-white ring-[#2f6fe0] shadow-sm" : "bg-white text-[#5a7794] ring-[#cfe0f2] hover:ring-[#9cc1f5] hover:text-[#2f6fe0]"
       }`}
     >
       {children}
@@ -437,14 +444,14 @@ function Chip({ selected, onClick, children }: { selected: boolean; onClick: () 
 }
 
 function Hint({ children }: { children: React.ReactNode }) {
-  return <p className="mt-4 rounded-xl bg-slate-50 px-3 py-2 text-xs text-slate-500">💡 {children}</p>;
+  return <p className="mt-4 rounded-xl bg-[#f6f9fd] px-3 py-2 text-xs text-[#7591ab]">💡 {children}</p>;
 }
 
 function SummaryRow({ k, v }: { k: string; v: string }) {
   return (
-    <div className="flex items-baseline justify-between gap-3 border-b border-slate-100 py-1.5 last:border-0 sm:border-0">
-      <span className="shrink-0 text-slate-500">{k}</span>
-      <span className="text-right font-medium text-slate-800">{v}</span>
+    <div className="flex items-baseline justify-between gap-3 border-b border-[#eef3f9] py-1.5 last:border-0 sm:border-0">
+      <span className="shrink-0 text-[#7591ab]">{k}</span>
+      <span className="text-right font-semibold text-[#1a3352]">{v}</span>
     </div>
   );
 }

@@ -21,9 +21,9 @@ export default function CompareBar() {
 
   return (
     <div className="animate-rise fixed inset-x-0 bottom-4 z-40 px-4">
-      <div className="mx-auto flex max-w-3xl flex-wrap items-center justify-between gap-3 rounded-2xl border border-slate-700/60 bg-slate-900/95 px-4 py-3 text-white shadow-2xl backdrop-blur">
+      <div className="mx-auto flex max-w-[820px] flex-wrap items-center justify-between gap-3 rounded-[18px] border border-[#7896dc]/35 bg-[#101936]/95 px-4 py-3 text-white shadow-[0_20px_50px_-18px_rgba(0,0,0,0.7)] backdrop-blur">
         <div className="flex min-w-0 flex-1 flex-wrap items-center gap-2">
-          <span className="shrink-0 text-sm font-semibold text-slate-300">
+          <span className="shrink-0 text-sm font-semibold text-[#c5d2f0]">
             ⇄ {t("compareBar.label")} ({items.length}/{MAX_COMPARE})
           </span>
           {items.map((s) => s && (
@@ -35,7 +35,7 @@ export default function CompareBar() {
               <span className="truncate">{s.title}</span>
               <button
                 onClick={() => toggleCompare(s.id)}
-                className="ml-0.5 text-slate-400 hover:text-rose-400"
+                className="ml-0.5 text-[#93a7bd] hover:text-rose-400"
                 title={t("compareBar.removeTitle")}
               >
                 ✕
@@ -44,15 +44,15 @@ export default function CompareBar() {
           ))}
         </div>
         <div className="flex shrink-0 items-center gap-2">
-          <button onClick={clearCompare} className="text-xs text-slate-400 hover:text-white">
+          <button onClick={clearCompare} className="text-xs text-[#93a7bd] hover:text-white">
             {t("compareBar.clear")}
           </button>
           <Link
             href="/compare"
-            className={`rounded-xl px-4 py-2 text-sm font-semibold transition ${
+            className={`rounded-xl px-4 py-2 text-sm font-bold transition ${
               items.length >= 2
-                ? "bg-gradient-to-r from-indigo-500 to-violet-500 text-white hover:from-indigo-400 hover:to-violet-400"
-                : "cursor-not-allowed bg-white/10 text-slate-400"
+                ? "bg-gradient-to-br from-[#3b82f6] to-[#5aa2ff] text-white hover:brightness-110"
+                : "cursor-not-allowed bg-white/10 text-[#93a7bd]"
             }`}
             aria-disabled={items.length < 2}
             onClick={(e) => items.length < 2 && e.preventDefault()}
