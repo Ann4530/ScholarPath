@@ -393,7 +393,7 @@
     "legend": "👑 = Match Score cao nhất · (dễ nhất) = yêu cầu thấp nhất trong nhóm so sánh."
   },
   "professors": {
-    "title": "Tìm giáo sư hướng dẫn 👨‍🏫",
+    "title": "Tìm giáo sư hướng dẫn",
     "desc": "Học bổng nghiên cứu (MEXT, CSC, NUS RS, Gates Cambridge…) thường cần thư đồng ý của giáo sư trước khi nộp. Tìm theo hướng nghiên cứu, xem công bố & dùng trợ lý soạn email liên hệ.",
     "searchPh": "Tên, trường, từ khóa nghiên cứu (vd: computer vision, batteries)…",
     "fField": "Hướng nghiên cứu",

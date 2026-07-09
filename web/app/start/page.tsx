@@ -6,7 +6,7 @@
 import { useMemo, useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { GraduationCap, BookOpen, Globe, PenLine, Coins, Settings, PartyPopper } from "lucide-react";
+import { GraduationCap, BookOpen, Globe, PenLine, Coins, Settings, PartyPopper, Backpack, Microscope, Gem, PiggyBank, Handshake, Trophy, UserCheck, CalendarDays, Target } from "lucide-react";
 import { useTranslation } from "react-i18next";
 import HeroSky from "@/components/HeroSky";
 import {
@@ -178,10 +178,10 @@ export default function StartWizard() {
             <StepShell title={t("wizard.s1Title")} desc={t("wizard.s1Desc")}>
               <div className="grid gap-3 sm:grid-cols-3">
                 {([
-                  { v: "Bachelor", icon: "🎒", d: t("wizard.s1Bachelor") },
-                  { v: "Master", icon: "📚", d: t("wizard.s1Master") },
-                  { v: "PhD", icon: "🔬", d: t("wizard.s1Phd") },
-                ] as { v: Level; icon: string; d: string }[]).map((o) => (
+                  { v: "Bachelor", icon: <Backpack className="h-5 w-5" />, d: t("wizard.s1Bachelor") },
+                  { v: "Master", icon: <BookOpen className="h-5 w-5" />, d: t("wizard.s1Master") },
+                  { v: "PhD", icon: <Microscope className="h-5 w-5" />, d: t("wizard.s1Phd") },
+                ] as { v: Level; icon: React.ReactNode; d: string }[]).map((o) => (
                   <BigCard key={o.v} selected={level === o.v} onClick={() => setLevel(o.v)} icon={o.icon} title={t(`level.${o.v}`)} desc={o.d} />
                 ))}
               </div>
@@ -282,10 +282,10 @@ export default function StartWizard() {
             <StepShell title={t("wizard.s5Title")} desc={t("wizard.s5Desc")}>
               <div className="grid gap-3 sm:grid-cols-3">
                 {([
-                  { v: "Full", icon: "💎", tt: t("wizard.s5FullT"), d: t("wizard.s5FullD") },
-                  { v: "Partial", icon: "🌓", tt: t("wizard.s5PartT"), d: t("wizard.s5PartD") },
-                  { v: "Any", icon: "🤝", tt: t("wizard.s5AnyT"), d: t("wizard.s5AnyD") },
-                ] as { v: Profile["fundingNeed"]; icon: string; tt: string; d: string }[]).map((o) => (
+                  { v: "Full", icon: <Gem className="h-5 w-5" />, tt: t("wizard.s5FullT"), d: t("wizard.s5FullD") },
+                  { v: "Partial", icon: <PiggyBank className="h-5 w-5" />, tt: t("wizard.s5PartT"), d: t("wizard.s5PartD") },
+                  { v: "Any", icon: <Handshake className="h-5 w-5" />, tt: t("wizard.s5AnyT"), d: t("wizard.s5AnyD") },
+                ] as { v: Profile["fundingNeed"]; icon: React.ReactNode; tt: string; d: string }[]).map((o) => (
                   <BigCard key={o.v} selected={fundingNeed === o.v} onClick={() => setFundingNeed(o.v)} icon={o.icon} title={o.tt} desc={o.d} />
                 ))}
               </div>
@@ -304,7 +304,7 @@ export default function StartWizard() {
             <StepShell title={t("wizard.s6Title")} desc={t("wizard.s6Desc")}>
               <div className="space-y-6">
                 <div>
-                  <p className="mb-2 text-sm font-bold text-[#5a7794]">🏆 {t("wizard.s6Qs")}</p>
+                  <p className="mb-2 flex items-center gap-1.5 text-sm font-bold text-[#5a7794]"><Trophy className="h-4 w-4 text-[#2f6fe0]" /> {t("wizard.s6Qs")}</p>
                   <div className="flex flex-wrap gap-2">
                     {[0, 10, 30, 50, 100].map((v) => (
                       <Chip key={v} selected={maxRank === v} onClick={() => setMaxRank(v)}>
@@ -314,7 +314,7 @@ export default function StartWizard() {
                   </div>
                 </div>
                 <div>
-                  <p className="mb-2 text-sm font-bold text-[#5a7794]">👨‍🏫 {t("wizard.s6Sup")}</p>
+                  <p className="mb-2 flex items-center gap-1.5 text-sm font-bold text-[#5a7794]"><UserCheck className="h-4 w-4 text-[#2f6fe0]" /> {t("wizard.s6Sup")}</p>
                   <div className="grid gap-2 sm:grid-cols-3">
                     {([
                       { v: "both", tt: t("wizard.s6SupBothT"), d: t("wizard.s6SupBothD") },
@@ -332,7 +332,7 @@ export default function StartWizard() {
                   </div>
                 </div>
                 <div>
-                  <p className="mb-2 text-sm font-bold text-[#5a7794]">🗓️ {t("wizard.s6Intake")} <span className="font-normal text-[#93a7bd]">{t("wizard.optional")}</span></p>
+                  <p className="mb-2 flex items-center gap-1.5 text-sm font-bold text-[#5a7794]"><CalendarDays className="h-4 w-4 text-[#2f6fe0]" /> {t("wizard.s6Intake")} <span className="font-normal text-[#93a7bd]">{t("wizard.optional")}</span></p>
                   <div className="flex flex-wrap gap-2">
                     {INTAKES.map((i) => (
                       <Chip key={i} selected={intakes.includes(i)} onClick={() => setIntakes(toggle(intakes, i))}>{i}</Chip>
@@ -359,7 +359,7 @@ export default function StartWizard() {
               </div>
 
               <div className="mt-5 flex items-center gap-4 rounded-2xl bg-gradient-to-r from-[#1e3a8a] to-[#3b82f6] p-5 text-white">
-                <div className="text-4xl">🎯</div>
+                <div className="grid h-12 w-12 shrink-0 place-items-center rounded-[14px] bg-white/15"><Target className="h-6 w-6" /></div>
                 <div>
                   <p className="text-2xl font-bold">{t("wizard.preview", { n: preview.total })}</p>
                   <p className="text-sm text-[#cfe0ff]">{t("wizard.previewSub1")} <b className="text-[#a5cbff]">{preview.good}</b> {t("wizard.previewSub2")}</p>
@@ -423,7 +423,7 @@ function StepShell({ title, desc, children }: { title: string; desc: string; chi
   );
 }
 
-function BigCard({ selected, onClick, icon, title, desc }: { selected: boolean; onClick: () => void; icon: string; title: string; desc: string }) {
+function BigCard({ selected, onClick, icon, title, desc }: { selected: boolean; onClick: () => void; icon: React.ReactNode; title: string; desc: string }) {
   return (
     <button
       onClick={onClick}
@@ -432,7 +432,7 @@ function BigCard({ selected, onClick, icon, title, desc }: { selected: boolean; 
       }`}
     >
       <div className="flex items-center justify-between">
-        <span className="text-3xl">{icon}</span>
+        <span className={`grid h-11 w-11 place-items-center rounded-[13px] transition ${selected ? "bg-[#2f6fe0] text-white" : "bg-[#eef4fb] text-[#2f6fe0]"}`}>{icon}</span>
         <span className={`grid h-5 w-5 place-items-center rounded-full text-xs font-bold ${selected ? "bg-[#2f6fe0] text-white" : "border border-[#cfe0f2] text-transparent"}`}>✓</span>
       </div>
       <p className="mt-2 font-extrabold text-[#1a3352]">{title}</p>

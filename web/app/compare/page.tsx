@@ -4,6 +4,7 @@
 
 import Link from "next/link";
 import { useTranslation } from "react-i18next";
+import { ArrowLeftRight } from "lucide-react";
 import {
   scholarshipById,
   matchScore,
@@ -22,8 +23,10 @@ export default function ComparePage() {
   if (items.length < 2) {
     return (
       <div className="mx-auto max-w-3xl px-4 py-20 text-center">
-        <div className="text-5xl">⇄</div>
-        <h1 className="mt-4 text-xl font-bold text-[#1a3352]">{t("compare.emptyTitle")}</h1>
+        <div className="mx-auto grid h-16 w-16 place-items-center rounded-[18px] bg-white text-[#93a7bd] shadow-[0_1px_2px_rgba(23,50,76,0.06)] ring-1 ring-[#dce8f4]">
+          <ArrowLeftRight className="h-8 w-8" strokeWidth={1.6} />
+        </div>
+        <h1 className="mt-4 text-xl font-extrabold text-[#1a3352]">{t("compare.emptyTitle")}</h1>
         <p className="mt-2 text-[#7591ab]">
           {items.length === 0 ? t("compare.emptyNone") : t("compare.emptyOne")}{" "}
           {t("compare.emptyHint1")} <b>⇄</b> {t("compare.emptyHint2")}

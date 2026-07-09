@@ -3,7 +3,7 @@
 // Trang cá nhân (account hub): Tổng quan (thống kê) · Hồ sơ học tập · Danh sách của tôi · Hỗ trợ.
 import { useMemo, useState } from "react";
 import Link from "next/link";
-import { Bookmark, PencilLine, Send, Clock, Target, FileText } from "lucide-react";
+import { Bookmark, PencilLine, Send, Clock, Target, FileText, FolderOpen } from "lucide-react";
 import { useTranslation } from "react-i18next";
 import {
   scholarshipById,
@@ -619,7 +619,9 @@ export default function ProfileClient({ email }: { email: string | null }) {
 function EmptyState({ t }: { t: (k: string) => string }) {
   return (
     <div className="mt-6 rounded-2xl border border-dashed border-[#cfe0f2] bg-white p-12 text-center">
-      <div className="text-5xl">🗂️</div>
+      <div className="mx-auto grid h-16 w-16 place-items-center rounded-[18px] bg-white text-[#93a7bd] shadow-[0_1px_2px_rgba(23,50,76,0.06)] ring-1 ring-[#dce8f4]">
+        <FolderOpen className="h-8 w-8" strokeWidth={1.6} />
+      </div>
       <h2 className="mt-3 text-lg font-bold text-[#1a3352]">{t("account.emptyTitle")}</h2>
       <p className="mt-1 text-sm text-[#7591ab]">{t("account.emptyDesc")}</p>
       <Link href="/" className="mt-5 inline-block rounded-xl bg-[#2f6fe0] px-5 py-2.5 font-bold text-white hover:brightness-105">{t("account.goFind")}</Link>

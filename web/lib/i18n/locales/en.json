@@ -393,7 +393,7 @@
     "legend": "👑 = highest Match Score · (easiest) = lowest requirement in this comparison."
   },
   "professors": {
-    "title": "Find a supervising professor 👨‍🏫",
+    "title": "Find a supervising professor",
     "desc": "Research scholarships (MEXT, CSC, NUS RS, Gates Cambridge…) usually need a professor's acceptance before applying. Search by research direction, review publications & use the outreach email assistant.",
     "searchPh": "Name, university, research keywords (e.g. computer vision, batteries)…",
     "fField": "Research area",

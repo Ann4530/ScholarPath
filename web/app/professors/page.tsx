@@ -9,7 +9,7 @@ import { FlaskConical, Medal, Flag, UserSearch, Search } from "lucide-react";
 import { professors, scholarshipById } from "@/lib/data";
 import { flagEmoji } from "@/lib/ui";
 import FilterDropdown from "@/components/FilterDropdown";
-import HeroSky from "@/components/HeroSky";
+import AcademicScene from "@/components/AcademicScene";
 
 const PROF_FIELDS = Array.from(new Set(professors.flatMap((p) => p.fields))).sort();
 const PROF_COUNTRIES = Array.from(new Set(professors.map((p) => p.countryCode)));
@@ -74,7 +74,7 @@ export default function ProfessorsPage() {
       {/* Hero */}
       <section className="relative overflow-hidden rounded-[22px] bg-[linear-gradient(150deg,#0e1638_0%,#1c2a63_52%,#34459c_100%)] px-8 py-9 text-white">
         <div className="starfield pointer-events-none absolute inset-0" />
-        <HeroSky id="profs" />
+        <AcademicScene id="profs" />
         <div className="relative">
           <div className="mb-3.5 inline-flex items-center gap-2 rounded-full border border-white/20 bg-white/10 px-3 py-1.5 text-xs font-semibold text-[#cdd6f7]">
             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><path d="M22 10v6M2 10l10-5 10 5-10 5z" /><path d="M6 12v5c3 3 9 3 12 0v-5" /></svg>
