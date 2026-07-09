@@ -20,6 +20,7 @@ import {
   INTAKES,
   LANGUAGES,
   ALL_TAGS,
+  profileCompletion,
   Level,
   FundingLevel,
   ProviderType,
@@ -44,7 +45,20 @@ type Sort = "match" | "deadline" | "funding" | "qs";
 
 export default function SearchPage() {
   const { t } = useTranslation();
-  const { profile, setProfile } = useTrack();
+  const { profile, setProfile, tracked } = useTrack();
+
+  // % tiến độ hành trình du học — máy bay trên hero đứng ở đúng % này.
+  // Chưa theo dõi học bổng nào: dựa trên độ hoàn thiện hồ sơ (mới bắt đầu).
+  // Đã theo dõi: trung bình cột mốc giai đoạn của các học bổng đang theo dõi.
+  const journeyPct = useMemo(() => {
+    const STAGE_PCT: Record<string, number> = {
+      quan_tam: 12, nghien_cuu: 28, lien_he_gs: 45, chuan_bi: 65, da_nop: 88, phong_van: 94, ket_qua: 100,
+    };
+    const items = Object.values(tracked);
+    if (items.length === 0) return Math.max(6, Math.round(profileCompletion(profile) * 0.22));
+    const avg = items.reduce((s, it) => s + (STAGE_PCT[it.stage] ?? 12), 0) / items.length;
+    return Math.round(avg);
+  }, [tracked, profile]);
 
   const [q, setQ] = useState("");
   const [regions, setRegions] = useState<string[]>([]);
@@ -210,8 +224,8 @@ export default function SearchPage() {
           <div className="animate-twinkle pointer-events-none absolute left-[22%] top-8 h-1 w-1 rounded-full bg-white shadow-[0_0_8px_2px_rgba(255,255,255,0.7)]" />
           <div className="animate-twinkle pointer-events-none absolute left-[64%] top-[70px] h-[3px] w-[3px] rounded-full bg-[#cfe0ff] shadow-[0_0_7px_2px_rgba(160,200,255,0.7)] [animation-delay:0.6s]" />
           <div className="animate-twinkle pointer-events-none absolute left-[84%] top-11 h-1 w-1 rounded-full bg-[#ffe9a8] shadow-[0_0_9px_2px_rgba(255,220,140,0.7)] [animation-delay:0.3s]" />
-          {/* trăng + tuyến bay + máy bay (component dùng chung) */}
-          <HeroSky id="home" />
+          {/* tuyến bay = thanh tiến độ hành trình du học (máy bay đứng ở % đã hoàn thành) */}
+          <HeroSky id="home" progress={journeyPct} showPct />
 
           <div className="relative max-w-[600px]">
             <div className="inline-flex items-center gap-2 rounded-full border border-white/20 bg-white/10 px-3 py-1.5 text-[12.5px] font-semibold text-[#cfe0ff]">
@@ -249,21 +263,23 @@ export default function SearchPage() {
               </button>
             </div>
 
-            <div className="mt-4 flex flex-wrap items-center gap-2">
-              <span className="text-[12.5px] font-semibold text-white/60">{t("common.quickPick")}:</span>
-              {quickChips.map((chip, i) => (
-                <button
-                  key={i}
-                  onClick={chip.onClick}
-                  className={`flex items-center gap-1.5 rounded-full border px-3 py-1.5 text-[12.5px] font-semibold transition ${
-                    chip.active
-                      ? "border-white/40 bg-white/25 text-white"
-                      : "border-white/20 bg-white/10 text-[#e7f0ff] hover:bg-white/20"
-                  }`}
-                >
-                  {chip.icon}{chip.label}
-                </button>
-              ))}
+            <div className="mt-4 flex items-start gap-2">
+              <span className="shrink-0 pt-[7px] text-[12.5px] font-semibold text-white/60">{t("common.quickPick")}:</span>
+              <div className="flex flex-wrap gap-2">
+                {quickChips.map((chip, i) => (
+                  <button
+                    key={i}
+                    onClick={chip.onClick}
+                    className={`flex items-center gap-1.5 rounded-full border px-3 py-1.5 text-[12.5px] font-semibold transition ${
+                      chip.active
+                        ? "border-white/40 bg-white/25 text-white"
+                        : "border-white/20 bg-white/10 text-[#e7f0ff] hover:bg-white/20"
+                    }`}
+                  >
+                    {chip.icon}{chip.label}
+                  </button>
+                ))}
+              </div>
             </div>
           </div>
         </div>
