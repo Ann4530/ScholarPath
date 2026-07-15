@@ -42,18 +42,12 @@ export default function HeroSky({ id = "hs", progress = 35, showPct = false }: {
           <feDropShadow dx="0" dy="9" stdDeviation="8" floodColor="#050a1f" floodOpacity="0.5" />
           <feDropShadow dx="0" dy="0" stdDeviation="7" floodColor="#8cbaff" floodOpacity="0.5" />
         </filter>
-        <radialGradient id={`${id}-cloud`} cx="0.5" cy="0.5" r="0.5">
-          <stop offset="0" stopColor="#c9dcff" stopOpacity="0.18" />
-          <stop offset="1" stopColor="#c9dcff" stopOpacity="0" />
-        </radialGradient>
       </defs>
 
-      {/* mây mềm + vài vì sao (không có mặt trăng) */}
-      <ellipse cx="180" cy="250" rx="95" ry="34" fill={`url(#${id}-cloud)`} />
-      <ellipse cx="450" cy="120" rx="120" ry="44" fill={`url(#${id}-cloud)`} />
-      <circle cx="150" cy="70" r="1.8" fill="#fff" opacity="0.75" />
-      <circle cx="360" cy="60" r="1.5" fill="#cfe0ff" opacity="0.8" />
-      <circle cx="300" cy="200" r="1.6" fill="#fff" opacity="0.6" />
+      {/* vài vì sao nhỏ (không mây, không trăng) */}
+      <circle cx="150" cy="70" r="1.8" fill="#fff" opacity="0.7" />
+      <circle cx="360" cy="60" r="1.5" fill="#cfe0ff" opacity="0.75" />
+      <circle cx="300" cy="200" r="1.5" fill="#fff" opacity="0.55" />
 
       {/* đoạn CÒN LẠI (chưa đi) — mờ, đứt */}
       <path d={rest} stroke="#8098d4" strokeOpacity="0.42" strokeWidth="2" strokeDasharray="1 8" strokeLinecap="round" />
