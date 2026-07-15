@@ -25,22 +25,22 @@ export default async function LoginPage({
           </span>
         </div>
 
-        <h1 className="mt-5 text-center text-xl font-extrabold text-[#12345c]">Đăng nhập để tiếp tục</h1>
+        <h1 className="mt-5 text-center text-xl font-extrabold text-[#12345c]">Đăng nhập / Đăng ký</h1>
         <p className="mt-1 text-center text-[13px] text-[#7591ab]">
-          Trang này chỉ dành cho người dùng được cấp quyền. Vui lòng đăng nhập bằng email đã được duyệt.
+          Đăng nhập bằng Google để lưu hồ sơ, theo dõi tiến độ ứng tuyển và nhận gợi ý học bổng cá nhân hóa.
+          Chưa có tài khoản? Lần đầu đăng nhập sẽ tự tạo cho bạn.
         </p>
 
         {error && (
           <div className="mt-4 rounded-[11px] border border-[#f7ccd2] bg-[#fdecee] p-3 text-sm text-[#b23343]">
-            Tài khoản của bạn <b>không nằm trong danh sách được phép</b> truy cập. Vui lòng dùng email đã được cấp quyền
-            hoặc liên hệ quản trị viên.
+            Không thể đăng nhập với tài khoản này. Vui lòng thử lại hoặc dùng một email Google khác.
           </div>
         )}
 
         <form
           action={async () => {
             "use server";
-            await signIn("google", { redirectTo: callbackUrl || "/" });
+            await signIn("google", { redirectTo: callbackUrl || "/explore" });
           }}
           className="mt-6"
         >
@@ -59,7 +59,7 @@ export default async function LoginPage({
         </form>
 
         <p className="mt-6 text-center text-xs text-[#93a7bd]">
-          Được bảo vệ bằng đăng nhập. Chỉ email trong danh sách cho phép mới truy cập được.
+          Bạn có thể xem học bổng mà không cần đăng nhập. Đăng nhập chỉ để lưu & đồng bộ hồ sơ cá nhân.
         </p>
       </div>
     </div>

@@ -105,7 +105,7 @@ export default function StartWizard() {
     if (maxRank > 0) p.set("qs", String(maxRank));
     if (supervisorPref !== "both") p.set("sup", supervisorPref);
     if (intakes.length) p.set("it", intakes.join(","));
-    router.push(`/?${p.toString()}`);
+    router.push(`/explore?${p.toString()}`);
   };
 
   const canNext =
@@ -136,7 +136,7 @@ export default function StartWizard() {
               <h1 className="mt-0.5 text-2xl font-extrabold tracking-tight">{t("wizard.title")}</h1>
             </div>
           </div>
-          <Link href="/" className="text-sm font-semibold text-[#cfe0ff] hover:text-white">
+          <Link href="/explore" className="text-sm font-semibold text-[#cfe0ff] hover:text-white">
             {t("wizard.skip")} →
           </Link>
         </div>

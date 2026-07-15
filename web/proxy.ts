@@ -1,29 +1,17 @@
 // Next.js 16: "Middleware" đã đổi tên thành "Proxy" (proxy.ts).
-// Chặn toàn bộ site: chưa đăng nhập -> chuyển tới /login.
+// Site ở chế độ CÔNG KHAI: ai cũng xem được, không bắt buộc đăng nhập.
+// Đăng nhập chỉ để cá nhân hóa (đồng bộ hồ sơ). Chỉ giữ một tiện ích nhỏ:
+// đã đăng nhập mà vào /login thì đưa về trang chủ.
 import { auth } from "@/auth";
 
 export const proxy = auth((req) => {
-  // Công tắc CHỈ dùng khi chạy local để xem trước giao diện mà không cần đăng nhập.
-  // KHÔNG đặt biến này trên Vercel — production luôn được bảo vệ.
-  if (process.env.AUTH_DISABLED === "true") return;
-
   const { pathname } = req.nextUrl;
-  const isPublic = pathname === "/login" || pathname.startsWith("/api/auth");
-
-  // Chưa đăng nhập và truy cập trang bảo vệ -> về /login
-  if (!req.auth && !isPublic) {
-    const url = new URL("/login", req.nextUrl.origin);
-    if (pathname !== "/") url.searchParams.set("callbackUrl", pathname);
-    return Response.redirect(url);
-  }
-
-  // Đã đăng nhập mà vào /login -> về trang chủ
   if (req.auth && pathname === "/login") {
     return Response.redirect(new URL("/", req.nextUrl.origin));
   }
 });
 
 export const config = {
-  // Chạy proxy trên mọi route, trừ tài nguyên tĩnh
-  matcher: ["/((?!_next/static|_next/image|favicon.ico).*)"],
+  // Chỉ cần chạy trên /login để xử lý redirect ở trên; tránh gọi auth() trên mọi route.
+  matcher: ["/login"],
 };

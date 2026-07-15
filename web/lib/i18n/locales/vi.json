@@ -18,7 +18,8 @@
     "professors": "Giáo sư",
     "board": "Bảng theo dõi",
     "start": "Bắt đầu",
-    "signOut": "Đăng xuất"
+    "signOut": "Đăng xuất",
+    "login": "Đăng nhập"
   },
   "footer": {
     "demo1": "ScholarFinder · Bản demo minh họa luồng nghiệp vụ. Dữ liệu học bổng & giáo sư là",
@@ -600,5 +601,40 @@
   },
   "language": {
     "label": "Ngôn ngữ"
+  },
+  "landing": {
+    "badge": "Nền tảng tìm học bổng du học",
+    "heroTitle": "Con đường du học của bạn",
+    "heroTitleHl": "bắt đầu từ đây",
+    "heroDesc": "ScholarFinder chấm mức độ phù hợp của từng học bổng theo hồ sơ của bạn, gợi ý giáo sư hướng dẫn và giúp bạn theo dõi toàn bộ tiến độ ứng tuyển — tất cả ở một nơi.",
+    "startCta": "Bắt đầu với ScholarFinder",
+    "loginCta": "Đăng nhập / Đăng ký",
+    "browseCta": "Xem tất cả học bổng",
+    "heroNote": "Không cần đăng nhập để khám phá. Đăng nhập khi muốn lưu hồ sơ & theo dõi tiến độ.",
+    "statScholarships": "Học bổng",
+    "statCountries": "Quốc gia",
+    "statFields": "Ngành học",
+    "statFree": "Chi phí",
+    "statFreeValue": "Miễn phí",
+    "featTitle": "Mọi thứ bạn cần cho hành trình du học",
+    "featDesc": "Từ tìm học bổng phù hợp đến quản lý hồ sơ và deadline — ScholarFinder đồng hành cùng bạn từng bước.",
+    "f1Title": "Gợi ý theo hồ sơ",
+    "f1Desc": "Chấm điểm phù hợp từng học bổng dựa trên GPA, IELTS, ngành và mục tiêu của bạn.",
+    "f2Title": "Giáo sư hướng dẫn",
+    "f2Desc": "Tìm giáo sư theo lĩnh vực nghiên cứu, xem thông tin liên hệ và định hướng.",
+    "f3Title": "Bảng theo dõi Kanban",
+    "f3Desc": "Quản lý từng học bổng theo giai đoạn: quan tâm → chuẩn bị → đã nộp → kết quả.",
+    "f4Title": "Lịch & nhắc deadline",
+    "f4Desc": "Không bỏ lỡ hạn nộp — xuất Google Calendar/.ics và nhận thông báo.",
+    "howTitle": "Bắt đầu chỉ với 3 bước",
+    "howDesc": "Cá nhân hóa trải nghiệm trong chưa đầy một phút.",
+    "step1Title": "Tạo hồ sơ",
+    "step1Desc": "Nhập trình độ, ngành, GPA/IELTS và mong muốn về tài trợ.",
+    "step2Title": "Nhận gợi ý",
+    "step2Desc": "Xem danh sách học bổng phù hợp nhất, đã lọc theo hồ sơ của bạn.",
+    "step3Title": "Theo dõi tiến độ",
+    "step3Desc": "Thêm vào bảng theo dõi, làm checklist hồ sơ và bám sát deadline.",
+    "ctaTitle": "Sẵn sàng bắt đầu hành trình?",
+    "ctaDesc": "Tạo hồ sơ cá nhân hóa miễn phí và tìm học bổng phù hợp với bạn ngay hôm nay."
   }
 }

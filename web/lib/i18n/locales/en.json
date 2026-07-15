@@ -18,7 +18,8 @@
     "professors": "Professors",
     "board": "Tracker",
     "start": "Get started",
-    "signOut": "Sign out"
+    "signOut": "Sign out",
+    "login": "Sign in"
   },
   "footer": {
     "demo1": "ScholarFinder · Demo illustrating the business flow. Scholarship & professor data are",
@@ -600,5 +601,40 @@
   },
   "language": {
     "label": "Language"
+  },
+  "landing": {
+    "badge": "Study-abroad scholarship platform",
+    "heroTitle": "Your path to studying abroad",
+    "heroTitleHl": "starts here",
+    "heroDesc": "ScholarFinder scores every scholarship against your profile, suggests supervising professors and helps you track your entire application journey — all in one place.",
+    "startCta": "Start your ScholarFinder",
+    "loginCta": "Sign in / Sign up",
+    "browseCta": "Browse all scholarships",
+    "heroNote": "No sign-in needed to explore. Sign in when you want to save your profile & track progress.",
+    "statScholarships": "Scholarships",
+    "statCountries": "Countries",
+    "statFields": "Fields",
+    "statFree": "Cost",
+    "statFreeValue": "Free",
+    "featTitle": "Everything you need for your study-abroad journey",
+    "featDesc": "From finding the right scholarships to managing documents and deadlines — ScholarFinder is with you every step.",
+    "f1Title": "Profile-based matching",
+    "f1Desc": "Each scholarship is scored on your GPA, IELTS, field and goals.",
+    "f2Title": "Supervising professors",
+    "f2Desc": "Find professors by research area, with contact details and guidance.",
+    "f3Title": "Kanban tracker",
+    "f3Desc": "Manage each scholarship by stage: interested → preparing → submitted → result.",
+    "f4Title": "Deadline calendar",
+    "f4Desc": "Never miss a deadline — export to Google Calendar/.ics and get reminders.",
+    "howTitle": "Get started in just 3 steps",
+    "howDesc": "Personalize your experience in under a minute.",
+    "step1Title": "Create your profile",
+    "step1Desc": "Enter your level, field, GPA/IELTS and funding needs.",
+    "step2Title": "Get matches",
+    "step2Desc": "See the best-fit scholarships, filtered to your profile.",
+    "step3Title": "Track progress",
+    "step3Desc": "Add to your tracker, complete document checklists and stay on top of deadlines.",
+    "ctaTitle": "Ready to start your journey?",
+    "ctaDesc": "Create your free personalized profile and find scholarships that fit you today."
   }
 }

@@ -16,10 +16,11 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
     error: "/login", // lỗi (vd không nằm trong allowlist) quay về /login
   },
   callbacks: {
-    // Chỉ cho phép đăng nhập nếu email nằm trong danh sách cho phép
+    // Đăng ký/đăng nhập MỞ để cá nhân hóa: ai có Google cũng vào được.
+    // Nếu quản trị viên đặt ALLOWED_EMAILS thì mới giới hạn theo danh sách đó.
     signIn({ user }) {
+      if (allowedEmails.length === 0) return true; // mở: cho phép mọi tài khoản
       const email = user.email?.toLowerCase();
-      if (allowedEmails.length === 0) return false; // fail-closed: chưa cấu hình -> chặn hết
       return !!email && allowedEmails.includes(email);
     },
   },

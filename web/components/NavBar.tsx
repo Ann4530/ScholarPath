@@ -49,7 +49,7 @@ export default function NavBar({ children }: { children?: React.ReactNode }) {
         </Link>
         <div className="flex items-center gap-2">
           <nav className="flex items-center gap-1 rounded-xl bg-[#dbe8f7] p-1">
-            {link("/", t("nav.search"))}
+            {link("/explore", t("nav.search"))}
             {link("/professors", t("nav.professors"))}
             {link("/board", t("nav.board"), count)}
             {link("/profile", t("account.navTitle"))}
