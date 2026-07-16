@@ -5,20 +5,24 @@
 import { useMemo, useState } from "react";
 import Link from "next/link";
 import { useTranslation } from "react-i18next";
-import { FlaskConical, Medal, Flag, UserSearch, Search } from "lucide-react";
+import {
+  FlaskConical, Medal, Flag, UserSearch, Search,
+  GraduationCap, ArrowRight, Lightbulb,
+} from "lucide-react";
 import { professors, scholarshipById } from "@/lib/data";
-import { flagEmoji } from "@/lib/ui";
+import CountryTag from "@/components/CountryTag";
 import FilterDropdown from "@/components/FilterDropdown";
 import AcademicScene from "@/components/AcademicScene";
 
 const PROF_FIELDS = Array.from(new Set(professors.flatMap((p) => p.fields))).sort();
 const PROF_COUNTRIES = Array.from(new Set(professors.map((p) => p.countryCode)));
 const RANKS = ["professor", "associate", "assistant", "dr"] as const;
+// Học hàm chỉ là nhãn thông tin — để xám, dành màu cho trạng thái tuyển.
 const RANK_CLS: Record<string, string> = {
-  professor: "bg-[#eef2ff] text-[#4338ca] ring-[#c7d2fe]",
-  associate: "bg-[#e0f2fe] text-[#0369a1] ring-[#bae6fd]",
-  assistant: "bg-[#e9f8f0] text-[#0b7a52] ring-[#c4ecd8]",
-  dr: "bg-[#f1f5f9] text-[#475569] ring-[#e2e8f0]",
+  professor: "bg-[#f8fafd] text-[#5a7794] ring-[#dce8f4]",
+  associate: "bg-[#f8fafd] text-[#5a7794] ring-[#dce8f4]",
+  assistant: "bg-[#f8fafd] text-[#5a7794] ring-[#dce8f4]",
+  dr: "bg-[#f8fafd] text-[#5a7794] ring-[#dce8f4]",
 };
 
 const RECRUITING_CLS: Record<string, string> = {
@@ -112,7 +116,7 @@ export default function ProfessorsPage() {
         />
         <FilterDropdown
           label={t("professors.fCountry")} icon={<Flag className="h-4 w-4" />}
-          options={PROF_COUNTRIES.map((c) => ({ value: c, label: `${flagEmoji(c)} ${t(`country.${c}`)}` }))}
+          options={PROF_COUNTRIES.map((c) => ({ value: c, label: t(`country.${c}`) }))}
           selected={countries}
           onToggle={(v) => setCountries(toggle(countries, v))}
           onClear={() => setCountries([])}
@@ -150,13 +154,16 @@ export default function ProfessorsPage() {
               <div key={p.id} className="flex flex-col rounded-[18px] border border-[#e2e8f4] bg-white p-[18px] shadow-[0_1px_2px_rgba(23,50,76,0.04)] transition hover:-translate-y-0.5 hover:shadow-md">
                 <div className="flex items-start justify-between gap-2">
                   <div className="min-w-0">
-                    <Link href={`/professors/${p.id}`} className="text-[16px] font-extrabold text-[#1a3352] hover:text-[#4f46e5]">
+                    <Link href={`/professors/${p.id}`} className="text-[16px] font-extrabold text-[#1a3352] hover:text-[#2f6fe0]">
                       {p.name}
                     </Link>
                     <p className="mt-1">
                       <span className={`rounded-md px-1.5 py-0.5 text-[11px] font-semibold ring-1 ${RANK_CLS[p.rank]}`}>{t(`rank.${p.rank}`)}</span>
                     </p>
-                    <p className="mt-1 text-xs text-[#7591ab]">{flagEmoji(p.countryCode)} {p.university}</p>
+                    <p className="mt-1 flex items-center gap-1.5 text-xs text-[#7591ab]">
+                      <CountryTag name={t(`country.${p.countryCode}`)} code={p.countryCode} />
+                      {p.university}
+                    </p>
                   </div>
                   <span className={`shrink-0 rounded-full px-2.5 py-1 text-[11px] font-semibold ring-1 ${RECRUITING_CLS[p.recruiting]}`}>
                     {t(RECRUITING_KEY[p.recruiting])}
@@ -165,7 +172,7 @@ export default function ProfessorsPage() {
 
                 <div className="mt-3 flex flex-wrap gap-1.5">
                   {p.keywords.slice(0, 3).map((k) => (
-                    <span key={k} className="rounded-full bg-[#eef1fd] px-2.5 py-0.5 text-[11px] font-semibold text-[#4f46e5] ring-1 ring-[#dbe0fb]">{k}</span>
+                    <span key={k} className="rounded-full bg-[#eef4fb] px-2.5 py-0.5 text-[11px] font-semibold text-[#2f6fe0] ring-1 ring-[#dce8f4]">{k}</span>
                   ))}
                 </div>
 
@@ -180,12 +187,14 @@ export default function ProfessorsPage() {
 
                 <div className="mt-auto flex items-center justify-between pt-3">
                   {sch ? (
-                    <Link href={`/scholarships/${sch.id}`} className="truncate text-xs text-[#2f6fe0] hover:underline" title={sch.title}>
-                      🎓 {sch.title.length > 24 ? sch.title.slice(0, 24) + "…" : sch.title}
+                    <Link href={`/scholarships/${sch.id}`} className="flex min-w-0 items-center gap-1.5 text-xs text-[#2f6fe0] hover:underline" title={sch.title}>
+                      <GraduationCap className="h-3.5 w-3.5 shrink-0" />
+                      <span className="truncate">{sch.title.length > 24 ? sch.title.slice(0, 24) + "…" : sch.title}</span>
                     </Link>
                   ) : <span />}
-                  <Link href={`/professors/${p.id}`} className="shrink-0 rounded-[10px] bg-[#4f46e5] px-3 py-1.5 text-xs font-bold text-white hover:brightness-110">
-                    {t("professors.cta")} →
+                  <Link href={`/professors/${p.id}`} className="flex shrink-0 items-center gap-1.5 rounded-[10px] bg-[#2f6fe0] px-3 py-1.5 text-xs font-bold text-white hover:brightness-110">
+                    {t("professors.cta")}
+                    <ArrowRight className="h-3.5 w-3.5" />
                   </Link>
                 </div>
               </div>
@@ -194,8 +203,9 @@ export default function ProfessorsPage() {
         </div>
       )}
 
-      <p className="mt-6 text-center text-xs text-[#93a7bd]">
-        💡 {t("professors.tipPre")} <b className="text-[#5a7794]">{t("professors.tipBold")}</b> {t("professors.tipPost")}
+      <p className="mt-6 flex items-center justify-center gap-1.5 text-center text-xs text-[#93a7bd]">
+        <Lightbulb className="h-3.5 w-3.5 shrink-0" />
+        <span>{t("professors.tipPre")} <b className="text-[#5a7794]">{t("professors.tipBold")}</b> {t("professors.tipPost")}</span>
       </p>
     </div>
   );

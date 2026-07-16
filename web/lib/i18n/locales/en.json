@@ -13,7 +13,14 @@
     "quickPick": "Quick pick",
     "and": " and "
   },
+  "authGate": {
+    "title": "Sign in to personalise",
+    "desc": "This feature needs an account — sign in to score scholarships to your profile, save and track them.",
+    "cta": "Sign in / Sign up",
+    "later": "Maybe later"
+  },
   "nav": {
+    "home": "Home",
     "search": "Find scholarships",
     "professors": "Professors",
     "board": "Tracker",
@@ -73,7 +80,27 @@
     "KR": "South Korea",
     "SG": "Singapore",
     "SE": "Sweden",
-    "CH": "Switzerland"
+    "CH": "Switzerland",
+    "AT": "Austria",
+    "BE": "Belgium",
+    "CZ": "Czechia",
+    "DK": "Denmark",
+    "EE": "Estonia",
+    "ES": "Spain",
+    "FI": "Finland",
+    "HK": "Hong Kong",
+    "HU": "Hungary",
+    "IE": "Ireland",
+    "IN": "India",
+    "IT": "Italy",
+    "MY": "Malaysia",
+    "NO": "Norway",
+    "NZ": "New Zealand",
+    "PL": "Poland",
+    "PT": "Portugal",
+    "RU": "Russia",
+    "TH": "Thailand",
+    "TW": "Taiwan"
   },
   "teachLang": {
     "en": "English",
@@ -81,7 +108,11 @@
     "fr": "French",
     "zh": "Chinese",
     "ko": "Korean",
-    "vi": "Vietnamese"
+    "vi": "Vietnamese",
+    "de": "German",
+    "es": "Spanish",
+    "it": "Italian",
+    "ru": "Russian"
   },
   "stage": {
     "quan_tam": "Interested",
@@ -213,8 +244,8 @@
   "card": {
     "needSupervisor": "Needs supervisor",
     "needProposal": "Research proposal",
-    "track": "+ Track",
-    "tracking": "✓ Tracking",
+    "track": "Track",
+    "tracking": "Tracking",
     "compareAdd": "Add to comparison (max 4)",
     "compareRemove": "Remove from comparison",
     "detail": "Details"
@@ -254,10 +285,10 @@
     "trackToSave": "Click \"Track scholarship\" to save checklist progress.",
     "e18Title": "Application writing assistant (E18):",
     "e18Desc": "items like CV, SOP/Motivation Letter, Research Proposal and reference letters will come with templates & follow-along guides. (Illustrative in this demo)",
-    "track": "+ Track scholarship",
-    "tracking": "✓ Tracking",
-    "compareAdd": "⇄ Add to comparison",
-    "compareIn": "✓ In comparison list",
+    "track": "Track scholarship",
+    "tracking": "Tracking",
+    "compareAdd": "Add to comparison",
+    "compareIn": "In comparison list",
     "status": "Application status",
     "note": "Personal note",
     "notePh": "E.g. asked Prof. A for a reference letter…",
@@ -290,7 +321,7 @@
     "s3Title": "Where do you want to go?",
     "s3Desc": "Pick preferred countries — click a region name to quickly select the whole group.",
     "s3GroupAll": "(select group)",
-    "s3GroupClear": "✓ (deselect group)",
+    "s3GroupClear": "(deselect group)",
     "s3Hint": "{{n}} countries selected.",
     "s4Title": "Your current academic standing",
     "s4Desc": "Used for Match Score — enter honestly for accurate recommendations.",
@@ -322,7 +353,7 @@
     "s6SupNoT": "No — coursework",
     "s6SupNoD": "Chevening, Erasmus, GKS… apply directly, no professor needed",
     "s6Intake": "Preferred intake",
-    "s7Title": "All set! 🎉",
+    "s7Title": "All set!",
     "s7Desc": "Review your choices — you can always adjust filters or rerun this wizard.",
     "sumLevel": "Level",
     "sumGpa": "GPA",
@@ -347,7 +378,7 @@
     "finish": "See {{n}} matching scholarships",
     "needField": "Select at least 1 field to continue",
     "needCountry": "Select at least 1 country to continue",
-    "footerNote": "Choices are saved to your profile on this device — adjust anytime via ⚙️ Profile or rerun the wizard."
+    "footerNote": "Choices are saved to your profile on this device — adjust anytime via Profile or rerun the wizard."
   },
   "compare": {
     "emptyTitle": "Compare scholarships",
@@ -355,8 +386,8 @@
     "emptyOne": "At least 2 scholarships are needed to compare (1 selected).",
     "emptyHint1": "Click the",
     "emptyHint2": "button on a scholarship card in search to add (max 4).",
-    "backCta": "← Back to search",
-    "back": "← Search page",
+    "backCta": "Back to search",
+    "back": "Search page",
     "title": "Comparing {{n}} scholarships",
     "clear": "Clear comparison list",
     "criteria": "Criteria",
@@ -386,12 +417,12 @@
     "docsCount": "{{n}} items",
     "rowTrust": "Source trust score",
     "updated": "verified {{d}}",
-    "track": "+ Track",
-    "tracking": "✓ Tracking",
+    "track": "Track",
+    "tracking": "Tracking",
     "viewDetail": "View details",
     "removeTitle": "Remove from comparison",
     "kingTitle": "Highest",
-    "legend": "👑 = highest Match Score · (easiest) = lowest requirement in this comparison."
+    "legend": "= highest Match Score · (easiest) = lowest requirement in this comparison."
   },
   "professors": {
     "title": "Find a supervising professor",
@@ -426,8 +457,8 @@
     "featuredPubs": "Selected publications",
     "outreach": "Professor outreach helper",
     "outreachDesc": "An email template personalized to the professor's research & your profile. Read 1–2 of their publications carefully and fill in the [bracketed] parts before sending.",
-    "copy": "📋 Copy email template",
-    "copied": "✓ Copied",
+    "copy": "Copy email template",
+    "copied": "Copied",
     "tip1": "References a specific publication by the professor",
     "tip2": "States clearly why you're a fit & attaches your CV",
     "tip3": "Send from your personal email (the system never mass-sends — anti-spam)",
@@ -443,7 +474,7 @@
   "board": {
     "emptyTitle": "Your tracker is empty",
     "emptyDesc": "Click \"Track\" on a scholarship to start managing your application progress.",
-    "findCta": "Find scholarships →",
+    "findCta": "Find scholarships",
     "title": "Application tracker",
     "viewTable": "Table",
     "viewKanban": "Kanban",
@@ -473,7 +504,7 @@
     "back": "Scholarship details",
     "for": "For scholarship:",
     "langNote": "Drafts are in <b>English</b> (the common submission language), personalized to your profile. Fill in the [brackets], then copy/download to submit.",
-    "fillProfilePre": "💡 Update your",
+    "fillProfilePre": "Update your",
     "fillProfileLink": "profile",
     "fillProfilePost": "(name, GPA, field, country…) for more accurate drafts.",
     "generatedBadge": "Auto-draft",
@@ -485,8 +516,8 @@
     "edited": "Edited",
     "copyAll": "Copy all",
     "advisorPre": "Want someone to review before you submit?",
-    "advisorLink": "Book an essay advisor →",
-    "openCta": "✍️ Open document assistant",
+    "advisorLink": "Book an essay advisor",
+    "openCta": "Open document assistant",
     "openCtaShort": "Write documents",
     "empty": "This scholarship has no document list to draft yet.",
     "disclaimer": "Drafts are a starting point — write with your real experience; never submit them verbatim to a committee."
@@ -523,12 +554,12 @@
     "overallDocs": "Total documents completed",
     "urgentTitle": "Needs attention",
     "urgentDesc": "Docs incomplete & deadline ≤30 days",
-    "urgentEmpty": "Nothing urgent 🎉",
+    "urgentEmpty": "Nothing urgent",
     "deadlinesTitle": "Upcoming deadlines",
     "deadlinesEmpty": "No upcoming deadlines in your tracked list.",
     "emptyTitle": "No scholarships tracked yet",
     "emptyDesc": "Add scholarships to your tracked list to see statistics and manage progress.",
-    "goFind": "Find scholarships →",
+    "goFind": "Find scholarships",
     "listTitle": "Application progress tracker",
     "expandHint": "Click a row to see required documents, registration link & key dates.",
     "linksSection": "Registration & source",
@@ -542,7 +573,7 @@
     },
     "itemProgress": "Docs",
     "hasNote": "Note",
-    "openBoard": "Open Kanban board →",
+    "openBoard": "Open Kanban board",
     "academicTitle": "Academic information",
     "academicHint": "Used to score match across all scholarships.",
     "name": "Full name",
@@ -587,11 +618,11 @@
   "notif": {
     "title": "Notifications",
     "aria": "Notifications",
-    "empty": "Nothing needs attention 🎉",
+    "empty": "Nothing needs attention",
     "deadline": "{{type}} · {{left}}",
     "docsLow": "Docs only {{p}}% done — due {{left}}",
     "overdueTag": "Overdue",
-    "viewProfile": "Open my profile →"
+    "viewProfile": "Open my profile"
   },
   "advisorRole": {
     "government": "Government scholarship advisor",
@@ -600,7 +631,9 @@
     "essay": "Essay / SOP advisor"
   },
   "language": {
-    "label": "Language"
+    "label": "Language",
+    "search": "Search language…",
+    "noMatch": "No matching language"
   },
   "landing": {
     "badge": "Study-abroad scholarship platform",

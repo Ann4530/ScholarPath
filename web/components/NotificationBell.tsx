@@ -8,7 +8,8 @@ import { Bell } from "lucide-react";
 import { useTranslation } from "react-i18next";
 import { scholarshipById, nextDeadline, daysLeft } from "@/lib/data";
 import { useTrack } from "@/lib/store";
-import { flagEmoji, deadlineColor, deadlineText } from "@/lib/ui";
+import { deadlineColor, deadlineText } from "@/lib/ui";
+import CountryTag from "@/components/CountryTag";
 
 interface NotifItem {
   id: string;
@@ -112,8 +113,9 @@ export default function NotificationBell() {
                     className="flex items-start gap-2.5 border-b border-[#f3f7fb] px-3.5 py-2.5 transition hover:bg-[#f6f9fd]">
                     <span className={`mt-1.5 h-2 w-2 shrink-0 rounded-full ${n.overdue ? "bg-[#93a7bd]" : n.days <= 7 ? "bg-[#d33a4a]" : "bg-[#e0921a]"}`} />
                     <span className="min-w-0">
-                      <span className="block truncate text-sm font-semibold text-[#1a3352]">
-                        {flagEmoji(n.countryCode)} {n.title}
+                      <span className="flex items-center gap-1.5 text-sm font-semibold text-[#1a3352]">
+                        <CountryTag name={t(`country.${n.countryCode}`)} code={n.countryCode} />
+                        <span className="truncate">{n.title}</span>
                       </span>
                       <span className={`block text-xs ${deadlineColor(n.days)}`}>
                         {n.overdue && <b className="mr-1 rounded bg-[#eef3f9] px-1 text-[10px] uppercase text-[#5a7794]">{t("notif.overdueTag")}</b>}

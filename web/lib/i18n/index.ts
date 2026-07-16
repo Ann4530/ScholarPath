@@ -15,13 +15,51 @@ import {
 } from "./languages";
 import en from "./locales/en.json";
 import vi from "./locales/vi.json";
+import de from "./locales/de.json";
+import fr from "./locales/fr.json";
+import es from "./locales/es.json";
+import it from "./locales/it.json";
+import nl from "./locales/nl.json";
+import sv from "./locales/sv.json";
+import pt from "./locales/pt.json";
+import pl from "./locales/pl.json";
+import cs from "./locales/cs.json";
+import tr from "./locales/tr.json";
+import ru from "./locales/ru.json";
+import ja from "./locales/ja.json";
+import ko from "./locales/ko.json";
+import zhHans from "./locales/zh-Hans.json";
+import zhHant from "./locales/zh-Hant.json";
+import th from "./locales/th.json";
 
 export const STORAGE_KEY = "scholarfinder-language";
 
+// CHỈ đăng ký ngôn ngữ đã có file dịch — TRANSLATED_CODES bên dưới lọc bộ chọn theo
+// đúng danh sách này, để không ai chọn được một ngôn ngữ rồi thấy hiện tiếng Việt.
+// Thứ tự khớp SUPPORTED_LANGUAGES trong ./languages.ts.
 const resources = {
   vi: { translation: vi },
   en: { translation: en },
+  de: { translation: de },
+  fr: { translation: fr },
+  es: { translation: es },
+  it: { translation: it },
+  nl: { translation: nl },
+  sv: { translation: sv },
+  pt: { translation: pt },
+  pl: { translation: pl },
+  cs: { translation: cs },
+  tr: { translation: tr },
+  ru: { translation: ru },
+  ja: { translation: ja },
+  ko: { translation: ko },
+  "zh-Hans": { translation: zhHans },
+  "zh-Hant": { translation: zhHant },
+  th: { translation: th },
 } as const;
+
+/** Mã ngôn ngữ đã thực sự có bản dịch — nguồn cho bộ chọn ngôn ngữ. */
+export const TRANSLATED_CODES = Object.keys(resources) as LanguageCode[];
 
 if (!i18n.isInitialized) {
   void i18n.use(initReactI18next).init({
@@ -37,11 +75,13 @@ if (!i18n.isInitialized) {
 function preferredLanguage(): LanguageCode {
   try {
     const saved = localStorage.getItem(STORAGE_KEY);
-    if (isSupported(saved)) return saved;
+    if (isSupported(saved) && TRANSLATED_CODES.includes(saved)) return saved;
   } catch {
     /* localStorage có thể bị chặn — bỏ qua */
   }
-  return normalizeLanguage(navigator.language) ?? DEFAULT_LANGUAGE;
+  const fromBrowser = normalizeLanguage(navigator.language);
+  if (fromBrowser && TRANSLATED_CODES.includes(fromBrowser)) return fromBrowser;
+  return DEFAULT_LANGUAGE;
 }
 
 /** Khôi phục ngôn ngữ sau khi mount (I18nProvider gọi trong useEffect). */

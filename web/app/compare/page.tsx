@@ -4,7 +4,7 @@
 
 import Link from "next/link";
 import { useTranslation } from "react-i18next";
-import { ArrowLeftRight } from "lucide-react";
+import { ArrowLeftRight, ArrowRight, Bookmark, Check, Crown, Lock, X } from "lucide-react";
 import {
   scholarshipById,
   matchScore,
@@ -13,10 +13,13 @@ import {
   teachLanguages,
 } from "@/lib/data";
 import { useTrack } from "@/lib/store";
-import { flagEmoji, matchColor, deadlineColor, deadlineText } from "@/lib/ui";
+import { useAuth } from "@/components/AuthContext";
+import { matchColor, deadlineColor, deadlineText } from "@/lib/ui";
+import CountryTag from "@/components/CountryTag";
 
 export default function ComparePage() {
   const { t } = useTranslation();
+  const { loggedIn, requireAuth } = useAuth();
   const { compare, toggleCompare, clearCompare, profile, isTracked, toggleTrack } = useTrack();
   const items = compare.map((id) => scholarshipById(id)).filter(Boolean) as NonNullable<ReturnType<typeof scholarshipById>>[];
 
@@ -29,7 +32,9 @@ export default function ComparePage() {
         <h1 className="mt-4 text-xl font-extrabold text-[#1a3352]">{t("compare.emptyTitle")}</h1>
         <p className="mt-2 text-[#7591ab]">
           {items.length === 0 ? t("compare.emptyNone") : t("compare.emptyOne")}{" "}
-          {t("compare.emptyHint1")} <b>⇄</b> {t("compare.emptyHint2")}
+          {t("compare.emptyHint1")}{" "}
+          <ArrowLeftRight className="inline h-3.5 w-3.5 text-[#5a7794]" />{" "}
+          {t("compare.emptyHint2")}
         </p>
         <Link href="/" className="mt-6 inline-block rounded-xl bg-[#2f6fe0] px-5 py-2.5 font-bold text-white hover:brightness-105">
           {t("compare.backCta")}
@@ -67,12 +72,17 @@ export default function ComparePage() {
                 <th key={s.id} className="min-w-52 border-l border-[#eef3f9] bg-[#f6f9fd] p-3 text-left align-top">
                   <div className="flex items-start justify-between gap-2">
                     <div>
-                      <p className="text-xs font-normal text-[#7591ab]">{flagEmoji(s.countryCode)} {t(`country.${s.countryCode}`)} · QS #{s.qsRank}</p>
+                      <p className="flex items-center gap-1.5 text-xs font-normal text-[#7591ab]">
+                        <CountryTag name={t(`country.${s.countryCode}`)} code={s.countryCode} title={s.country} />
+                        QS #{s.qsRank}
+                      </p>
                       <Link href={`/scholarships/${s.id}`} className="mt-0.5 block font-bold leading-snug text-[#12345c] hover:text-[#2f6fe0]">
                         {s.title}
                       </Link>
                     </div>
-                    <button onClick={() => toggleCompare(s.id)} className="shrink-0 text-[#c3ccd8] hover:text-[#d33a4a]" title={t("compare.removeTitle")}>✕</button>
+                    <button onClick={() => toggleCompare(s.id)} className="shrink-0 text-[#c3ccd8] hover:text-[#d33a4a]" title={t("compare.removeTitle")}>
+                      <X className="h-3.5 w-3.5" />
+                    </button>
                   </div>
                 </th>
               ))}
@@ -82,11 +92,20 @@ export default function ComparePage() {
             <Row label={t("compare.rowMatch")}>
               {items.map((s, i) => (
                 <td key={s.id} className="border-l border-t border-[#eef3f9] p-3">
-                  <span className={`inline-flex items-center gap-1 rounded-lg border px-2.5 py-1 font-bold ${matchColor(matches[i].score)}`}>
-                    {matches[i].score}%
-                    {matches[i].score === bestMatch && <span title={t("compare.kingTitle")}>👑</span>}
-                  </span>
-                  <p className="mt-1 text-xs text-[#7591ab]">{matches[i].label}</p>
+                  {loggedIn ? (
+                    <>
+                      <span className={`inline-flex items-center gap-1 rounded-lg border px-2.5 py-1 font-bold ${matchColor(matches[i].score)}`}>
+                        {matches[i].score}%
+                        {matches[i].score === bestMatch && <Crown className="h-3.5 w-3.5" aria-label={t("compare.kingTitle")} />}
+                      </span>
+                      <p className="mt-1 text-xs text-[#7591ab]">{matches[i].label}</p>
+                    </>
+                  ) : (
+                    <button onClick={() => requireAuth()} title={t("authGate.title")}
+                      className="inline-flex items-center gap-1.5 rounded-lg border border-dashed border-[#cfe0f2] px-2.5 py-1 text-xs font-semibold text-[#93a7bd] transition hover:border-[#9cc1f5] hover:text-[#2f6fe0]">
+                      <Lock className="h-3.5 w-3.5" /> {t("filter.sortMatch")}
+                    </button>
+                  )}
                 </td>
               ))}
             </Row>
@@ -99,7 +118,12 @@ export default function ComparePage() {
               {items.map((s) => (
                 <Cell key={s.id}>
                   <ul className="space-y-0.5 text-xs text-[#455f78]">
-                    {s.benefits.map((b) => <li key={b}>◆ {b}</li>)}
+                    {s.benefits.map((b) => (
+                      <li key={b} className="flex items-start gap-1.5">
+                        <Check className="mt-0.5 h-3 w-3 shrink-0 text-[#7591ab]" />
+                        <span>{b}</span>
+                      </li>
+                    ))}
                   </ul>
                 </Cell>
               ))}
@@ -137,7 +161,7 @@ export default function ComparePage() {
             </Row>
             <Row label={t("compare.rowSup")}>
               {items.map((s) => (
-                <Cell key={s.id}>{s.requiresSupervisor ? <span className="text-[#7c3aed]">{t("compare.supYes")}</span> : t("common.no")}</Cell>
+                <Cell key={s.id}>{s.requiresSupervisor ? <span className="text-[#2f6fe0]">{t("compare.supYes")}</span> : t("common.no")}</Cell>
               ))}
             </Row>
             <Row label={t("compare.rowProposal")}>
@@ -199,15 +223,18 @@ export default function ComparePage() {
                 <td key={s.id} className="border-l border-t border-[#eef3f9] p-3">
                   <div className="flex flex-col gap-1.5">
                     <button
-                      onClick={() => toggleTrack(s.id)}
-                      className={`rounded-lg px-3 py-1.5 text-xs font-semibold transition ${
-                        isTracked(s.id) ? "bg-[#0f9d6b] text-white" : "border border-[#c8dcfa] bg-[#eaf1fd] text-[#2f6fe0] hover:bg-[#e0ebfc]"
+                      onClick={() => requireAuth(() => toggleTrack(s.id))}
+                      className={`flex items-center justify-center gap-1.5 rounded-lg px-3 py-1.5 text-xs font-semibold transition ${
+                        loggedIn && isTracked(s.id) ? "bg-[#0f9d6b] text-white" : "border border-[#c8dcfa] bg-[#eaf1fd] text-[#2f6fe0] hover:bg-[#e0ebfc]"
                       }`}
                     >
-                      {isTracked(s.id) ? t("compare.tracking") : t("compare.track")}
+                      {loggedIn && isTracked(s.id)
+                        ? <><Check className="h-3.5 w-3.5" />{t("compare.tracking")}</>
+                        : <><Bookmark className="h-3.5 w-3.5" />{t("compare.track")}</>}
                     </button>
-                    <Link href={`/scholarships/${s.id}`} className="rounded-lg bg-[#1a3352] px-3 py-1.5 text-center text-xs font-bold text-white hover:bg-[#22406a]">
-                      {t("compare.viewDetail")} →
+                    <Link href={`/scholarships/${s.id}`} className="flex items-center justify-center gap-1.5 rounded-lg bg-[#1a3352] px-3 py-1.5 text-center text-xs font-bold text-white hover:bg-[#22406a]">
+                      {t("compare.viewDetail")}
+                      <ArrowRight className="h-3.5 w-3.5" />
                     </Link>
                   </div>
                 </td>
@@ -217,7 +244,11 @@ export default function ComparePage() {
         </table>
       </div>
 
-      <p className="mt-4 text-xs text-[#93a7bd]">{t("compare.legend")}</p>
+      {/* Chú giải — icon vương miện đứng trước, vì chuỗi dịch không còn mang glyph */}
+      <p className="mt-4 flex items-center gap-1.5 text-xs text-[#93a7bd]">
+        <Crown className="h-3.5 w-3.5 shrink-0" />
+        {t("compare.legend")}
+      </p>
     </div>
   );
 }

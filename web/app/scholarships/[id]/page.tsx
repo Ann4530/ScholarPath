@@ -11,20 +11,30 @@ import {
   daysLeft,
   teachLanguages,
 } from "@/lib/data";
+import {
+  ChevronLeft, ArrowRight, ArrowLeftRight, Bookmark, Check, CircleCheck, CircleX,
+  TriangleAlert, Lightbulb, PenLine, StickyNote, ExternalLink, Info, Lock,
+} from "lucide-react";
 import { useTrack, STAGES, StageId } from "@/lib/store";
-import { flagEmoji, matchBar, matchRingBar, matchFg, deadlineColor, deadlineText } from "@/lib/ui";
+import { useAuth } from "@/components/AuthContext";
+import { matchBar, matchRingBar, matchFg, deadlineColor, deadlineText } from "@/lib/ui";
+import CountryTag from "@/components/CountryTag";
 
 export default function ScholarshipDetail() {
   const params = useParams<{ id: string }>();
   const { t } = useTranslation();
   const s = scholarshipById(params.id);
+  const { loggedIn, requireAuth } = useAuth();
   const { profile, isTracked, toggleTrack, tracked, setStage, setNote, toggleChecklist, progress, isCompared, toggleCompare } = useTrack();
 
   if (!s) {
     return (
       <div className="mx-auto max-w-3xl px-4 py-20 text-center">
         <p className="text-[#5a7794]">{t("detail.notFound")}</p>
-        <Link href="/" className="mt-4 inline-block text-[#2f6fe0] underline">← {t("detail.backSearch")}</Link>
+        <Link href="/" className="mt-4 inline-flex items-center gap-1 text-[#2f6fe0] underline">
+          <ChevronLeft className="h-4 w-4" />
+          {t("detail.backSearch")}
+        </Link>
       </div>
     );
   }
@@ -42,7 +52,7 @@ export default function ScholarshipDetail() {
   return (
     <div className="mx-auto max-w-[1120px] px-6 py-6">
       <Link href="/" className="flex w-fit items-center gap-1.5 py-1.5 text-[13.5px] font-semibold text-[#5a7794] hover:text-[#2f6fe0]">
-        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round"><path d="m15 18-6-6 6-6" /></svg>
+        <ChevronLeft className="h-4 w-4" />
         {t("detail.backList")}
       </Link>
 
@@ -51,30 +61,40 @@ export default function ScholarshipDetail() {
         <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
           <div className="min-w-0">
             <div className="flex flex-wrap items-center gap-2 text-[12.5px] font-medium text-[#7591ab]">
-              <span className="text-base">{flagEmoji(s.countryCode)}</span>
-              <span>{t(`country.${s.countryCode}`)} · {s.city}</span>
-              <span className="rounded-full bg-[#eaf4fe] px-2 py-px text-[11px] font-bold text-[#1c5cc0]">QS #{s.qsRank}</span>
-              <span className="rounded-full bg-[#f2ecfe] px-2 py-px text-[11px] font-bold text-[#7c3aed]">{t(`providerType.${s.providerType}`)}</span>
+              <CountryTag name={t(`country.${s.countryCode}`)} code={s.countryCode} title={s.country} />
+              <span>{s.city}</span>
+              <span>· QS #{s.qsRank}</span>
+              <span>· {t(`providerType.${s.providerType}`)}</span>
             </div>
             <h1 className="mt-2.5 text-[26px] font-extrabold tracking-tight text-[#12345c]">{s.title}</h1>
             <p className="mt-1.5 text-[13.5px] text-[#5a7794]">{t("detail.provider")} {s.provider}</p>
             <div className="mt-3.5 flex flex-wrap gap-1.5">
+              {/* Chỉ mức tài trợ giữ màu (tín hiệu chính); còn lại nhãn xám để bớt rối */}
               <Badge className="bg-[#e9f8f0] text-[#0b7a52] ring-[#c4ecd8]">{t(`funding.${s.fundingLevel}`)}</Badge>
-              {s.levels.map((l) => <Badge key={l} className="bg-[#eef3f9] text-[#5a7794] ring-[#e0e9f3]">{t(`level.${l}`)}</Badge>)}
-              <Badge className="bg-[#eaf4fe] text-[#1c5cc0] ring-[#c4dbfb]">{teachLanguages(s.language, t)}</Badge>
-              {s.requiresSupervisor && <Badge className="bg-[#f2ecfe] text-[#7c3aed] ring-[#ddd0fb]">{t("detail.needSupervisor")}</Badge>}
-              {s.requiresProposal && <Badge className="bg-[#fdf3e0] text-[#a9670a] ring-[#f5e0b8]">{t("detail.needProposal")}</Badge>}
-              {s.tags.map((tg) => <Badge key={tg} className="bg-[#f6f9fd] text-[#5a7794] ring-[#e6eef6]">{tg}</Badge>)}
+              {s.levels.map((l) => <Badge key={l} className="bg-[#f8fafd] text-[#5a7794] ring-[#dce8f4]">{t(`level.${l}`)}</Badge>)}
+              <Badge className="bg-[#f8fafd] text-[#5a7794] ring-[#dce8f4]">{teachLanguages(s.language, t)}</Badge>
+              {s.requiresSupervisor && <Badge className="bg-[#f8fafd] text-[#5a7794] ring-[#dce8f4]">{t("detail.needSupervisor")}</Badge>}
+              {s.requiresProposal && <Badge className="bg-[#f8fafd] text-[#5a7794] ring-[#dce8f4]">{t("detail.needProposal")}</Badge>}
+              {s.tags.map((tg) => <Badge key={tg} className="bg-[#f8fafd] text-[#7591ab] ring-[#e6eef6]">{tg}</Badge>)}
             </div>
           </div>
-          <div className="flex shrink-0 flex-col items-center">
-            <div className="grid h-[88px] w-[88px] place-items-center rounded-full" style={{ background: `conic-gradient(${ring} ${match.score}%, #e6eef6 0)` }}>
-              <div className="grid h-[66px] w-[66px] place-items-center rounded-full bg-white">
-                <div className="text-[22px] font-extrabold leading-none" style={{ color: fg }}>{match.score}%</div>
+          {loggedIn ? (
+            <div className="flex shrink-0 flex-col items-center">
+              <div className="grid h-[88px] w-[88px] place-items-center rounded-full" style={{ background: `conic-gradient(${ring} ${match.score}%, #e6eef6 0)` }}>
+                <div className="grid h-[66px] w-[66px] place-items-center rounded-full bg-white">
+                  <div className="text-[22px] font-extrabold leading-none" style={{ color: fg }}>{match.score}%</div>
+                </div>
               </div>
+              <div className="mt-2 text-xs font-bold" style={{ color: fg }}>{match.label}</div>
             </div>
-            <div className="mt-2 text-xs font-bold" style={{ color: fg }}>{match.label}</div>
-          </div>
+          ) : (
+            <button onClick={() => requireAuth()} title={t("authGate.title")} className="flex shrink-0 flex-col items-center">
+              <div className="grid h-[88px] w-[88px] place-items-center rounded-full border-2 border-dashed border-[#cfe0f2] text-[#93a7bd] transition hover:border-[#9cc1f5] hover:text-[#2f6fe0]">
+                <Lock className="h-6 w-6" />
+              </div>
+              <div className="mt-2 text-xs font-semibold text-[#93a7bd]">{t("filter.sortMatch")}</div>
+            </button>
+          )}
         </div>
       </div>
 
@@ -86,24 +106,42 @@ export default function ScholarshipDetail() {
           </Section>
 
           <Section title={t("detail.matchTitle")}>
-            <div className="mb-3 h-2 w-full overflow-hidden rounded-full bg-[#eef3f9]">
-              <div className={`h-full rounded-full ${matchBar(match.score)}`} style={{ width: `${match.score}%` }} />
-            </div>
-            <ul className="grid gap-1.5 sm:grid-cols-2">
-              {match.reasons.map((r, i) => (
-                <li key={i} className="flex items-start gap-2 text-sm">
-                  <span>{r.status === "ok" ? "✅" : r.status === "warn" ? "⚠️" : "❌"}</span>
-                  <span className={r.status === "fail" ? "text-[#b23343]" : r.status === "warn" ? "text-[#a9670a]" : "text-[#455f78]"}>{r.label}</span>
-                </li>
-              ))}
-            </ul>
+            {loggedIn ? (
+              <>
+                <div className="mb-3 h-2 w-full overflow-hidden rounded-full bg-[#eef3f9]">
+                  <div className={`h-full rounded-full ${matchBar(match.score)}`} style={{ width: `${match.score}%` }} />
+                </div>
+                <ul className="grid gap-1.5 sm:grid-cols-2">
+                  {match.reasons.map((r, i) => (
+                    <li key={i} className="flex items-start gap-2 text-sm">
+                      {r.status === "ok" ? (
+                        <CircleCheck className="mt-0.5 h-4 w-4 shrink-0 text-[#10a06d]" />
+                      ) : r.status === "warn" ? (
+                        <TriangleAlert className="mt-0.5 h-4 w-4 shrink-0 text-[#e0921a]" />
+                      ) : (
+                        <CircleX className="mt-0.5 h-4 w-4 shrink-0 text-[#e14b5a]" />
+                      )}
+                      <span className={r.status === "fail" ? "text-[#b23343]" : r.status === "warn" ? "text-[#a9670a]" : "text-[#455f78]"}>{r.label}</span>
+                    </li>
+                  ))}
+                </ul>
+              </>
+            ) : (
+              <button onClick={() => requireAuth()} className="flex w-full items-center gap-3 rounded-[12px] border border-dashed border-[#cfe0f2] bg-[#f8fafd] p-4 text-left transition hover:border-[#9cc1f5]">
+                <span className="grid h-9 w-9 shrink-0 place-items-center rounded-full bg-[#eaf1fd] text-[#2f6fe0]"><Lock className="h-[18px] w-[18px]" /></span>
+                <span>
+                  <span className="block text-sm font-bold text-[#1a3352]">{t("authGate.title")}</span>
+                  <span className="mt-0.5 block text-xs text-[#5a7794]">{t("authGate.desc")}</span>
+                </span>
+              </button>
+            )}
           </Section>
 
           <Section title={t("detail.benefits")}>
             <ul className="grid gap-2 sm:grid-cols-2">
               {s.benefits.map((b) => (
                 <li key={b} className="flex items-start gap-2 text-sm text-[#455f78]">
-                  <svg className="mt-0.5 shrink-0" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#10a06d" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round"><path d="M20 6 9 17l-5-5" /></svg>{b}
+                  <Check className="mt-0.5 h-[15px] w-[15px] shrink-0 text-[#10a06d]" />{b}
                 </li>
               ))}
             </ul>
@@ -147,14 +185,17 @@ export default function ScholarshipDetail() {
                 <div className="grid gap-3">
                   {profs.map((p) => p && (
                     <Link key={p.id} href={`/professors/${p.id}`}
-                      className="flex items-center justify-between rounded-xl border border-[#ece7f6] bg-[#faf8fe] p-3.5 hover:border-[#c4b5fd]">
+                      className="flex items-center justify-between rounded-xl border border-[#dce8f4] bg-[#f8fafd] p-3.5 hover:border-[#9cc1f5]">
                       <div className="min-w-0">
                         <p className="font-bold text-[#1a3352]">{p.name}</p>
                         <p className="text-xs text-[#7591ab]">{p.university} · {p.keywords.slice(0, 3).join(", ")}</p>
                       </div>
                       <div className="shrink-0 text-right">
                         {p.recruiting === "recruiting" && <span className="rounded bg-[#e9f8f0] px-2 py-0.5 text-xs text-[#0b7a52]">{t("detail.recruiting")}</span>}
-                        <p className="mt-1 text-xs font-bold text-[#7c3aed]">{t("detail.viewProfile")} →</p>
+                        <p className="mt-1 flex items-center justify-end gap-1 text-xs font-bold text-[#2f6fe0]">
+                          {t("detail.viewProfile")}
+                          <ArrowRight className="h-3.5 w-3.5" />
+                        </p>
                       </div>
                     </Link>
                   ))}
@@ -170,7 +211,12 @@ export default function ScholarshipDetail() {
               </div>
               <span className="text-sm font-extrabold text-[#2f6fe0]">{prog}%</span>
             </div>
-            {!isT && <p className="mb-2 text-xs text-[#a9670a]">{t("detail.trackToSave")}</p>}
+            {!isT && (
+              <p className="mb-2 flex items-start gap-1.5 text-xs text-[#93a7bd]">
+                <Info className="mt-px h-3.5 w-3.5 shrink-0" />
+                {t("detail.trackToSave")}
+              </p>
+            )}
             <ul className="space-y-1.5">
               {s.documents.map((d) => (
                 <li key={d}>
@@ -181,8 +227,11 @@ export default function ScholarshipDetail() {
                 </li>
               ))}
             </ul>
-            <div className="mt-3 flex flex-wrap items-center justify-between gap-2 rounded-xl bg-[#eef1fd] p-3 text-xs text-[#3730a3]">
-              <span>💡 <b>{t("detail.e18Title")}</b> {t("detail.e18Desc")}</span>
+            <div className="mt-3 flex flex-wrap items-center justify-between gap-2 rounded-xl border border-[#dce8f4] bg-[#f8fafd] p-3 text-xs text-[#5a7794]">
+              <span className="flex items-start gap-2">
+                <Lightbulb className="mt-px h-3.5 w-3.5 shrink-0 text-[#7591ab]" />
+                <span><b className="text-[#1a3352]">{t("detail.e18Title")}</b> {t("detail.e18Desc")}</span>
+              </span>
               <Link href={`/scholarships/${s.id}/documents`}
                 className="shrink-0 rounded-lg bg-[#2f6fe0] px-3 py-2 text-xs font-bold text-white hover:brightness-105">
                 {t("docs.openCta")}
@@ -195,28 +244,33 @@ export default function ScholarshipDetail() {
         <aside className="space-y-3.5 lg:sticky lg:top-[82px] lg:h-fit">
           <div className="rounded-[16px] border border-[#dce8f4] bg-white p-4">
             <button
-              onClick={() => toggleTrack(s.id)}
-              className={`w-full rounded-xl px-4 py-3 text-sm font-bold text-white transition hover:brightness-105 ${
-                isT ? "bg-[#0f9d6b]" : "bg-[#2f6fe0]"
+              onClick={() => requireAuth(() => toggleTrack(s.id))}
+              className={`flex w-full items-center justify-center gap-1.5 rounded-xl px-4 py-3 text-sm font-bold text-white transition hover:brightness-105 ${
+                loggedIn && isT ? "bg-[#0f9d6b]" : "bg-[#2f6fe0]"
               }`}
             >
-              {isT ? t("detail.tracking") : t("detail.track")}
+              {loggedIn && isT
+                ? <><Check className="h-4 w-4" />{t("detail.tracking")}</>
+                : <><Bookmark className="h-4 w-4" />{t("detail.track")}</>}
             </button>
 
             <button
               onClick={() => toggleCompare(s.id)}
-              className={`mt-2.5 w-full rounded-xl border px-4 py-2.5 text-sm font-bold transition ${
+              className={`mt-2.5 flex w-full items-center justify-center gap-1.5 rounded-xl border px-4 py-2.5 text-sm font-bold transition ${
                 isCompared(s.id)
-                  ? "border-[#7c3aed] bg-[#f2ecfe] text-[#7c3aed]"
-                  : "border-[#cdd6f7] bg-white text-[#4f46e5] hover:bg-[#f6f5ff]"
+                  ? "border-[#9cc1f5] bg-[#eef4fb] text-[#2f6fe0]"
+                  : "border-[#dce8f4] bg-white text-[#5a7794] hover:bg-[#f6f9fd]"
               }`}
             >
-              {isCompared(s.id) ? t("detail.compareIn") : t("detail.compareAdd")}
+              {isCompared(s.id)
+                ? <><Check className="h-4 w-4" />{t("detail.compareIn")}</>
+                : <><ArrowLeftRight className="h-4 w-4" />{t("detail.compareAdd")}</>}
             </button>
 
             <Link href={`/scholarships/${s.id}/documents`}
-              className="mt-2.5 flex w-full items-center justify-center gap-1.5 rounded-xl border border-[#cdd6f7] bg-[#eef1fd] px-4 py-2.5 text-sm font-bold text-[#3730a3] hover:brightness-[0.98]">
-              ✍️ {t("docs.openCta")}
+              className="mt-2.5 flex w-full items-center justify-center gap-1.5 rounded-xl border border-[#dce8f4] bg-[#f8fafd] px-4 py-2.5 text-sm font-bold text-[#5a7794] hover:border-[#9cc1f5] hover:text-[#2f6fe0]">
+              <PenLine className="h-4 w-4" />
+              {t("docs.openCta")}
             </Link>
 
             {isT && (
@@ -229,7 +283,10 @@ export default function ScholarshipDetail() {
                 >
                   {STAGES.map((st) => <option key={st.id} value={st.id}>{t(`stage.${st.id}`)}</option>)}
                 </select>
-                <label className="mb-1.5 mt-3 block text-[11.5px] font-bold text-[#7591ab]">📝 {t("detail.note")}</label>
+                <label className="mb-1.5 mt-3 flex items-center gap-1.5 text-[11.5px] font-bold text-[#7591ab]">
+                  <StickyNote className="h-3.5 w-3.5" />
+                  {t("detail.note")}
+                </label>
                 <textarea
                   value={item?.note ?? ""}
                   onChange={(e) => setNote(s.id, e.target.value)}
@@ -252,7 +309,8 @@ export default function ScholarshipDetail() {
 
             <a href={s.officialUrl} target="_blank" rel="noopener noreferrer"
               className="mt-3.5 flex items-center justify-center gap-2 rounded-xl border border-[#e2e8f0] px-4 py-2.5 text-center text-sm font-bold text-[#5a7794] hover:bg-[#f6f9fd]">
-              🔗 {t("detail.official")}
+              <ExternalLink className="h-4 w-4" />
+              {t("detail.official")}
             </a>
           </div>
 
@@ -264,8 +322,10 @@ export default function ScholarshipDetail() {
             <div className="mt-2 flex items-center justify-between">
               <span>{t("detail.updated")}</span><span className="font-semibold text-[#455f78]">{s.lastVerified}</span>
             </div>
-            <p className="mt-3 rounded-lg bg-[#fdf3e0] p-2.5 text-[#a9670a]">
-              ⚠️ {t("detail.disclaimer")}
+            {/* Ghi chú nhỏ: chữ nhạt + icon, không dùng hộp vàng */}
+            <p className="mt-3 flex items-start gap-1.5 border-t border-[#eef3f9] pt-3 text-[11.5px] leading-relaxed text-[#93a7bd]">
+              <Info className="mt-px h-3.5 w-3.5 shrink-0" />
+              {t("detail.disclaimer")}
             </p>
           </div>
         </aside>

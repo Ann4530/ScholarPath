@@ -1,11 +1,8 @@
 // Helper UI dùng chung — bảng màu "Starry Blue"
-
-const FLAGS: Record<string, string> = {
-  DE: "🇩🇪", JP: "🇯🇵", GB: "🇬🇧", NL: "🇳🇱", AU: "🇦🇺", US: "🇺🇸",
-  CA: "🇨🇦", FR: "🇫🇷", CN: "🇨🇳", KR: "🇰🇷", SG: "🇸🇬", SE: "🇸🇪", CH: "🇨🇭",
-};
-
-export const flagEmoji = (code: string) => FLAGS[code] ?? "🏳️";
+//
+// Nhãn quốc gia: xem components/CountryTag.tsx. Trước đây ở đây có bảng emoji cờ
+// (flagEmoji) nhưng đã bỏ — Windows không có font emoji cờ nên 🇩🇪 rơi về cặp chữ
+// "DE" trông như lỗi, và bảng cứng chỉ phủ 13 nước trong khi dữ liệu nay có 33.
 
 // Màu theo Match Score (badge/khung) — trả về class Tailwind
 export function matchColor(score: number): string {

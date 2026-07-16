@@ -2,11 +2,12 @@
 
 import { useEffect, useMemo, useRef, useState } from "react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { useTranslation } from "react-i18next";
 import {
   Globe, Flag, GraduationCap, BookOpen, Coins, Landmark, Clock, CalendarDays,
   Trophy, PenLine, Calculator, UserCheck, Languages as LangIcon, Tag, BadgeCheck,
-  Sparkles, Search, SlidersHorizontal, X,
+  Sparkles, Search, SlidersHorizontal, X, Settings2, ArrowLeftRight, Lock,
 } from "lucide-react";
 import {
   scholarships,
@@ -27,7 +28,7 @@ import {
   DeadlineStatus,
 } from "@/lib/data";
 import { useTrack } from "@/lib/store";
-import { flagEmoji } from "@/lib/ui";
+import { useAuth } from "@/components/AuthContext";
 import ScholarshipCard from "@/components/ScholarshipCard";
 import FilterDropdown from "@/components/FilterDropdown";
 import HeroSky from "@/components/HeroSky";
@@ -45,7 +46,12 @@ type Sort = "match" | "deadline" | "funding" | "qs";
 
 export default function ExplorePage() {
   const { t } = useTranslation();
+  const router = useRouter();
+  const { loggedIn, requireAuth } = useAuth();
   const { profile, setProfile, tracked } = useTrack();
+
+  // Khách không được cá nhân hóa: chặn wizard/hồ sơ/lọc-theo-hồ-sơ, mời đăng nhập.
+  const goStart = () => requireAuth(() => router.push("/start"));
 
   // % tiến độ hành trình du học — máy bay trên hero đứng ở đúng % này.
   // Chưa theo dõi học bổng nào: dựa trên độ hoàn thiện hồ sơ (mới bắt đầu).
@@ -165,12 +171,15 @@ export default function ExplorePage() {
     if (gre !== "any") list = list.filter(({ s }) => (gre === "yes" ? s.eligibility.gre : !s.eligibility.gre));
     if (supervisor !== "any")
       list = list.filter(({ s }) => (supervisor === "yes" ? s.requiresSupervisor : !s.requiresSupervisor));
-    if (eligibleOnly) list = list.filter(({ match }) => match.tier !== "ineligible");
+    // Lọc "chỉ đủ điều kiện" dựa trên hồ sơ → chỉ áp khi đã đăng nhập.
+    if (eligibleOnly && loggedIn) list = list.filter(({ match }) => match.tier !== "ineligible");
 
+    // Khách không có Match Score → không sắp theo độ phù hợp; mặc định về deadline.
+    const effSort: Sort = loggedIn ? sort : sort === "match" ? "deadline" : sort;
     list.sort((a, b) => {
-      if (sort === "match") return b.match.score - a.match.score;
-      if (sort === "qs") return a.s.qsRank - b.s.qsRank;
-      if (sort === "funding") {
+      if (effSort === "match") return b.match.score - a.match.score;
+      if (effSort === "qs") return a.s.qsRank - b.s.qsRank;
+      if (effSort === "funding") {
         const order = { Full: 0, Partial: 1, TuitionOnly: 2 } as const;
         return order[a.s.fundingLevel] - order[b.s.fundingLevel];
       }
@@ -179,12 +188,12 @@ export default function ExplorePage() {
       return new Date(na).getTime() - new Date(nb).getTime();
     });
     return list;
-  }, [profile, q, regions, countries, levels, fields, funding, providerTypes, dlStatus, intakes, languages, tags, maxRank, maxIelts, gre, supervisor, eligibleOnly, sort, t]);
+  }, [profile, q, regions, countries, levels, fields, funding, providerTypes, dlStatus, intakes, languages, tags, maxRank, maxIelts, gre, supervisor, eligibleOnly, sort, loggedIn, t]);
 
-  // ---- Chips "bộ lọc đang áp dụng" (chỉ chữ, giữ cờ quốc gia) ----
+  // ---- Chips "bộ lọc đang áp dụng" (chỉ chữ — tên quốc gia, không cờ) ----
   const chips: { label: string; onRemove: () => void }[] = [
     ...regions.map((r) => ({ label: t(`region.${REGION_KEY[r as keyof typeof REGION_KEY]}`), onRemove: () => setRegions(toggle(regions, r)) })),
-    ...countries.map((c) => ({ label: `${flagEmoji(c)} ${t(`country.${c}`)}`, onRemove: () => setCountries(toggle(countries, c)) })),
+    ...countries.map((c) => ({ label: t(`country.${c}`), onRemove: () => setCountries(toggle(countries, c)) })),
     ...levels.map((l) => ({ label: t(`level.${l}`), onRemove: () => setLevels(toggle(levels, l)) })),
     ...fields.map((f) => ({ label: f, onRemove: () => setFields(toggle(fields, f)) })),
     ...funding.map((f) => ({ label: t(`funding.${f}`), onRemove: () => setFunding(toggle(funding, f)) })),
@@ -211,7 +220,7 @@ export default function ExplorePage() {
     { icon: <Coins className="h-3.5 w-3.5" />, label: t("funding.Full"), active: funding.includes("Full"), onClick: () => setFunding(toggle(funding, "Full")) },
     { icon: <GraduationCap className="h-3.5 w-3.5" />, label: t("level.Master"), active: levels.includes("Master"), onClick: () => setLevels(toggle(levels, "Master")) },
     { icon: <GraduationCap className="h-3.5 w-3.5" />, label: t("level.PhD"), active: levels.includes("PhD"), onClick: () => setLevels(toggle(levels, "PhD")) },
-    { icon: <BadgeCheck className="h-3.5 w-3.5" />, label: t("sidebar.eligibleOnly"), active: eligibleOnly, onClick: () => setEligibleOnly((v) => !v) },
+    { icon: <BadgeCheck className="h-3.5 w-3.5" />, label: t("sidebar.eligibleOnly"), active: eligibleOnly, onClick: () => requireAuth(() => setEligibleOnly((v) => !v)) },
   ];
 
   return (
@@ -247,19 +256,20 @@ export default function ExplorePage() {
                   className="w-full rounded-[14px] border-0 bg-transparent py-3.5 pl-11 pr-4 text-[14.5px] text-[#1a3352] outline-none"
                 />
               </div>
-              <Link
-                href="/start"
+              <button
+                onClick={goStart}
                 className="flex items-center gap-2.5 rounded-[14px] bg-gradient-to-br from-[#3b82f6] to-[#5aa2ff] px-5 py-3.5 text-[14.5px] font-extrabold text-white shadow-[0_14px_30px_-12px_rgba(59,130,246,0.9)] transition hover:brightness-110"
               >
                 <Sparkles className="h-[17px] w-[17px]" />
                 {t("hero.start")}
-              </Link>
+              </button>
               <button
-                onClick={() => setShowProfile((v) => !v)}
+                onClick={() => requireAuth(() => setShowProfile((v) => !v))}
                 title={t("hero.profile")}
+                aria-label={t("hero.profile")}
                 className="grid place-items-center rounded-[14px] border border-white/20 bg-white/10 px-4 text-white transition hover:bg-white/20"
               >
-                ⚙️
+                <Settings2 className="h-[18px] w-[18px]" />
               </button>
             </div>
 
@@ -370,12 +380,14 @@ export default function ExplorePage() {
                   <button
                     key={c.code}
                     onClick={() => setProfile({ ...profile, countries: toggle(profile.countries, c.code) })}
-                    className={`rounded-full px-3 py-1 text-xs ring-1 transition ${
+                    className={`flex items-center gap-1.5 rounded-full px-3 py-1 text-xs ring-1 transition ${
                       profile.countries.includes(c.code)
                         ? "bg-[#2f6fe0] text-white ring-[#2f6fe0]"
                         : "bg-white text-[#5a7794] ring-[#cfe0f2] hover:ring-[#9cc1f5]"
                     }`}
-                  >{flagEmoji(c.code)} {t(`country.${c.code}`)}</button>
+                  >
+                    {t(`country.${c.code}`)}
+                  </button>
                 ))}
               </div>
             </div>
@@ -463,29 +475,42 @@ export default function ExplorePage() {
 
             <div className="border-t border-[#eef3f9] p-3">
               <label className="flex cursor-pointer items-center gap-2.5 rounded-xl border border-[#c4ecd8] bg-[#e9f8f0] px-3 py-2.5">
-                <input type="checkbox" checked={eligibleOnly} onChange={() => setEligibleOnly((v) => !v)} className="h-4 w-4 accent-[#0f9d6b]" />
+                <input type="checkbox" checked={eligibleOnly && loggedIn} onChange={() => requireAuth(() => setEligibleOnly((v) => !v))} className="h-4 w-4 accent-[#0f9d6b]" />
                 <span className="text-[12.5px] font-bold text-[#0b7a52]">{t("sidebar.eligibleOnly")}</span>
               </label>
             </div>
           </div>
 
-          {/* Tóm tắt hồ sơ */}
-          <div className="mt-4 rounded-[18px] border border-[#dce8f4] bg-white p-4 text-sm shadow-[0_1px_2px_rgba(23,50,76,0.03)]">
-            <div className="mb-2 flex items-center justify-between">
-              <h3 className="font-bold text-[#1a3352]">{t("sidebar.profileTitle")}</h3>
-              <button onClick={() => { setShowProfile(true); window.scrollTo({ top: 0, behavior: "smooth" }); }} className="text-xs text-[#2f6fe0] hover:underline">{t("common.edit")}</button>
+          {/* Tóm tắt hồ sơ — khách thấy thẻ mời đăng nhập (cá nhân hóa cần tài khoản) */}
+          {loggedIn ? (
+            <div className="mt-4 rounded-[18px] border border-[#dce8f4] bg-white p-4 text-sm shadow-[0_1px_2px_rgba(23,50,76,0.03)]">
+              <div className="mb-2 flex items-center justify-between">
+                <h3 className="font-bold text-[#1a3352]">{t("sidebar.profileTitle")}</h3>
+                <button onClick={() => { setShowProfile(true); window.scrollTo({ top: 0, behavior: "smooth" }); }} className="text-xs text-[#2f6fe0] hover:underline">{t("common.edit")}</button>
+              </div>
+              <dl className="space-y-1 text-xs text-[#5a7794]">
+                <div className="flex justify-between"><dt>{t("sidebar.rowLevel")}</dt><dd className="font-semibold text-[#1a3352]">{t(`level.${profile.level}`)}</dd></div>
+                <div className="flex justify-between"><dt>{t("sidebar.rowGpa")}</dt><dd className="font-semibold text-[#1a3352]">{profile.gpa.toFixed(1)}/4.0</dd></div>
+                <div className="flex justify-between"><dt>{t("sidebar.rowIelts")}</dt><dd className="font-semibold text-[#1a3352]">{profile.ielts.toFixed(1)}</dd></div>
+                <div className="flex justify-between"><dt>{t("sidebar.rowGre")}</dt><dd className="font-semibold text-[#1a3352]">{profile.hasGre ? t("sidebar.greHave") : t("sidebar.greNone")}</dd></div>
+                <div className="flex justify-between"><dt>{t("sidebar.rowFunding")}</dt><dd className="font-semibold text-[#1a3352]">{profile.fundingNeed === "Full" ? t("profilePanel.needFull") : profile.fundingNeed === "Partial" ? t("profilePanel.needPartial") : t("profilePanel.needAny")}</dd></div>
+              </dl>
+              <Link href="/start" className="mt-3 flex items-center justify-center gap-1.5 rounded-[10px] bg-gradient-to-br from-[#1e3a8a] to-[#3b82f6] px-3 py-2 text-center text-xs font-bold text-white transition hover:brightness-110">
+                <Sparkles className="h-3.5 w-3.5" /> {t("sidebar.wizardCta")}
+              </Link>
             </div>
-            <dl className="space-y-1 text-xs text-[#5a7794]">
-              <div className="flex justify-between"><dt>{t("sidebar.rowLevel")}</dt><dd className="font-semibold text-[#1a3352]">{t(`level.${profile.level}`)}</dd></div>
-              <div className="flex justify-between"><dt>{t("sidebar.rowGpa")}</dt><dd className="font-semibold text-[#1a3352]">{profile.gpa.toFixed(1)}/4.0</dd></div>
-              <div className="flex justify-between"><dt>{t("sidebar.rowIelts")}</dt><dd className="font-semibold text-[#1a3352]">{profile.ielts.toFixed(1)}</dd></div>
-              <div className="flex justify-between"><dt>{t("sidebar.rowGre")}</dt><dd className="font-semibold text-[#1a3352]">{profile.hasGre ? t("sidebar.greHave") : t("sidebar.greNone")}</dd></div>
-              <div className="flex justify-between"><dt>{t("sidebar.rowFunding")}</dt><dd className="font-semibold text-[#1a3352]">{profile.fundingNeed === "Full" ? t("profilePanel.needFull") : profile.fundingNeed === "Partial" ? t("profilePanel.needPartial") : t("profilePanel.needAny")}</dd></div>
-            </dl>
-            <Link href="/start" className="mt-3 flex items-center justify-center gap-1.5 rounded-[10px] bg-gradient-to-br from-[#1e3a8a] to-[#3b82f6] px-3 py-2 text-center text-xs font-bold text-white transition hover:brightness-110">
-              <Sparkles className="h-3.5 w-3.5" /> {t("sidebar.wizardCta")}
-            </Link>
-          </div>
+          ) : (
+            <button onClick={goStart} className="mt-4 block w-full rounded-[18px] border border-[#dce8f4] bg-white p-4 text-left shadow-[0_1px_2px_rgba(23,50,76,0.03)] transition hover:border-[#9cc1f5]">
+              <div className="flex items-center gap-2 text-[#1a3352]">
+                <span className="grid h-8 w-8 shrink-0 place-items-center rounded-full bg-[#eaf1fd] text-[#2f6fe0]"><Lock className="h-4 w-4" /></span>
+                <h3 className="text-sm font-bold">{t("authGate.title")}</h3>
+              </div>
+              <p className="mt-2 text-xs leading-relaxed text-[#5a7794]">{t("authGate.desc")}</p>
+              <span className="mt-3 flex items-center justify-center gap-1.5 rounded-[10px] bg-[#2f6fe0] px-3 py-2 text-xs font-bold text-white">
+                <Sparkles className="h-3.5 w-3.5" /> {t("authGate.cta")}
+              </span>
+            </button>
+          )}
         </aside>
 
         {/* KẾT QUẢ */}
@@ -503,7 +528,7 @@ export default function ExplorePage() {
             />
             <FilterDropdown
               label={t("filter.country")} icon={<Flag className="h-4 w-4" />} searchable
-              options={COUNTRIES.map((c) => ({ value: c.code, label: `${flagEmoji(c.code)} ${t(`country.${c.code}`)}` }))}
+              options={COUNTRIES.map((c) => ({ value: c.code, label: t(`country.${c.code}`) }))}
               selected={countries} onToggle={(v) => setCountries(toggle(countries, v))} onClear={() => setCountries([])}
             />
             <FilterDropdown
@@ -546,11 +571,12 @@ export default function ExplorePage() {
             )}
             <label className="flex items-center gap-2 pr-1 text-[12.5px] font-semibold text-[#5a7794]">{t("filter.sortLabel")}
               <select
-                value={sort}
+                value={loggedIn ? sort : sort === "match" ? "deadline" : sort}
                 onChange={(e) => setSort(e.target.value as Sort)}
                 className="rounded-[10px] border border-[#cfe0f2] bg-white px-2.5 py-2 text-[12.5px] font-semibold text-[#1a3352] outline-none"
               >
-                <option value="match">{t("filter.sortMatch")}</option>
+                {/* Mức phù hợp cần hồ sơ → chỉ cho người đã đăng nhập */}
+                {loggedIn && <option value="match">{t("filter.sortMatch")}</option>}
                 <option value="deadline">{t("filter.sortDeadline")}</option>
                 <option value="funding">{t("filter.sortFunding")}</option>
                 <option value="qs">{t("filter.sortQs")}</option>
@@ -575,10 +601,10 @@ export default function ExplorePage() {
             <p className="text-sm font-medium text-[#5a7794]">
               <span className="text-[21px] font-extrabold text-[#1a3352]">{results.length}</span> {t("results.matchWord")}
             </p>
-            <Link href="/start" className="flex items-center gap-1.5 rounded-[11px] border border-[#c8dcfa] bg-[#eaf1fd] px-3.5 py-2 text-[12.5px] font-bold text-[#2f6fe0]">
+            <button onClick={goStart} className="flex items-center gap-1.5 rounded-[11px] border border-[#c8dcfa] bg-[#eaf1fd] px-3.5 py-2 text-[12.5px] font-bold text-[#2f6fe0]">
               <Sparkles className="h-3.5 w-3.5" />
               {t("results.suggestCta")}
-            </Link>
+            </button>
           </div>
 
           {results.length === 0 ? (
@@ -598,7 +624,8 @@ export default function ExplorePage() {
           )}
 
           <p className="mt-6 text-center text-xs text-[#93a7bd]">
-            {t("results.tip1")} <b className="text-[#5a7794]">⇄ {t("results.tipCompare")}</b> {t("results.tip2")}{" "}
+            {t("results.tip1")}{" "}
+            <b className="text-[#5a7794]"><ArrowLeftRight className="inline h-3.5 w-3.5" /> {t("results.tipCompare")}</b> {t("results.tip2")}{" "}
             <Link href="/board" className="text-[#2f6fe0] underline">{t("results.tipBoard")}</Link> {t("results.tip3")}
           </p>
         </main>

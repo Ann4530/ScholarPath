@@ -6,7 +6,7 @@
 import { useMemo, useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { GraduationCap, BookOpen, Globe, PenLine, Coins, Settings, PartyPopper, Backpack, Microscope, Gem, PiggyBank, Handshake, Trophy, UserCheck, CalendarDays, Target } from "lucide-react";
+import { GraduationCap, BookOpen, Globe, PenLine, Coins, Settings, Flag, Backpack, Microscope, Gem, PiggyBank, Handshake, Trophy, UserCheck, CalendarDays, Target, Check, ArrowLeft, ArrowRight, TriangleAlert, Lightbulb } from "lucide-react";
 import { useTranslation } from "react-i18next";
 import HeroSky from "@/components/HeroSky";
 import {
@@ -23,7 +23,7 @@ import {
   Profile,
 } from "@/lib/data";
 import { useTrack } from "@/lib/store";
-import { flagEmoji } from "@/lib/ui";
+import GuestGate from "@/components/GuestGate";
 
 const STEP_IDS = ["level", "fields", "dest", "academic", "funding", "prefs", "done"] as const;
 const ICON_CLS = "h-[18px] w-[18px]";
@@ -34,7 +34,7 @@ const STEP_ICONS = [
   <PenLine key="3" className={ICON_CLS} />,
   <Coins key="4" className={ICON_CLS} />,
   <Settings key="5" className={ICON_CLS} />,
-  <PartyPopper key="6" className={ICON_CLS} />,
+  <Flag key="6" className={ICON_CLS} />,
 ];
 
 const IELTS_OPTIONS = [0, 5.5, 6.0, 6.5, 7.0, 7.5, 8.0];
@@ -44,6 +44,14 @@ function toggle<T>(arr: T[], v: T): T[] {
 }
 
 export default function StartWizard() {
+  return (
+    <GuestGate>
+      <StartWizardInner />
+    </GuestGate>
+  );
+}
+
+function StartWizardInner() {
   const router = useRouter();
   const { t } = useTranslation();
   const { profile, setProfile } = useTrack();
@@ -136,8 +144,9 @@ export default function StartWizard() {
               <h1 className="mt-0.5 text-2xl font-extrabold tracking-tight">{t("wizard.title")}</h1>
             </div>
           </div>
-          <Link href="/explore" className="text-sm font-semibold text-[#cfe0ff] hover:text-white">
-            {t("wizard.skip")} →
+          <Link href="/explore" className="flex items-center gap-1.5 text-sm font-semibold text-[#cfe0ff] hover:text-white">
+            {t("wizard.skip")}
+            <ArrowRight className="h-4 w-4" />
           </Link>
         </div>
 
@@ -161,7 +170,7 @@ export default function StartWizard() {
                         : "bg-white/10 ring-white/20"
                   }`}
                 >
-                  {i < step ? "✓" : STEP_ICONS[i]}
+                  {i < step ? <Check className={ICON_CLS} strokeWidth={2.5} /> : STEP_ICONS[i]}
                 </span>
                 <span className="hidden sm:block">{t(`wizard.steps.${id}`)}</span>
               </button>
@@ -215,14 +224,16 @@ export default function StartWizard() {
                               : Array.from(new Set([...countries, ...group.map((g) => g.code)]))
                           )
                         }
-                        className={`mb-2 text-sm font-bold ${allSelected ? "text-[#2f6fe0]" : "text-[#5a7794] hover:text-[#2f6fe0]"}`}
+                        className={`mb-2 flex items-center gap-1.5 text-sm font-bold ${allSelected ? "text-[#2f6fe0]" : "text-[#5a7794] hover:text-[#2f6fe0]"}`}
                       >
-                        {t(`region.${REGION_KEY[r]}`)} {allSelected ? t("wizard.s3GroupClear") : t("wizard.s3GroupAll")}
+                        {t(`region.${REGION_KEY[r]}`)}
+                        {allSelected && <Check className="h-3.5 w-3.5" />}
+                        <span className="font-normal">{allSelected ? t("wizard.s3GroupClear") : t("wizard.s3GroupAll")}</span>
                       </button>
                       <div className="flex flex-wrap gap-2">
                         {group.map((c) => (
                           <Chip key={c.code} selected={countries.includes(c.code)} onClick={() => setCountries(toggle(countries, c.code))}>
-                            {flagEmoji(c.code)} {t(`country.${c.code}`)}
+                            {t(`country.${c.code}`)}
                           </Chip>
                         ))}
                       </div>
@@ -351,14 +362,14 @@ export default function StartWizard() {
                 <SummaryRow k={t("wizard.sumIelts")} v={ielts === 0 ? t("wizard.s4NoIelts") : ielts.toFixed(1)} />
                 <SummaryRow k={t("wizard.sumGre")} v={hasGre ? t("wizard.greHave") : t("wizard.greNone")} />
                 <SummaryRow k={t("wizard.sumFields")} v={fields.join(", ") || "—"} />
-                <SummaryRow k={t("wizard.sumCountries")} v={countries.map((c) => flagEmoji(c)).join(" ") || t("common.all")} />
+                <SummaryRow k={t("wizard.sumCountries")} v={countries.map((c) => t(`country.${c}`)).join(", ") || t("common.all")} />
                 <SummaryRow k={t("wizard.sumFunding")} v={fundingNeed === "Full" ? t("wizard.s5FullT") : fundingNeed === "Partial" ? t("wizard.s5PartT") : t("wizard.s5AnyT")} />
                 <SummaryRow k={t("wizard.sumProvider")} v={providerTypes.length ? providerTypes.map((p) => t(`providerType.${p}`)).join(", ") : t("common.all")} />
                 <SummaryRow k={t("wizard.sumRank")} v={maxRank > 0 ? `QS ${t("sidebar.topN", { n: maxRank })}` : t("sidebar.anyRank")} />
                 <SummaryRow k={t("wizard.sumSup")} v={supervisorPref === "both" ? t("wizard.supBoth") : supervisorPref === "yes" ? t("wizard.supYes") : t("wizard.supNo")} />
               </div>
 
-              <div className="mt-5 flex items-center gap-4 rounded-2xl bg-gradient-to-r from-[#1e3a8a] to-[#3b82f6] p-5 text-white">
+              <div className="mt-5 flex items-center gap-4 rounded-2xl bg-[#1a3352] p-5 text-white">
                 <div className="grid h-12 w-12 shrink-0 place-items-center rounded-[14px] bg-white/15"><Target className="h-6 w-6" /></div>
                 <div>
                   <p className="text-2xl font-bold">{t("wizard.preview", { n: preview.total })}</p>
@@ -366,8 +377,9 @@ export default function StartWizard() {
                 </div>
               </div>
               {preview.total === 0 && (
-                <p className="mt-3 rounded-xl bg-[#fdf3e0] p-3 text-sm text-[#a9670a]">
-                  ⚠️ {t("wizard.noneWarn")}
+                <p className="mt-3 flex items-start gap-2 rounded-xl border border-[#f0e0bd] bg-[#fdf8ee] p-3 text-sm leading-relaxed text-[#8a5a08]">
+                  <TriangleAlert className="mt-0.5 h-4 w-4 shrink-0 text-[#c9a227]" />
+                  <span>{t("wizard.noneWarn")}</span>
                 </p>
               )}
             </StepShell>
@@ -378,24 +390,27 @@ export default function StartWizard() {
             <button
               onClick={() => setStep((s) => Math.max(0, s - 1))}
               disabled={step === 0}
-              className="rounded-xl px-4 py-2.5 text-sm font-semibold text-[#5a7794] transition enabled:hover:bg-[#eef3f9] disabled:cursor-not-allowed disabled:opacity-40"
+              className="flex items-center gap-1.5 rounded-xl px-4 py-2.5 text-sm font-semibold text-[#5a7794] transition enabled:hover:bg-[#eef3f9] disabled:cursor-not-allowed disabled:opacity-40"
             >
-              ← {t("common.back")}
+              <ArrowLeft className="h-4 w-4" />
+              {t("common.back")}
             </button>
             {step < STEP_IDS.length - 1 ? (
               <button
                 onClick={() => canNext && setStep((s) => s + 1)}
                 disabled={!canNext}
-                className="rounded-xl bg-gradient-to-br from-[#3b82f6] to-[#5aa2ff] px-6 py-2.5 text-sm font-bold text-white shadow-lg transition enabled:hover:brightness-110 disabled:cursor-not-allowed disabled:opacity-40"
+                className="flex items-center gap-1.5 rounded-xl bg-[#2f6fe0] px-6 py-2.5 text-sm font-bold text-white transition enabled:hover:brightness-110 disabled:cursor-not-allowed disabled:opacity-40"
               >
-                {t("common.next")} →
+                {t("common.next")}
+                <ArrowRight className="h-4 w-4" />
               </button>
             ) : (
               <button
                 onClick={finish}
-                className="rounded-xl bg-gradient-to-br from-[#0f9d6b] to-[#34c88a] px-6 py-2.5 text-sm font-bold text-white shadow-lg transition hover:brightness-110"
+                className="flex items-center gap-1.5 rounded-xl bg-[#0f9d6b] px-6 py-2.5 text-sm font-bold text-white transition hover:brightness-110"
               >
-                {t("wizard.finish", { n: preview.total })} →
+                {t("wizard.finish", { n: preview.total })}
+                <ArrowRight className="h-4 w-4" />
               </button>
             )}
           </div>
@@ -433,7 +448,9 @@ function BigCard({ selected, onClick, icon, title, desc }: { selected: boolean; 
     >
       <div className="flex items-center justify-between">
         <span className={`grid h-11 w-11 place-items-center rounded-[13px] transition ${selected ? "bg-[#2f6fe0] text-white" : "bg-[#eef4fb] text-[#2f6fe0]"}`}>{icon}</span>
-        <span className={`grid h-5 w-5 place-items-center rounded-full text-xs font-bold ${selected ? "bg-[#2f6fe0] text-white" : "border border-[#cfe0f2] text-transparent"}`}>✓</span>
+        <span className={`grid h-5 w-5 place-items-center rounded-full ${selected ? "bg-[#2f6fe0] text-white" : "border border-[#cfe0f2] text-transparent"}`}>
+          <Check className="h-3 w-3" strokeWidth={3} />
+        </span>
       </div>
       <p className="mt-2 font-extrabold text-[#1a3352]">{title}</p>
       <p className="mt-1 text-xs leading-relaxed text-[#7591ab]">{desc}</p>
@@ -445,7 +462,7 @@ function Chip({ selected, onClick, children }: { selected: boolean; onClick: () 
   return (
     <button
       onClick={onClick}
-      className={`rounded-full px-3.5 py-1.5 text-sm font-medium ring-1 transition ${
+      className={`inline-flex items-center gap-1.5 rounded-full px-3.5 py-1.5 text-sm font-medium ring-1 transition ${
         selected ? "bg-[#2f6fe0] text-white ring-[#2f6fe0] shadow-sm" : "bg-white text-[#5a7794] ring-[#cfe0f2] hover:ring-[#9cc1f5] hover:text-[#2f6fe0]"
       }`}
     >
@@ -455,7 +472,12 @@ function Chip({ selected, onClick, children }: { selected: boolean; onClick: () 
 }
 
 function Hint({ children }: { children: React.ReactNode }) {
-  return <p className="mt-4 rounded-xl bg-[#f6f9fd] px-3 py-2 text-xs text-[#7591ab]">💡 {children}</p>;
+  return (
+    <p className="mt-4 flex items-start gap-2 rounded-xl bg-[#f8fafd] px-3 py-2 text-xs text-[#7591ab]">
+      <Lightbulb className="mt-0.5 h-3.5 w-3.5 shrink-0 text-[#93a7bd]" />
+      <span>{children}</span>
+    </p>
+  );
 }
 
 function SummaryRow({ k, v }: { k: string; v: string }) {

@@ -2,14 +2,17 @@
 
 import Link from "next/link";
 import { useTranslation } from "react-i18next";
+import { Bookmark, Check, Lock } from "lucide-react";
 import {
   MatchResult,
   nextDeadline,
   daysLeft,
   Scholarship,
 } from "@/lib/data";
-import { flagEmoji, matchRingBar, matchFg, deadlineColor, deadlineHex, deadlineText } from "@/lib/ui";
+import { matchRingBar, matchFg, deadlineColor, deadlineHex, deadlineText } from "@/lib/ui";
 import { useTrack } from "@/lib/store";
+import { useAuth } from "@/components/AuthContext";
+import CountryTag from "@/components/CountryTag";
 
 export default function ScholarshipCard({
   s,
@@ -19,6 +22,7 @@ export default function ScholarshipCard({
   match: MatchResult;
 }) {
   const { t } = useTranslation();
+  const { loggedIn, requireAuth } = useAuth();
   const { isTracked, toggleTrack, isCompared, toggleCompare } = useTrack();
   const tracked = isTracked(s.id);
   const compared = isCompared(s.id);
@@ -35,8 +39,8 @@ export default function ScholarshipCard({
       <div className="flex items-start justify-between gap-3.5">
         <div className="min-w-0 flex-1">
           <div className="flex flex-wrap items-center gap-1.5 text-xs font-medium text-[#7591ab]">
-            <span className="text-[15px]">{flagEmoji(s.countryCode)}</span>
-            <span>{t(`country.${s.countryCode}`)} · {s.city}</span>
+            <CountryTag name={t(`country.${s.countryCode}`)} code={s.countryCode} title={s.country} />
+            <span>{s.city}</span>
             <span className="rounded-full bg-[#eaf4fe] px-1.5 py-px text-[11px] font-bold text-[#1c5cc0]">QS #{s.qsRank}</span>
           </div>
           <Link
@@ -50,15 +54,29 @@ export default function ScholarshipCard({
             {s.university}
           </div>
         </div>
-        {/* match ring */}
-        <div className="flex w-[66px] shrink-0 flex-col items-center">
-          <div className="grid h-14 w-14 place-items-center rounded-full" style={{ background: ring }}>
-            <div className="grid h-[42px] w-[42px] place-items-center rounded-full bg-white text-[14px] font-extrabold" style={{ color: fg }}>
-              {match.score}%
+        {/* match ring — chỉ hiện khi đã đăng nhập; khách thấy ô khóa mời đăng nhập */}
+        {loggedIn ? (
+          <div className="flex w-[66px] shrink-0 flex-col items-center">
+            <div className="grid h-14 w-14 place-items-center rounded-full" style={{ background: ring }}>
+              <div className="grid h-[42px] w-[42px] place-items-center rounded-full bg-white text-[14px] font-extrabold" style={{ color: fg }}>
+                {match.score}%
+              </div>
             </div>
+            <div className="mt-1.5 text-center text-[10px] font-bold leading-tight" style={{ color: fg }}>{match.label}</div>
           </div>
-          <div className="mt-1.5 text-center text-[10px] font-bold leading-tight" style={{ color: fg }}>{match.label}</div>
-        </div>
+        ) : (
+          <button
+            type="button"
+            onClick={() => requireAuth()}
+            title={t("authGate.title")}
+            className="flex w-[66px] shrink-0 flex-col items-center"
+          >
+            <div className="grid h-14 w-14 place-items-center rounded-full border-2 border-dashed border-[#cfe0f2] text-[#93a7bd] transition hover:border-[#9cc1f5] hover:text-[#2f6fe0]">
+              <Lock className="h-4 w-4" />
+            </div>
+            <div className="mt-1.5 text-center text-[10px] font-semibold leading-tight text-[#93a7bd]">{t("filter.sortMatch")}</div>
+          </button>
+        )}
       </div>
 
       {/* meta grid */}
@@ -81,18 +99,18 @@ export default function ScholarshipCard({
         </div>
       </div>
 
-      {/* requirement chips */}
+      {/* requirement chips — một tông trầm, không "badge soup" nhiều màu */}
       <div className="mt-[13px] flex flex-wrap gap-1.5 text-[11px] font-semibold">
         {s.requiresSupervisor && (
-          <span className="rounded-lg border border-[#ddd0fb] bg-[#f2ecfe] px-2 py-1 font-bold text-[#6d3ee0]">
+          <span className="rounded-lg border border-[#dce8f4] bg-[#f8fafd] px-2 py-1 text-[#5a7794]">
             {t("card.needSupervisor")}
           </span>
         )}
         {needsGre && (
-          <span className="rounded-lg border border-[#f5e0b8] bg-[#fdf3e0] px-2 py-1 font-bold text-[#a9670a]">GRE/GMAT</span>
+          <span className="rounded-lg border border-[#dce8f4] bg-[#f8fafd] px-2 py-1 text-[#5a7794]">GRE/GMAT</span>
         )}
         {needsProposal && (
-          <span className="rounded-lg border border-[#bcdcfb] bg-[#e7f2ff] px-2 py-1 font-bold text-[#1c5cc0]">{t("card.needProposal")}</span>
+          <span className="rounded-lg border border-[#dce8f4] bg-[#f8fafd] px-2 py-1 text-[#5a7794]">{t("card.needProposal")}</span>
         )}
       </div>
 
@@ -111,23 +129,25 @@ export default function ScholarshipCard({
       {/* actions */}
       <div className="mt-3.5 flex gap-2.5">
         <button
-          onClick={() => toggleTrack(s.id)}
+          onClick={() => requireAuth(() => toggleTrack(s.id))}
           className={`flex flex-1 items-center justify-center gap-1.5 rounded-[11px] px-3 py-2.5 text-[13px] font-bold transition ${
-            tracked
+            loggedIn && tracked
               ? "bg-[#0f9d6b] text-white hover:brightness-105"
               : "border border-[#c8dcfa] bg-[#eaf1fd] text-[#2f6fe0] hover:bg-[#e0ebfc]"
           }`}
         >
-          <svg width="15" height="15" viewBox="0 0 24 24" fill={tracked ? "currentColor" : "none"} stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="m19 21-7-4-7 4V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z" /></svg>
-          {tracked ? t("card.tracking") : t("card.track")}
+          {loggedIn && tracked
+            ? <Check className="h-[15px] w-[15px]" strokeWidth={2.5} />
+            : <Bookmark className="h-[15px] w-[15px]" strokeWidth={2} />}
+          {loggedIn && tracked ? t("card.tracking") : t("card.track")}
         </button>
         <button
           onClick={() => toggleCompare(s.id)}
           title={compared ? t("card.compareRemove") : t("card.compareAdd")}
           className={`grid place-items-center rounded-[11px] border px-3 py-2.5 transition ${
             compared
-              ? "border-[#7c3aed] bg-[#7c3aed] text-white"
-              : "border-[#dce8f4] bg-white text-[#7591ab] hover:border-[#c4b5fd] hover:text-[#7c3aed]"
+              ? "border-[#2f6fe0] bg-[#2f6fe0] text-white"
+              : "border-[#dce8f4] bg-white text-[#7591ab] hover:border-[#9cc1f5] hover:text-[#2f6fe0]"
           }`}
         >
           <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="m17 3 4 4-4 4" /><path d="M21 7H9a4 4 0 0 0-4 4" /><path d="m7 21-4-4 4-4" /><path d="M3 17h12a4 4 0 0 0 4-4" /></svg>

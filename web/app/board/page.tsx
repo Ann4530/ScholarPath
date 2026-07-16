@@ -10,11 +10,21 @@ import {
   nextDeadline,
   daysLeft,
 } from "@/lib/data";
-import { ClipboardList } from "lucide-react";
+import { ClipboardList, StickyNote, X } from "lucide-react";
 import { useTrack, STAGES, StageId, stageColor } from "@/lib/store";
-import { flagEmoji, deadlineColor, deadlineText, matchColor } from "@/lib/ui";
+import { deadlineColor, deadlineText, matchColor } from "@/lib/ui";
+import CountryTag from "@/components/CountryTag";
+import GuestGate from "@/components/GuestGate";
 
 export default function BoardPage() {
+  return (
+    <GuestGate>
+      <BoardPageInner />
+    </GuestGate>
+  );
+}
+
+function BoardPageInner() {
   const { t } = useTranslation();
   const { tracked, profile, setStage, setNote, removeTrack, progress } = useTrack();
   const [view, setView] = useState<"table" | "kanban">("table");
@@ -112,7 +122,9 @@ export default function BoardPage() {
                 <tr className="border-t border-[#eef3f9] hover:bg-[#f6f9fd]">
                   <td className="p-3">
                     <Link href={`/scholarships/${r.s.id}`} className="font-bold text-[#1a3352] hover:text-[#2f6fe0]">{r.s.title}</Link>
-                    <div className="text-xs text-[#7591ab]">{flagEmoji(r.s.countryCode)} {t(`country.${r.s.countryCode}`)}</div>
+                    <div className="flex items-center gap-1.5 text-xs text-[#7591ab]">
+                      <CountryTag name={t(`country.${r.s.countryCode}`)} code={r.s.countryCode} />
+                    </div>
                   </td>
                   <td className="p-3">
                     <span className={`rounded-md border px-2 py-0.5 text-xs font-semibold ${matchColor(r.match.score)}`}>{r.match.score}%</span>
@@ -125,7 +137,7 @@ export default function BoardPage() {
                   </td>
                   <td className="p-3">
                     {r.prof ? (
-                      <Link href={`/professors/${r.prof.id}`} className="font-semibold text-[#7c3aed] hover:underline">{r.prof.name}</Link>
+                      <Link href={`/professors/${r.prof.id}`} className="font-semibold text-[#2f6fe0] hover:underline">{r.prof.name}</Link>
                     ) : <span className="text-[#c3ccd8]">—</span>}
                   </td>
                   <td className="p-3">
@@ -146,25 +158,27 @@ export default function BoardPage() {
                     <div className="flex items-center gap-1.5">
                       <button
                         onClick={() => setNoteOpen(noteOpen === r.s.id ? null : r.s.id)}
-                        className={`text-sm ${r.item.note ? "text-[#e0921a]" : "text-[#c3ccd8] hover:text-[#e0921a]"}`}
+                        className={`grid h-7 w-7 place-items-center rounded-md hover:bg-[#eef4fb] ${r.item.note ? "text-[#2f6fe0]" : "text-[#c3ccd8] hover:text-[#2f6fe0]"}`}
                         title={r.item.note ? t("board.noteHas") : t("board.noteAdd")}
                       >
-                        📝
+                        <StickyNote className="h-4 w-4" />
                       </button>
-                      <button onClick={() => removeTrack(r.s.id)} className="text-xs text-[#93a7bd] hover:text-[#d33a4a]" title={t("board.removeTitle")}>✕</button>
+                      <button onClick={() => removeTrack(r.s.id)} className="grid h-7 w-7 place-items-center rounded-md text-[#93a7bd] hover:bg-[#fff0f1] hover:text-[#d33a4a]" title={t("board.removeTitle")}>
+                        <X className="h-4 w-4" />
+                      </button>
                     </div>
                   </td>
                 </tr>
                 {noteOpen === r.s.id && (
-                  <tr className="border-t border-[#eef3f9] bg-[#fdf3e0]/40">
+                  <tr className="border-t border-[#eef3f9] bg-[#f8fafd]">
                     <td colSpan={7} className="px-3 pb-3 pt-1">
-                      <label className="mb-1 block text-xs font-bold text-[#a9670a]">{t("board.noteLabel")}</label>
+                      <label className="mb-1 block text-xs font-bold text-[#7591ab]">{t("board.noteLabel")}</label>
                       <textarea
                         value={r.item.note}
                         onChange={(e) => setNote(r.s.id, e.target.value)}
                         placeholder={t("board.notePh")}
                         rows={2}
-                        className="w-full rounded-lg border border-[#f5e0b8] bg-white px-3 py-2 text-sm text-[#1a3352] outline-none focus:border-[#e0921a]"
+                        className="w-full rounded-lg border border-[#dce8f4] bg-white px-3 py-2 text-sm text-[#1a3352] outline-none focus:border-[#2f6fe0]"
                       />
                     </td>
                   </tr>
@@ -195,15 +209,18 @@ export default function BoardPage() {
                       className="cursor-grab rounded-[12px] border border-[#dce8f4] bg-white p-3 shadow-[0_1px_2px_rgba(23,50,76,0.05)] active:cursor-grabbing">
                       <Link href={`/scholarships/${r.s.id}`} className="text-sm font-bold text-[#1a3352] hover:text-[#2f6fe0]">{r.s.title}</Link>
                       <div className="mt-1 flex items-center justify-between text-xs text-[#7591ab]">
-                        <span>{flagEmoji(r.s.countryCode)} {t(`country.${r.s.countryCode}`)}</span>
+                        <span className="flex items-center gap-1.5">
+                          <CountryTag name={t(`country.${r.s.countryCode}`)} code={r.s.countryCode} />
+                        </span>
                         <span className={`font-semibold ${deadlineColor(r.days)}`}>{deadlineText(r.days, t)}</span>
                       </div>
                       <div className="mt-2 h-1.5 overflow-hidden rounded-full bg-[#eef3f9]">
                         <div className="h-full bg-[#2f6fe0]" style={{ width: `${r.prog}%` }} />
                       </div>
                       {r.item.note && (
-                        <p className="mt-2 truncate rounded bg-[#fdf3e0] px-2 py-1 text-[11px] text-[#a9670a]" title={r.item.note}>
-                          📝 {r.item.note}
+                        <p className="mt-2 flex items-center gap-1.5 rounded bg-[#f8fafd] px-2 py-1 text-[11px] text-[#5a7794] ring-1 ring-inset ring-[#e6eef6]" title={r.item.note}>
+                          <StickyNote className="h-3 w-3 shrink-0 text-[#93a7bd]" />
+                          <span className="truncate">{r.item.note}</span>
                         </p>
                       )}
                     </div>
@@ -224,16 +241,17 @@ export default function BoardPage() {
 }
 
 function Stat({ label, value, tone }: { label: string; value: number; tone: "slate" | "rose" | "amber" | "emerald" }) {
-  const tones = {
-    slate: "bg-white text-[#1a3352] border-[#dce8f4]",
-    rose: "bg-[#fdecee] text-[#b23343] border-[#f7ccd2]",
-    amber: "bg-[#fdf3e0] text-[#a9670a] border-[#f5e0b8]",
-    emerald: "bg-[#e9f8f0] text-[#0b7a52] border-[#c4ecd8]",
+  // Thẻ trắng viền mảnh; chỉ con số mang màu ngữ nghĩa để tránh mảng pastel rối mắt.
+  const numTone = {
+    slate: "text-[#1a3352]",
+    rose: "text-[#b23343]",
+    amber: "text-[#a9670a]",
+    emerald: "text-[#0b7a52]",
   };
   return (
-    <div className={`rounded-[14px] border p-4 ${tones[tone]}`}>
-      <p className="text-[26px] font-extrabold">{value}</p>
-      <p className="text-xs font-semibold opacity-80">{label}</p>
+    <div className="rounded-[14px] border border-[#dce8f4] bg-white p-4">
+      <p className={`text-[26px] font-extrabold ${numTone[tone]}`}>{value}</p>
+      <p className="text-xs font-semibold text-[#7591ab]">{label}</p>
     </div>
   );
 }

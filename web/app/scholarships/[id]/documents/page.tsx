@@ -5,10 +5,14 @@ import { useEffect, useMemo, useState } from "react";
 import { useParams } from "next/navigation";
 import Link from "next/link";
 import { useTranslation } from "react-i18next";
+import {
+  ChevronLeft, PenLine, Info, Copy, Check, Download, RotateCcw,
+  GraduationCap, ArrowRight,
+} from "lucide-react";
 import { scholarshipById, professorById } from "@/lib/data";
 import { generateDrafts } from "@/lib/docs";
 import { useTrack } from "@/lib/store";
-import { flagEmoji } from "@/lib/ui";
+import CountryTag from "@/components/CountryTag";
 import i18n from "@/lib/i18n";
 
 const DRAFTS_KEY = "scholarfinder_drafts_v1";
@@ -106,29 +110,40 @@ export default function DocumentsPage() {
   return (
     <div className="mx-auto max-w-[900px] px-6 py-6">
       <Link href={`/scholarships/${s.id}`} className="flex w-fit items-center gap-1.5 py-1.5 text-[13.5px] font-semibold text-[#5a7794] hover:text-[#2f6fe0]">
-        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round"><path d="m15 18-6-6 6-6" /></svg>
+        <ChevronLeft className="h-4 w-4" />
         {t("docs.back")}
       </Link>
 
-      {/* Header */}
-      <section className="relative mt-2.5 overflow-hidden rounded-[20px] bg-[linear-gradient(150deg,#0e1638_0%,#1c2a63_52%,#34459c_100%)] p-7 text-white sm:px-8">
-        <div className="pointer-events-none absolute -right-5 -top-8 h-44 w-44 rounded-full bg-[radial-gradient(circle,rgba(90,120,255,0.4),transparent_70%)]" />
-        <div className="relative">
-          <p className="text-[11px] font-bold uppercase tracking-[0.08em] text-[#aebbe8]">✍️ {t("docs.title")}</p>
-          <h1 className="mt-1.5 text-[23px] font-extrabold tracking-tight">{t("docs.subtitle")}</h1>
-          <p className="mt-2 text-[13.5px] text-[#c5d2f0]">{t("docs.for")} <b className="text-white">{flagEmoji(s.countryCode)} {s.title}</b></p>
+      {/* Header — bản mảnh, chỉ một đường kẻ + icon, không gradient/không đốm sáng */}
+      <section className="mt-2.5 flex items-start gap-3.5 border-b border-[#e4ecf5] pb-5">
+        <span className="mt-0.5 grid h-10 w-10 shrink-0 place-items-center rounded-[10px] bg-[#eef4fb] text-[#2f6fe0] ring-1 ring-inset ring-[#dce8f4]">
+          <PenLine className="h-[19px] w-[19px]" />
+        </span>
+        <div className="min-w-0">
+          <p className="text-[11px] font-bold uppercase tracking-[0.08em] text-[#93a7bd]">{t("docs.title")}</p>
+          <h1 className="mt-0.5 text-[22px] font-extrabold leading-tight tracking-tight text-[#1a3352]">{t("docs.subtitle")}</h1>
+          <p className="mt-1.5 flex flex-wrap items-center gap-1.5 text-[13px] text-[#5a7794]">
+            {t("docs.for")}
+            <CountryTag name={t(`country.${s.countryCode}`)} code={s.countryCode} title={s.country} />
+            <b className="font-semibold text-[#1a3352]">{s.title}</b>
+          </p>
         </div>
       </section>
 
-      {/* Ghi chú ngôn ngữ + nhắc hồ sơ */}
-      <div className="mt-4 space-y-2">
-        <p className="rounded-xl bg-[#eef1fd] p-3 text-sm text-[#3730a3]"
-          dangerouslySetInnerHTML={{ __html: "📝 " + t("docs.langNote") }} />
+      {/* Ghi chú ngôn ngữ + nhắc hồ sơ — một dòng nhạt, không phải hộp màu */}
+      <div className="mt-4 space-y-2.5">
+        <p className="flex items-start gap-2 text-[13px] leading-relaxed text-[#5a7794]">
+          <Info className="mt-0.5 h-4 w-4 shrink-0 text-[#93a7bd]" />
+          <span dangerouslySetInnerHTML={{ __html: t("docs.langNote") }} />
+        </p>
         {(!profile.name.trim() || profile.fields.length === 0) && (
-          <p className="rounded-xl bg-[#fdf3e0] p-3 text-sm text-[#a9670a]">
-            {t("docs.fillProfilePre")}{" "}
-            <Link href="/profile" className="font-bold underline">{t("docs.fillProfileLink")}</Link>{" "}
-            {t("docs.fillProfilePost")}
+          <p className="flex items-start gap-2 rounded-[10px] border border-[#f0e0bd] bg-[#fdf8ee] px-3 py-2.5 text-[13px] leading-relaxed text-[#8a5a08]">
+            <Info className="mt-0.5 h-4 w-4 shrink-0 text-[#c9a227]" />
+            <span>
+              {t("docs.fillProfilePre")}{" "}
+              <Link href="/profile" className="font-bold underline underline-offset-2">{t("docs.fillProfileLink")}</Link>{" "}
+              {t("docs.fillProfilePost")}
+            </span>
           </p>
         )}
       </div>
@@ -143,8 +158,10 @@ export default function DocumentsPage() {
             </a>
           ))}
           <button onClick={copyAll}
-            className="ml-auto rounded-full bg-[#1a3352] px-3.5 py-1.5 text-xs font-bold text-white hover:bg-[#22406a]">
-            {copiedId === "__all__" ? `✓ ${t("docs.copied")}` : `📋 ${t("docs.copyAll")}`}
+            className="ml-auto flex items-center gap-1.5 rounded-full bg-[#1a3352] px-3.5 py-1.5 text-xs font-bold text-white hover:bg-[#22406a]">
+            {copiedId === "__all__"
+              ? <><Check className="h-3.5 w-3.5" />{t("docs.copied")}</>
+              : <><Copy className="h-3.5 w-3.5" />{t("docs.copyAll")}</>}
           </button>
         </div>
       )}
@@ -163,7 +180,7 @@ export default function DocumentsPage() {
                   <div>
                     <div className="flex items-center gap-2">
                       <h2 className="text-[15px] font-extrabold text-[#1a3352]">{d.title}</h2>
-                      <span className="rounded-full bg-[#f2ecfe] px-2 py-0.5 text-[10px] font-bold text-[#7c3aed] ring-1 ring-[#ddd0fb]">
+                      <span className="rounded-full bg-[#f2f6fb] px-2 py-0.5 text-[10px] font-semibold text-[#7591ab] ring-1 ring-inset ring-[#e2eaf3]">
                         {isEdited ? t("docs.edited") : t("docs.generatedBadge")}
                       </span>
                     </div>
@@ -183,17 +200,21 @@ export default function DocumentsPage() {
                   <span className="text-xs text-[#93a7bd]">{t("docs.words", { n: wordCount(text) })}</span>
                   <div className="ml-auto flex gap-2">
                     <button onClick={() => copy(d.id, text)}
-                      className="rounded-lg bg-[#2f6fe0] px-3 py-1.5 text-xs font-bold text-white hover:brightness-105">
-                      {copiedId === d.id ? `✓ ${t("docs.copied")}` : `📋 ${t("docs.copy")}`}
+                      className="flex items-center gap-1.5 rounded-lg bg-[#2f6fe0] px-3 py-1.5 text-xs font-bold text-white hover:brightness-105">
+                      {copiedId === d.id
+                        ? <><Check className="h-3.5 w-3.5" />{t("docs.copied")}</>
+                        : <><Copy className="h-3.5 w-3.5" />{t("docs.copy")}</>}
                     </button>
                     <button onClick={() => download(d.id, text)}
-                      className="rounded-lg border border-[#dce8f4] px-3 py-1.5 text-xs font-semibold text-[#5a7794] hover:bg-[#f6f9fd]">
-                      ⬇ {t("docs.download")}
+                      className="flex items-center gap-1.5 rounded-lg border border-[#dce8f4] px-3 py-1.5 text-xs font-semibold text-[#5a7794] hover:bg-[#f6f9fd]">
+                      <Download className="h-3.5 w-3.5" />
+                      {t("docs.download")}
                     </button>
                     {isEdited && (
                       <button onClick={() => resetDoc(d.id)}
-                        className="rounded-lg border border-[#dce8f4] px-3 py-1.5 text-xs font-semibold text-[#7591ab] hover:border-[#f7d0d5] hover:text-[#d33a4a]">
-                        ↺ {t("docs.reset")}
+                        className="flex items-center gap-1.5 rounded-lg border border-[#dce8f4] px-3 py-1.5 text-xs font-semibold text-[#7591ab] hover:border-[#f7d0d5] hover:text-[#d33a4a]">
+                        <RotateCcw className="h-3.5 w-3.5" />
+                        {t("docs.reset")}
                       </button>
                     )}
                   </div>
@@ -205,14 +226,21 @@ export default function DocumentsPage() {
       )}
 
       {/* Nối với cố vấn viết luận */}
-      <div className="mt-5 flex flex-wrap items-center justify-between gap-2 rounded-[16px] border border-[#ddd0fb] bg-[#f2ecfe] p-4">
-        <p className="text-sm text-[#5b21b6]">🧑‍🏫 {t("docs.advisorPre")}</p>
-        <Link href="/profile" className="rounded-lg bg-[#7c3aed] px-4 py-2 text-sm font-bold text-white hover:brightness-105">
+      <div className="mt-5 flex flex-wrap items-center justify-between gap-3 rounded-[14px] border border-[#dce8f4] bg-[#f8fafd] p-4">
+        <p className="flex items-center gap-2.5 text-sm text-[#3f5f7f]">
+          <GraduationCap className="h-[18px] w-[18px] shrink-0 text-[#5a7794]" />
+          {t("docs.advisorPre")}
+        </p>
+        <Link href="/profile" className="flex items-center gap-1.5 rounded-lg bg-[#1a3352] px-4 py-2 text-sm font-bold text-white hover:bg-[#22406a]">
           {t("docs.advisorLink")}
+          <ArrowRight className="h-4 w-4" />
         </Link>
       </div>
 
-      <p className="mt-4 rounded-xl bg-[#fdf3e0] p-3 text-xs text-[#a9670a]">⚠️ {t("docs.disclaimer")}</p>
+      <p className="mt-4 flex items-start gap-2 text-xs leading-relaxed text-[#93a7bd]">
+        <Info className="mt-px h-3.5 w-3.5 shrink-0" />
+        {t("docs.disclaimer")}
+      </p>
     </div>
   );
 }

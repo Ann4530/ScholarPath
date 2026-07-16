@@ -3,7 +3,34 @@
 // Trang cá nhân (account hub): Tổng quan (thống kê) · Hồ sơ học tập · Danh sách của tôi · Hỗ trợ.
 import { useMemo, useState } from "react";
 import Link from "next/link";
-import { Bookmark, PencilLine, Send, Clock, Target, FileText, FolderOpen } from "lucide-react";
+import {
+  Bookmark,
+  PencilLine,
+  Send,
+  Clock,
+  Target,
+  FileText,
+  FolderOpen,
+  Paperclip,
+  TriangleAlert,
+  StickyNote,
+  ChevronDown,
+  ChevronLeft,
+  ChevronRight,
+  ClipboardList,
+  Link2,
+  Globe,
+  CalendarDays,
+  CalendarPlus,
+  Star,
+  Mail,
+  MessageCircle,
+  CircleHelp,
+  Download,
+  Info,
+  ArrowRight,
+  Check,
+} from "lucide-react";
 import { useTranslation } from "react-i18next";
 import {
   scholarshipById,
@@ -22,7 +49,8 @@ import {
   ProviderType,
 } from "@/lib/data";
 import { useTrack, STAGES, StageId, stageColor } from "@/lib/store";
-import { flagEmoji, matchColor, deadlineColor, deadlineText } from "@/lib/ui";
+import { matchColor, deadlineColor, deadlineText } from "@/lib/ui";
+import CountryTag from "@/components/CountryTag";
 import { downloadIcs, gcalUrl, type CalEvent } from "@/lib/ics";
 import i18n from "@/lib/i18n";
 
@@ -193,7 +221,10 @@ export default function ProfileClient({ email }: { email: string | null }) {
             {/* Tổng giấy tờ đã hoàn thành */}
             <div className="rounded-2xl border border-[#dce8f4] bg-white p-4">
               <div className="mb-2 flex items-center justify-between text-sm">
-                <span className="font-semibold text-[#5a7794]">📎 {t("account.overallDocs")}</span>
+                <span className="flex items-center gap-1.5 font-semibold text-[#5a7794]">
+                  <Paperclip className="h-3.5 w-3.5 text-[#93a7bd]" />
+                  {t("account.overallDocs")}
+                </span>
                 <span className="font-semibold text-[#1a3352]">{stats.docsDone}/{stats.docsTotal}</span>
               </div>
               <div className="h-2.5 w-full overflow-hidden rounded-full bg-[#eef3f9]">
@@ -213,7 +244,7 @@ export default function ProfileClient({ email }: { email: string | null }) {
                       <div key={st.id} className="flex items-center gap-3">
                         <span className={`w-32 shrink-0 rounded-md border px-2 py-0.5 text-xs font-medium ${st.color}`}>{t(`stage.${st.id}`)}</span>
                         <div className="h-2.5 flex-1 overflow-hidden rounded-full bg-[#eef3f9]">
-                          <div className="h-full rounded-full bg-[#eaf1fd]0 transition-all" style={{ width: `${pct}%` }} />
+                          <div className="h-full rounded-full bg-[#2f6fe0] transition-all" style={{ width: `${pct}%` }} />
                         </div>
                         <span className="w-6 text-right text-sm font-semibold text-[#455f78]">{c}</span>
                       </div>
@@ -243,23 +274,33 @@ export default function ProfileClient({ email }: { email: string | null }) {
               <Panel title={t("account.byRegionTitle")}>
                 <BarChart rows={REGIONS.filter((r) => stats.byRegion[r] > 0).map((r, i) => ({
                   label: t(`region.${REGION_KEY[r]}`), value: stats.byRegion[r],
-                  color: ["bg-[#2f6fe0]", "bg-sky-500", "bg-teal-500", "bg-fuchsia-500"][i % 4],
+                  color: ["bg-[#2f6fe0]", "bg-[#5aa2ff]", "bg-[#9cc1f5]", "bg-[#cfe0f2]"][i % 4],
                 }))} />
               </Panel>
               <Panel title={t("account.byProviderTitle")}>
                 <BarChart rows={PROVIDER_TYPES.map((p, i) => ({
                   label: t(`providerType.${p}`), value: stats.byProvider[p],
-                  color: ["bg-[#2f6fe0]", "bg-sky-500", "bg-violet-500", "bg-amber-500"][i],
+                  color: ["bg-[#2f6fe0]", "bg-[#5aa2ff]", "bg-[#9cc1f5]", "bg-[#cfe0f2]"][i],
                 }))} />
               </Panel>
             </div>
 
             {/* Hàng 3: cần xử lý gấp + deadline sắp tới */}
             <div className="grid gap-6 lg:grid-cols-2">
-              <Panel title={`⚠️ ${t("account.urgentTitle")}`}>
+              <Panel
+                title={
+                  <>
+                    <TriangleAlert className="h-4 w-4 text-[#7591ab]" />
+                    {t("account.urgentTitle")}
+                  </>
+                }
+              >
                 <p className="-mt-2 mb-2 text-xs text-[#93a7bd]">{t("account.urgentDesc")}</p>
                 {urgent.length === 0 ? (
-                  <p className="rounded-lg bg-[#e9f8f0] p-3 text-sm text-[#0b7a52]">{t("account.urgentEmpty")}</p>
+                  <p className="flex items-center gap-2 rounded-lg border border-[#dce8f4] bg-[#f8fafd] p-3 text-sm text-[#5a7794]">
+                    <Check className="h-3.5 w-3.5 shrink-0 text-[#0b7a52]" />
+                    {t("account.urgentEmpty")}
+                  </p>
                 ) : (
                   <ul className="space-y-2">
                     {urgent.map((r) => (
@@ -268,7 +309,10 @@ export default function ProfileClient({ email }: { email: string | null }) {
                           className="flex items-center justify-between gap-3 rounded-lg border border-[#eef3f9] p-2.5 hover:border-[#9cc1f5] hover:bg-[#eaf1fd]/40">
                           <div className="min-w-0">
                             <span className="block truncate text-sm font-bold text-[#1a3352]">{r.s.title}</span>
-                            <span className="text-xs text-[#7591ab]">{flagEmoji(r.s.countryCode)} {t(`country.${r.s.countryCode}`)} · {t("account.itemProgress")} {r.prog}%</span>
+                            <span className="flex items-center gap-1.5 text-xs text-[#7591ab]">
+                              <CountryTag name={t(`country.${r.s.countryCode}`)} code={r.s.countryCode} />
+                              {t("account.itemProgress")} {r.prog}%
+                            </span>
                           </div>
                           <span className={`shrink-0 text-xs font-semibold ${deadlineColor(r.days)}`}>{deadlineText(r.days, t)}</span>
                         </Link>
@@ -287,7 +331,10 @@ export default function ProfileClient({ email }: { email: string | null }) {
                       <li key={r.s.id} className="flex items-center justify-between gap-3 py-2.5">
                         <div className="min-w-0">
                           <Link href={`/scholarships/${r.s.id}`} className="block truncate font-bold text-[#1a3352] hover:text-[#2f6fe0]">{r.s.title}</Link>
-                          <span className="text-xs text-[#7591ab]">{flagEmoji(r.s.countryCode)} {t(`country.${r.s.countryCode}`)} · {r.dl?.type}</span>
+                          <span className="flex items-center gap-1.5 text-xs text-[#7591ab]">
+                            <CountryTag name={t(`country.${r.s.countryCode}`)} code={r.s.countryCode} />
+                            {r.dl?.type}
+                          </span>
                         </div>
                         <div className="shrink-0 text-right">
                           <p className="text-sm text-[#455f78]">{r.dl?.date}</p>
@@ -311,7 +358,10 @@ export default function ProfileClient({ email }: { email: string | null }) {
               <h2 className="text-lg font-semibold text-[#1a3352]">{t("account.academicTitle")}</h2>
               <p className="text-sm text-[#7591ab]">{t("account.academicHint")}</p>
             </div>
-            <span className="hidden items-center gap-1 rounded-full bg-[#e9f8f0] px-3 py-1 text-xs font-semibold text-[#0b7a52] sm:flex">✓ {t("account.saved")}</span>
+            <span className="hidden items-center gap-1.5 rounded-full border border-[#dce8f4] bg-[#f8fafd] px-3 py-1 text-xs font-semibold text-[#5a7794] sm:flex">
+              <Check className="h-3.5 w-3.5 text-[#0b7a52]" />
+              {t("account.saved")}
+            </span>
           </div>
 
           <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
@@ -376,10 +426,15 @@ export default function ProfileClient({ email }: { email: string | null }) {
             <div>
               <p className="mb-2 text-sm font-semibold text-[#5a7794]">{t("profilePanel.countries")}</p>
               <div className="flex flex-wrap gap-1.5">
-                {COUNTRIES.map((c) => (
-                  <button key={c.code} onClick={() => setProfile({ ...profile, countries: toggle(profile.countries, c.code) })}
-                    className={`rounded-full px-3 py-1 text-xs ring-1 transition ${profile.countries.includes(c.code) ? "bg-[#2f6fe0] text-white ring-[#2f6fe0]" : "bg-white text-[#5a7794] ring-[#cfe0f2] hover:ring-[#9cc1f5]"}`}>{flagEmoji(c.code)} {t(`country.${c.code}`)}</button>
-                ))}
+                {COUNTRIES.map((c) => {
+                  const on = profile.countries.includes(c.code);
+                  return (
+                    <button key={c.code} onClick={() => setProfile({ ...profile, countries: toggle(profile.countries, c.code) })}
+                      className={`flex items-center gap-1.5 rounded-full px-3 py-1 text-xs ring-1 transition ${on ? "bg-[#2f6fe0] text-white ring-[#2f6fe0]" : "bg-white text-[#5a7794] ring-[#cfe0f2] hover:ring-[#9cc1f5]"}`}>
+                      {t(`country.${c.code}`)}
+                    </button>
+                  );
+                })}
               </div>
             </div>
           </div>
@@ -403,7 +458,10 @@ export default function ProfileClient({ email }: { email: string | null }) {
                   <option value="match">{t("filter.sortMatch")}</option>
                   <option value="stage">{t("account.group.stage")}</option>
                 </select>
-                <Link href="/board" className="rounded-lg bg-[#1a3352] px-3 py-1.5 text-xs font-bold text-white hover:bg-[#22406a]">{t("account.openBoard")}</Link>
+                <Link href="/board" className="flex items-center gap-1.5 rounded-lg bg-[#1a3352] px-3 py-1.5 text-xs font-bold text-white hover:bg-[#22406a]">
+                  {t("account.openBoard")}
+                  <ArrowRight className="h-3.5 w-3.5" />
+                </Link>
               </div>
             </div>
 
@@ -428,10 +486,10 @@ export default function ProfileClient({ email }: { email: string | null }) {
                     >
                       <div className="min-w-0">
                         <p className="truncate font-bold text-[#1a3352]">{r.s.title}</p>
-                        <p className="text-xs text-[#7591ab]">
-                          {flagEmoji(r.s.countryCode)} {t(`country.${r.s.countryCode}`)}
-                          <span className={`ml-2 rounded border px-1 py-0.5 text-[10px] font-bold ${matchColor(r.match.score)}`}>{r.match.score}%</span>
-                          {r.item.note && <span className="ml-2 text-[#a9670a]">📝</span>}
+                        <p className="flex items-center gap-1.5 text-xs text-[#7591ab]">
+                          <CountryTag name={t(`country.${r.s.countryCode}`)} code={r.s.countryCode} />
+                          <span className={`ml-0.5 rounded border px-1 py-0.5 text-[10px] font-bold ${matchColor(r.match.score)}`}>{r.match.score}%</span>
+                          {r.item.note && <StickyNote className="h-3.5 w-3.5 text-[#93a7bd]" aria-label={t("detail.note")} />}
                         </p>
                       </div>
                       {/* Đổi trạng thái — chặn nổi bọt để không bung/thu khi chọn */}
@@ -455,7 +513,7 @@ export default function ProfileClient({ email }: { email: string | null }) {
                         </div>
                         <span className="text-xs text-[#7591ab]">{r.prog}%</span>
                       </div>
-                      <span className={`hidden text-[#93a7bd] transition-transform sm:inline ${open ? "rotate-180" : ""}`}>▾</span>
+                      <ChevronDown className={`hidden h-4 w-4 text-[#93a7bd] transition-transform sm:inline ${open ? "rotate-180" : ""}`} />
                     </div>
 
                     {/* Panel chi tiết */}
@@ -463,7 +521,10 @@ export default function ProfileClient({ email }: { email: string | null }) {
                       <div className="animate-drop grid gap-4 border-t border-[#dbe8f7] bg-[#eaf1fd]/30 px-4 py-4 lg:grid-cols-2">
                         {/* Hồ sơ cần nộp (tick tiến độ) */}
                         <div className="rounded-xl border border-[#dce8f4] bg-white p-3">
-                          <p className="mb-2 text-sm font-semibold text-[#1a3352]">📋 {t("detail.checklist")} <span className="font-normal text-[#93a7bd]">({r.prog}%)</span></p>
+                          <p className="mb-2 flex items-center gap-1.5 text-sm font-semibold text-[#1a3352]">
+                            <ClipboardList className="h-4 w-4 text-[#7591ab]" />
+                            {t("detail.checklist")} <span className="font-normal text-[#93a7bd]">({r.prog}%)</span>
+                          </p>
                           <ul className="space-y-1">
                             {r.s.documents.map((d) => (
                               <li key={d}>
@@ -479,20 +540,32 @@ export default function ProfileClient({ email }: { email: string | null }) {
                         <div className="space-y-3">
                           {/* Link đăng ký / nguồn + trợ lý viết hồ sơ */}
                           <div className="rounded-xl border border-[#dce8f4] bg-white p-3">
-                            <p className="mb-2 text-sm font-semibold text-[#1a3352]">🔗 {t("account.linksSection")}</p>
+                            <p className="mb-2 flex items-center gap-1.5 text-sm font-semibold text-[#1a3352]">
+                              <Link2 className="h-4 w-4 text-[#7591ab]" />
+                              {t("account.linksSection")}
+                            </p>
                             <div className="flex flex-wrap gap-2">
                               <a href={r.s.officialUrl} target="_blank" rel="noopener noreferrer"
-                                className="rounded-lg border border-[#dce8f4] px-3 py-1.5 text-xs font-semibold text-[#5a7794] hover:bg-[#f6f9fd]">🌐 {t("detail.official")}</a>
+                                className="flex items-center gap-1.5 rounded-lg border border-[#dce8f4] px-3 py-1.5 text-xs font-semibold text-[#5a7794] hover:bg-[#f6f9fd]">
+                                <Globe className="h-3.5 w-3.5" />
+                                {t("detail.official")}
+                              </a>
                               <Link href={`/scholarships/${r.s.id}/documents`}
                                 className="rounded-lg bg-[#2f6fe0] px-3 py-1.5 text-xs font-bold text-white hover:brightness-105">{t("docs.openCta")}</Link>
                               <Link href={`/scholarships/${r.s.id}`}
-                                className="rounded-lg border border-[#dce8f4] px-3 py-1.5 text-xs font-semibold text-[#5a7794] hover:bg-[#f6f9fd]">{t("account.viewFull")} →</Link>
+                                className="flex items-center gap-1.5 rounded-lg border border-[#dce8f4] px-3 py-1.5 text-xs font-semibold text-[#5a7794] hover:bg-[#f6f9fd]">
+                                {t("account.viewFull")}
+                                <ArrowRight className="h-3.5 w-3.5" />
+                              </Link>
                             </div>
                           </div>
 
                           {/* Các mốc thời gian */}
                           <div className="rounded-xl border border-[#dce8f4] bg-white p-3">
-                            <p className="mb-2 text-sm font-semibold text-[#1a3352]">🗓️ {t("detail.timeline")}</p>
+                            <p className="mb-2 flex items-center gap-1.5 text-sm font-semibold text-[#1a3352]">
+                              <CalendarDays className="h-4 w-4 text-[#7591ab]" />
+                              {t("detail.timeline")}
+                            </p>
                             <ul className="space-y-1 text-xs">
                               {r.s.deadlines.map((d, i) => {
                                 const dl2 = daysLeft(d.date);
@@ -504,7 +577,9 @@ export default function ProfileClient({ email }: { email: string | null }) {
                                       <span className={deadlineColor(dl2)}>({deadlineText(dl2, t)})</span>
                                       <a href={gcalUrl({ title: `[${d.type}] ${r.s.title}`, date: d.date, url: r.s.officialUrl })}
                                         target="_blank" rel="noopener noreferrer" title={t("calendar.addOne")}
-                                        className="text-[#93a7bd] hover:text-[#2f6fe0]">📅</a>
+                                        className="text-[#93a7bd] hover:text-[#2f6fe0]">
+                                        <CalendarPlus className="h-3.5 w-3.5" />
+                                      </a>
                                     </span>
                                   </li>
                                 );
@@ -514,7 +589,10 @@ export default function ProfileClient({ email }: { email: string | null }) {
 
                           {/* Ghi chú */}
                           <div className="rounded-xl border border-[#dce8f4] bg-white p-3">
-                            <p className="mb-1.5 text-sm font-semibold text-[#1a3352]">📝 {t("detail.note")}</p>
+                            <p className="mb-1.5 flex items-center gap-1.5 text-sm font-semibold text-[#1a3352]">
+                              <StickyNote className="h-4 w-4 text-[#7591ab]" />
+                              {t("detail.note")}
+                            </p>
                             <textarea value={r.item.note} onChange={(e) => setNote(r.s.id, e.target.value)}
                               placeholder={t("detail.notePh")} rows={2}
                               className="w-full rounded-[10px] border border-[#cfe0f2] bg-white px-3 py-2 text-sm text-[#1a3352] outline-none focus:border-[#2f6fe0]" />
@@ -549,22 +627,32 @@ export default function ProfileClient({ email }: { email: string | null }) {
               return (
                 <div key={a.id} className={`rounded-2xl border bg-white p-4 shadow-sm transition hover:shadow-md ${fits ? "border-[#9cc1f5] ring-1 ring-[#dbe8f7]" : "border-[#dce8f4]"}`}>
                   <div className="flex items-start gap-3">
-                    <div className="grid h-12 w-12 shrink-0 place-items-center rounded-xl bg-[#f3f6fd] text-2xl">{a.avatar}</div>
+                    <div className="grid h-12 w-12 shrink-0 place-items-center rounded-xl border border-[#dce8f4] bg-[#f8fafd] text-base font-bold text-[#5a7794]">
+                      {a.name.trim().charAt(0).toUpperCase()}
+                    </div>
                     <div className="min-w-0 flex-1">
                       <div className="flex items-center gap-2">
                         <p className="font-bold text-[#1a3352]">{a.name}</p>
-                        {fits && <span className="rounded-full bg-[#eaf1fd] px-2 py-0.5 text-[10px] font-semibold text-[#1c5cc0]">★ {t("account.advisorMatch")}</span>}
+                        {fits && (
+                          <span className="flex items-center gap-1 rounded-full bg-[#eaf1fd] px-2 py-0.5 text-[10px] font-semibold text-[#1c5cc0]">
+                            <Star className="h-3 w-3" />
+                            {t("account.advisorMatch")}
+                          </span>
+                        )}
                       </div>
                       <p className="text-xs text-[#7591ab]">{t(`advisorRole.${a.roleKey}`)}</p>
                       <div className="mt-1 flex items-center gap-2 text-xs text-[#7591ab]">
-                        <span className="text-[#e0921a]">⭐ {a.rating.toFixed(1)}</span>
+                        <span className="flex items-center gap-1 text-[#5a7794]">
+                          <Star className="h-3.5 w-3.5 fill-[#e0921a] text-[#e0921a]" />
+                          {a.rating.toFixed(1)}
+                        </span>
                         <span>·</span>
                         <span>{t("account.sessions", { n: a.sessions })}</span>
                       </div>
                     </div>
                   </div>
                   <div className="mt-3 flex flex-wrap items-center gap-1.5 text-xs">
-                    {a.regions.map((r) => <span key={r} title={t(`country.${r}`)}>{flagEmoji(r)}</span>)}
+                    {a.regions.map((r) => <CountryTag key={r} name={t(`country.${r}`)} code={r} />)}
                     <span className="ml-1 text-[#93a7bd]">{t("account.speaks")}</span>
                     {a.langs.map((l) => <span key={l} className="rounded bg-[#eef3f9] px-1.5 py-0.5 text-[#5a7794]">{t(`teachLang.${l}`)}</span>)}
                   </div>
@@ -587,13 +675,16 @@ export default function ProfileClient({ email }: { email: string | null }) {
           <div>
             <h3 className="mb-2 text-sm font-bold uppercase tracking-wide text-[#7591ab]">{t("account.channelsTitle")}</h3>
             <div className="grid gap-3 sm:grid-cols-3">
-              <Channel icon="✉️" title={t("account.channelEmail")} desc={t("account.channelEmailDesc")} href="mailto:support@scholarfinder.example" />
-              <Channel icon="💬" title={t("account.channelCommunity")} desc={t("account.channelCommunityDesc")} href="#" />
-              <Channel icon="❓" title={t("account.channelFaq")} desc={t("account.channelFaqDesc")} href="#" />
+              <Channel icon={<Mail className="h-4 w-4" />} title={t("account.channelEmail")} desc={t("account.channelEmailDesc")} href="mailto:support@scholarfinder.example" />
+              <Channel icon={<MessageCircle className="h-4 w-4" />} title={t("account.channelCommunity")} desc={t("account.channelCommunityDesc")} href="#" />
+              <Channel icon={<CircleHelp className="h-4 w-4" />} title={t("account.channelFaq")} desc={t("account.channelFaqDesc")} href="#" />
             </div>
           </div>
 
-          <p className="rounded-xl bg-[#fdf3e0] p-3 text-xs text-[#a9670a]">⚠️ {t("account.supportDisclaimer")}</p>
+          <p className="flex items-center gap-2 rounded-xl border border-[#dce8f4] bg-[#f8fafd] p-3 text-xs text-[#5a7794]">
+            <TriangleAlert className="h-3.5 w-3.5 shrink-0 text-[#93a7bd]" />
+            {t("account.supportDisclaimer")}
+          </p>
         </div>
       )}
 
@@ -624,24 +715,29 @@ function EmptyState({ t }: { t: (k: string) => string }) {
       </div>
       <h2 className="mt-3 text-lg font-bold text-[#1a3352]">{t("account.emptyTitle")}</h2>
       <p className="mt-1 text-sm text-[#7591ab]">{t("account.emptyDesc")}</p>
-      <Link href="/" className="mt-5 inline-block rounded-xl bg-[#2f6fe0] px-5 py-2.5 font-bold text-white hover:brightness-105">{t("account.goFind")}</Link>
+      <Link href="/" className="mt-5 inline-flex items-center gap-2 rounded-xl bg-[#2f6fe0] px-5 py-2.5 font-bold text-white hover:brightness-105">
+        {t("account.goFind")}
+        <ArrowRight className="h-4 w-4" />
+      </Link>
     </div>
   );
 }
 
 function StatCard({ icon, label, value, tone }: { icon: React.ReactNode; label: string; value: string | number; tone: string }) {
+  // Nền chip giữ một tông trầm chung; chỉ màu icon mang ý nghĩa (xanh = brand,
+  // đỏ = gấp, lục = đã nộp) để tránh "rừng badge" nhiều màu.
   const chip: Record<string, string> = {
-    indigo: "bg-[#eaf1fd] text-[#1c5cc0]",
-    amber: "bg-[#fdf3e0] text-[#a9670a]",
-    emerald: "bg-[#e9f8f0] text-[#0b7a52]",
-    rose: "bg-[#fdecee] text-[#b23343]",
-    violet: "bg-[#f2ecfe] text-[#7c3aed]",
-    sky: "bg-[#e0f2fe] text-[#0369a1]",
+    indigo: "text-[#1c5cc0]",
+    amber: "text-[#5a7794]",
+    emerald: "text-[#0b7a52]",
+    rose: "text-[#b23343]",
+    violet: "text-[#1c5cc0]",
+    sky: "text-[#1c5cc0]",
   };
   return (
     <div className="rounded-[16px] border border-[#dce8f4] bg-white p-4 shadow-[0_1px_2px_rgba(23,50,76,0.04)] transition hover:shadow-md">
       <div className="flex items-center gap-2.5">
-        <span className={`grid h-9 w-9 shrink-0 place-items-center rounded-xl text-lg ${chip[tone]}`}>{icon}</span>
+        <span className={`grid h-9 w-9 shrink-0 place-items-center rounded-xl bg-[#f8fafd] ring-1 ring-inset ring-[#dce8f4] ${chip[tone]}`}>{icon}</span>
         <p className="text-2xl font-extrabold leading-none text-[#1a3352]">{value}</p>
       </div>
       <p className="mt-2 text-xs leading-tight text-[#7591ab]">{label}</p>
@@ -669,10 +765,10 @@ function BarChart({ rows }: { rows: { label: string; value: number; color: strin
   );
 }
 
-function Panel({ title, children }: { title: string; children: React.ReactNode }) {
+function Panel({ title, children }: { title: React.ReactNode; children: React.ReactNode }) {
   return (
     <section className="rounded-2xl border border-[#dce8f4] bg-white p-5">
-      <h3 className="mb-3 font-semibold text-[#1a3352]">{title}</h3>
+      <h3 className="mb-3 flex items-center gap-2 font-semibold text-[#1a3352]">{title}</h3>
       {children}
     </section>
   );
@@ -765,15 +861,19 @@ function CalendarTab({ rows }: { rows: { s: CalRowScholarship }[] }) {
     <div className="mt-6 space-y-4">
       <div className="flex flex-wrap items-center justify-between gap-2">
         <div>
-          <h2 className="text-lg font-semibold text-[#1a3352]">📅 {t("calendar.title")}</h2>
+          <h2 className="flex items-center gap-2 text-lg font-semibold text-[#1a3352]">
+            <CalendarDays className="h-[18px] w-[18px] text-[#7591ab]" />
+            {t("calendar.title")}
+          </h2>
           <p className="text-xs text-[#7591ab]">{t("calendar.subtitle")}</p>
         </div>
         <button
           onClick={() => downloadIcs("scholarfinder-deadlines", events)}
-          className="rounded-lg bg-[#1a3352] px-3.5 py-2 text-xs font-bold text-white hover:bg-[#22406a]"
+          className="flex items-center gap-1.5 rounded-lg bg-[#1a3352] px-3.5 py-2 text-xs font-bold text-white hover:bg-[#22406a]"
           title={t("calendar.exportHint")}
         >
-          ⬇ {t("calendar.exportAll")}
+          <Download className="h-3.5 w-3.5" />
+          {t("calendar.exportAll")}
         </button>
       </div>
 
@@ -782,7 +882,9 @@ function CalendarTab({ rows }: { rows: { s: CalRowScholarship }[] }) {
         <div className="rounded-2xl border border-[#dce8f4] bg-white p-4">
           <div className="mb-3 flex items-center justify-between">
             <button onClick={() => { setMonth(new Date(y, m0 - 1, 1)); setSelected(null); }}
-              className="grid h-8 w-8 place-items-center rounded-lg border border-[#cfe0f2] text-[#5a7794] hover:border-[#9cc1f5]">‹</button>
+              className="grid h-8 w-8 place-items-center rounded-lg border border-[#cfe0f2] text-[#5a7794] hover:border-[#9cc1f5]">
+              <ChevronLeft className="h-4 w-4" />
+            </button>
             <div className="flex items-center gap-2">
               <p className="font-bold capitalize text-[#1a3352]">{monthLabel}</p>
               <button onClick={() => { const d = new Date(); setMonth(new Date(d.getFullYear(), d.getMonth(), 1)); setSelected(todayStr); }}
@@ -791,7 +893,9 @@ function CalendarTab({ rows }: { rows: { s: CalRowScholarship }[] }) {
               </button>
             </div>
             <button onClick={() => { setMonth(new Date(y, m0 + 1, 1)); setSelected(null); }}
-              className="grid h-8 w-8 place-items-center rounded-lg border border-[#cfe0f2] text-[#5a7794] hover:border-[#9cc1f5]">›</button>
+              className="grid h-8 w-8 place-items-center rounded-lg border border-[#cfe0f2] text-[#5a7794] hover:border-[#9cc1f5]">
+              <ChevronRight className="h-4 w-4" />
+            </button>
           </div>
 
           <div className="grid grid-cols-7 gap-1 text-center text-[11px] font-semibold uppercase text-[#93a7bd]">
@@ -826,7 +930,10 @@ function CalendarTab({ rows }: { rows: { s: CalRowScholarship }[] }) {
               );
             })}
           </div>
-          <p className="mt-3 text-[11px] text-[#93a7bd]">ℹ️ {t("calendar.timeNote")}</p>
+          <p className="mt-3 flex items-center gap-1.5 text-[11px] text-[#93a7bd]">
+            <Info className="h-3.5 w-3.5 shrink-0" />
+            {t("calendar.timeNote")}
+          </p>
         </div>
 
         {/* Danh sách mốc */}
@@ -848,12 +955,14 @@ function CalendarTab({ rows }: { rows: { s: CalRowScholarship }[] }) {
                       <span className={deadlineColor(days)}>{deadlineText(days, t)}</span>
                     </div>
                     <p className="mt-0.5 text-xs font-medium text-[#1c5cc0]">{e.type}</p>
-                    <Link href={`/scholarships/${e.sId}`} className="mt-0.5 block truncate text-sm font-bold text-[#1a3352] hover:text-[#2f6fe0]">
-                      {flagEmoji(e.countryCode)} {rows.find((r) => r.s.id === e.sId)?.s.title}
+                    <Link href={`/scholarships/${e.sId}`} className="mt-0.5 flex items-center gap-1.5 text-sm font-bold text-[#1a3352] hover:text-[#2f6fe0]">
+                      <CountryTag name={t(`country.${e.countryCode}`)} code={e.countryCode} />
+                      <span className="truncate">{rows.find((r) => r.s.id === e.sId)?.s.title}</span>
                     </Link>
                     <a href={gcalUrl(e)} target="_blank" rel="noopener noreferrer"
-                      className="mt-1.5 inline-block rounded-md border border-[#cfe0f2] px-2 py-1 text-[11px] font-semibold text-[#5a7794] hover:border-[#9cc1f5] hover:text-[#2f6fe0]">
-                      📅 {t("calendar.addOne")} · Google
+                      className="mt-1.5 inline-flex items-center gap-1.5 rounded-md border border-[#cfe0f2] px-2 py-1 text-[11px] font-semibold text-[#5a7794] hover:border-[#9cc1f5] hover:text-[#2f6fe0]">
+                      <CalendarPlus className="h-3.5 w-3.5" />
+                      {t("calendar.addOne")} · Google
                     </a>
                   </li>
                 );
@@ -866,10 +975,10 @@ function CalendarTab({ rows }: { rows: { s: CalRowScholarship }[] }) {
   );
 }
 
-function Channel({ icon, title, desc, href }: { icon: string; title: string; desc: string; href: string }) {
+function Channel({ icon, title, desc, href }: { icon: React.ReactNode; title: string; desc: string; href: string }) {
   return (
     <a href={href} className="flex items-start gap-3 rounded-xl border border-[#dce8f4] bg-white p-3 shadow-sm transition hover:border-[#9cc1f5] hover:shadow-md">
-      <span className="text-xl">{icon}</span>
+      <span className="mt-0.5 grid h-8 w-8 shrink-0 place-items-center rounded-lg border border-[#dce8f4] bg-[#f8fafd] text-[#5a7794]">{icon}</span>
       <span>
         <span className="block text-sm font-semibold text-[#1a3352]">{title}</span>
         <span className="block text-xs text-[#7591ab]">{desc}</span>

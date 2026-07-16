@@ -4,9 +4,10 @@ import { useState } from "react";
 import { useParams } from "next/navigation";
 import Link from "next/link";
 import { useTranslation } from "react-i18next";
+import { ChevronLeft, Check, Copy, Info } from "lucide-react";
 import { professorById, scholarshipById } from "@/lib/data";
 import { useTrack } from "@/lib/store";
-import { flagEmoji } from "@/lib/ui";
+import CountryTag from "@/components/CountryTag";
 
 const RECRUITING_CLS: Record<string, string> = {
   recruiting: "bg-[#e9f8f0] text-[#0b7a52]",
@@ -30,7 +31,10 @@ export default function ProfessorDetail() {
     return (
       <div className="mx-auto max-w-3xl px-4 py-20 text-center">
         <p className="text-[#5a7794]">{t("profDetail.notFound")}</p>
-        <Link href="/professors" className="mt-4 inline-block text-[#2f6fe0] underline">← {t("profDetail.back")}</Link>
+        <Link href="/professors" className="mt-4 inline-flex items-center gap-1 text-[#2f6fe0] underline">
+          <ChevronLeft className="h-4 w-4" />
+          {t("profDetail.back")}
+        </Link>
       </div>
     );
   }
@@ -59,7 +63,10 @@ export default function ProfessorDetail() {
 
   return (
     <div className="mx-auto max-w-[1000px] px-6 py-6">
-      <Link href="/professors" className="flex w-fit items-center gap-1.5 py-1.5 text-[13.5px] font-semibold text-[#5a7794] hover:text-[#2f6fe0]">← {t("profDetail.back")}</Link>
+      <Link href="/professors" className="flex w-fit items-center gap-1.5 py-1.5 text-[13.5px] font-semibold text-[#5a7794] hover:text-[#2f6fe0]">
+        <ChevronLeft className="h-4 w-4" />
+        {t("profDetail.back")}
+      </Link>
 
       {/* Header */}
       <div className="mt-2.5 rounded-[20px] border border-[#e2e8f4] bg-white p-6">
@@ -67,8 +74,9 @@ export default function ProfessorDetail() {
           <div>
             <h1 className="text-[25px] font-extrabold tracking-tight text-[#12345c]">{p.name}</h1>
             <p className="mt-1 text-[#5a7794]">{t(`rank.${p.rank}`)}</p>
-            <p className="mt-1 text-sm text-[#7591ab]">
-              {flagEmoji(p.countryCode)} {p.university} · {p.department}
+            <p className="mt-1 flex items-center gap-1.5 text-sm text-[#7591ab]">
+              <CountryTag name={t(`country.${p.countryCode}`)} code={p.countryCode} />
+              {p.university} · {p.department}
             </p>
             <p className="text-sm text-[#7591ab]">{t("profDetail.lab")} {p.lab}</p>
           </div>
@@ -89,7 +97,7 @@ export default function ProfessorDetail() {
             <p className="text-sm text-[#455f78]">{p.summary}</p>
             <div className="mt-3 flex flex-wrap gap-1.5">
               {p.keywords.map((k) => (
-                <span key={k} className="rounded-full bg-[#eef1fd] px-3 py-1 text-xs font-semibold text-[#4f46e5] ring-1 ring-[#dbe0fb]">{k}</span>
+                <span key={k} className="rounded-full bg-[#eef4fb] px-3 py-1 text-xs font-semibold text-[#2f6fe0] ring-1 ring-[#dce8f4]">{k}</span>
               ))}
             </div>
             <div className="mt-2 flex flex-wrap gap-1.5">
@@ -113,13 +121,18 @@ export default function ProfessorDetail() {
           <Card title={t("profDetail.outreach")}>
             <p className="mb-2 text-sm text-[#7591ab]">{t("profDetail.outreachDesc")}</p>
             <pre className="sf-scroll max-h-72 overflow-auto whitespace-pre-wrap rounded-[12px] bg-[#161d33] p-4 text-xs leading-relaxed text-[#e6eaf6]">{emailTemplate}</pre>
-            <button onClick={copy} className="mt-2 rounded-[10px] bg-[#4f46e5] px-4 py-2 text-sm font-bold text-white hover:brightness-110">
-              {copied ? t("profDetail.copied") : t("profDetail.copy")}
+            <button onClick={copy} className="mt-2 flex items-center gap-1.5 rounded-[10px] bg-[#2f6fe0] px-4 py-2 text-sm font-bold text-white hover:brightness-110">
+              {copied
+                ? <><Check className="h-4 w-4" />{t("profDetail.copied")}</>
+                : <><Copy className="h-4 w-4" />{t("profDetail.copy")}</>}
             </button>
             <ul className="mt-3 space-y-1 text-xs text-[#7591ab]">
-              <li>✓ {t("profDetail.tip1")}</li>
-              <li>✓ {t("profDetail.tip2")}</li>
-              <li>✓ {t("profDetail.tip3")}</li>
+              {[t("profDetail.tip1"), t("profDetail.tip2"), t("profDetail.tip3")].map((tip) => (
+                <li key={tip} className="flex items-start gap-1.5">
+                  <Check className="mt-0.5 h-3.5 w-3.5 shrink-0 text-[#10a06d]" />
+                  {tip}
+                </li>
+              ))}
             </ul>
           </Card>
         </div>
@@ -132,8 +145,10 @@ export default function ProfessorDetail() {
               <LinkRow label="Google Scholar" value={t("profDetail.scholarVal")} href={p.scholar} />
               <LinkRow label="ORCID" value={p.orcid} href={`https://orcid.org/${p.orcid}`} />
             </div>
-            <p className="mt-3 rounded-lg bg-[#fdf3e0] p-2.5 text-xs text-[#a9670a]">
-              ⚠️ {t("profDetail.warn")}
+            {/* Ghi chú nhỏ: chữ nhạt + icon, không dùng hộp vàng */}
+            <p className="mt-3 flex items-start gap-1.5 border-t border-[#eef3f9] pt-3 text-xs leading-relaxed text-[#93a7bd]">
+              <Info className="mt-px h-3.5 w-3.5 shrink-0" />
+              {t("profDetail.warn")}
             </p>
           </Card>
 
@@ -144,7 +159,9 @@ export default function ProfessorDetail() {
                   <Link key={s.id} href={`/scholarships/${s.id}`}
                     className="block rounded-xl border border-[#e6eef6] bg-[#f6f9fd] p-3 text-sm hover:border-[#9cc1f5]">
                     <p className="font-bold text-[#1a3352]">{s.title}</p>
-                    <p className="text-xs text-[#7591ab]">{flagEmoji(s.countryCode)} {t(`country.${s.countryCode}`)}</p>
+                    <p className="flex items-center gap-1.5 text-xs text-[#7591ab]">
+                      <CountryTag name={t(`country.${s.countryCode}`)} code={s.countryCode} />
+                    </p>
                   </Link>
                 ))}
               </div>
@@ -176,7 +193,7 @@ function LinkRow({ label, value, href }: { label: string; value: string; href: s
   return (
     <div className="flex items-center justify-between gap-2">
       <span className="text-[#7591ab]">{label}</span>
-      <a href={href} target="_blank" rel="noopener noreferrer" className="truncate font-semibold text-[#4f46e5] hover:underline">{value}</a>
+      <a href={href} target="_blank" rel="noopener noreferrer" className="truncate font-semibold text-[#2f6fe0] hover:underline">{value}</a>
     </div>
   );
 }

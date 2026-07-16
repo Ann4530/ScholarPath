@@ -37,7 +37,7 @@ export default function NavBar({ children }: { children?: React.ReactNode }) {
   return (
     <header className="sticky top-0 z-40 border-b border-[#d9e6f3] bg-[#eef4fb]/85 backdrop-blur-[12px]">
       <div className="mx-auto flex max-w-[1200px] items-center justify-between px-6 py-3">
-        <Link href="/" className="flex items-center gap-2.5">
+        <Link href="/" title={t("nav.home")} aria-label={t("nav.home")} className="flex items-center gap-2.5 transition hover:opacity-80">
           <span className="grid h-9 w-9 place-items-center rounded-[11px] bg-gradient-to-br from-[#1e3a8a] to-[#3b82f6] text-white shadow-[0_6px_16px_-7px_rgba(30,58,138,0.7)]">
             <svg width="19" height="19" viewBox="0 0 24 24" fill="#fff">
               <path d="M2.5 19h19v2h-19zM22.07 9.64c-.21-.8-1.04-1.28-1.84-1.06L14.92 10 8.46 3.98l-1.93.52 3.87 6.7-4.97 1.34-1.97-1.54-1.45.39 2.59 4.49 17.42-4.67c.81-.23 1.28-1.05 1.06-1.86z" />

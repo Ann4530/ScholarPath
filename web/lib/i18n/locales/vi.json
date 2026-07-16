@@ -13,7 +13,14 @@
     "quickPick": "Chọn nhanh",
     "and": " và "
   },
+  "authGate": {
+    "title": "Đăng nhập để cá nhân hóa",
+    "desc": "Tính năng này cần tài khoản — đăng nhập để chấm độ phù hợp theo hồ sơ, lưu và theo dõi học bổng.",
+    "cta": "Đăng nhập / Đăng ký",
+    "later": "Để sau"
+  },
   "nav": {
+    "home": "Trang chủ",
     "search": "Tìm học bổng",
     "professors": "Giáo sư",
     "board": "Bảng theo dõi",
@@ -73,7 +80,27 @@
     "KR": "Hàn Quốc",
     "SG": "Singapore",
     "SE": "Thụy Điển",
-    "CH": "Thụy Sĩ"
+    "CH": "Thụy Sĩ",
+    "AT": "Áo",
+    "BE": "Bỉ",
+    "CZ": "Séc",
+    "DK": "Đan Mạch",
+    "EE": "Estonia",
+    "ES": "Tây Ban Nha",
+    "FI": "Phần Lan",
+    "HK": "Hồng Kông",
+    "HU": "Hungary",
+    "IE": "Ai-len",
+    "IN": "Ấn Độ",
+    "IT": "Ý",
+    "MY": "Malaysia",
+    "NO": "Na Uy",
+    "NZ": "New Zealand",
+    "PL": "Ba Lan",
+    "PT": "Bồ Đào Nha",
+    "RU": "Nga",
+    "TH": "Thái Lan",
+    "TW": "Đài Loan"
   },
   "teachLang": {
     "en": "Tiếng Anh",
@@ -81,7 +108,11 @@
     "fr": "Tiếng Pháp",
     "zh": "Tiếng Trung",
     "ko": "Tiếng Hàn",
-    "vi": "Tiếng Việt"
+    "vi": "Tiếng Việt",
+    "de": "Tiếng Đức",
+    "es": "Tiếng Tây Ban Nha",
+    "it": "Tiếng Ý",
+    "ru": "Tiếng Nga"
   },
   "stage": {
     "quan_tam": "Quan tâm",
@@ -213,8 +244,8 @@
   "card": {
     "needSupervisor": "Cần giáo sư",
     "needProposal": "Cần đề cương NC",
-    "track": "+ Theo dõi",
-    "tracking": "✓ Đang theo dõi",
+    "track": "Theo dõi",
+    "tracking": "Đang theo dõi",
     "compareAdd": "Thêm vào so sánh (tối đa 4)",
     "compareRemove": "Bỏ khỏi so sánh",
     "detail": "Chi tiết"
@@ -254,10 +285,10 @@
     "trackToSave": "Bấm \"Theo dõi học bổng\" để lưu tiến độ checklist.",
     "e18Title": "Trợ lý viết hồ sơ (E18):",
     "e18Desc": "các mục như CV, SOP/Motivation Letter, Research Proposal, thư giới thiệu sẽ có template & hướng dẫn để bạn \"đọc là làm theo\". (Minh họa trong demo)",
-    "track": "+ Theo dõi học bổng",
-    "tracking": "✓ Đang theo dõi",
-    "compareAdd": "⇄ Thêm vào so sánh",
-    "compareIn": "✓ Trong danh sách so sánh",
+    "track": "Theo dõi học bổng",
+    "tracking": "Đang theo dõi",
+    "compareAdd": "Thêm vào so sánh",
+    "compareIn": "Trong danh sách so sánh",
     "status": "Trạng thái ứng tuyển",
     "note": "Ghi chú cá nhân",
     "notePh": "Vd: đã hỏi thầy A về thư giới thiệu…",
@@ -290,7 +321,7 @@
     "s3Title": "Bạn muốn đến đâu?",
     "s3Desc": "Chọn quốc gia ưu tiên — bấm tên khu vực để chọn nhanh cả nhóm.",
     "s3GroupAll": "(chọn cả nhóm)",
-    "s3GroupClear": "✓ (bỏ chọn cả nhóm)",
+    "s3GroupClear": "(bỏ chọn cả nhóm)",
     "s3Hint": "Đã chọn {{n}} quốc gia.",
     "s4Title": "Học lực hiện tại của bạn",
     "s4Desc": "Dùng để chấm Match Score — nhập trung thực để kết quả gợi ý chính xác.",
@@ -322,7 +353,7 @@
     "s6SupNoT": "Không — coursework",
     "s6SupNoD": "Chevening, Erasmus, GKS… nộp thẳng không cần giáo sư",
     "s6Intake": "Kỳ nhập học mong muốn",
-    "s7Title": "Tất cả đã sẵn sàng! 🎉",
+    "s7Title": "Tất cả đã sẵn sàng!",
     "s7Desc": "Xem lại lựa chọn — bạn luôn có thể chỉnh lại trong bộ lọc hoặc chạy lại wizard.",
     "sumLevel": "Bậc học",
     "sumGpa": "GPA",
@@ -347,7 +378,7 @@
     "finish": "Xem {{n}} học bổng phù hợp",
     "needField": "Chọn ít nhất 1 ngành để tiếp tục",
     "needCountry": "Chọn ít nhất 1 quốc gia để tiếp tục",
-    "footerNote": "Lựa chọn được lưu vào hồ sơ trên máy bạn — có thể chỉnh bất cứ lúc nào tại ⚙️ Hồ sơ hoặc chạy lại wizard."
+    "footerNote": "Lựa chọn được lưu vào hồ sơ trên máy bạn — có thể chỉnh bất cứ lúc nào tại Hồ sơ hoặc chạy lại wizard."
   },
   "compare": {
     "emptyTitle": "So sánh học bổng",
@@ -355,8 +386,8 @@
     "emptyOne": "Cần ít nhất 2 học bổng để so sánh (đang chọn 1).",
     "emptyHint1": "Bấm nút",
     "emptyHint2": "trên thẻ học bổng ở trang tìm kiếm để thêm (tối đa 4).",
-    "backCta": "← Về trang tìm kiếm",
-    "back": "← Trang tìm kiếm",
+    "backCta": "Về trang tìm kiếm",
+    "back": "Trang tìm kiếm",
     "title": "So sánh {{n}} học bổng",
     "clear": "Xóa danh sách so sánh",
     "criteria": "Tiêu chí",
@@ -386,12 +417,12 @@
     "docsCount": "{{n}} mục",
     "rowTrust": "Độ tin cậy nguồn",
     "updated": "cập nhật {{d}}",
-    "track": "+ Theo dõi",
-    "tracking": "✓ Đang theo dõi",
+    "track": "Theo dõi",
+    "tracking": "Đang theo dõi",
     "viewDetail": "Xem chi tiết",
     "removeTitle": "Bỏ khỏi so sánh",
     "kingTitle": "Cao nhất",
-    "legend": "👑 = Match Score cao nhất · (dễ nhất) = yêu cầu thấp nhất trong nhóm so sánh."
+    "legend": "= Match Score cao nhất · (dễ nhất) = yêu cầu thấp nhất trong nhóm so sánh."
   },
   "professors": {
     "title": "Tìm giáo sư hướng dẫn",
@@ -426,8 +457,8 @@
     "featuredPubs": "Công bố tiêu biểu",
     "outreach": "Trợ lý liên hệ giáo sư (Outreach Helper)",
     "outreachDesc": "Mẫu email đã cá nhân hóa theo hướng nghiên cứu & hồ sơ của bạn. Hãy đọc kỹ 1–2 công bố của giáo sư và điền phần trong [ngoặc] trước khi gửi.",
-    "copy": "📋 Sao chép mẫu email",
-    "copied": "✓ Đã sao chép",
+    "copy": "Sao chép mẫu email",
+    "copied": "Đã sao chép",
     "tip1": "Đã tham chiếu công bố cụ thể của giáo sư",
     "tip2": "Nêu rõ lý do phù hợp & đính kèm CV",
     "tip3": "Gửi từ email cá nhân của bạn (hệ thống không gửi hàng loạt — chống spam)",
@@ -438,12 +469,12 @@
     "scholarVal": "Hồ sơ Scholar",
     "warn": "Thông tin nghề nghiệp công khai (demo). Liên hệ có trách nhiệm, không gửi hàng loạt.",
     "applicable": "Học bổng có thể áp dụng",
-    "emailTpl": "Chủ đề: Prospective {{level}} applicant interested in your research on {{kw}}\n\nKính gửi {{name}},\n\nEm là [Tên của bạn], hiện [nền tảng học vấn/ngành]. Em đặc biệt quan tâm tới hướng nghiên cứu {{kws}} của thầy/cô, đặc biệt là công trình \"{{pub}}\" ({{pubYear}}).\n\nEm dự định ứng tuyển tại {{uni}} và mong muốn được thầy/cô cân nhắc hướng dẫn. Nền tảng của em phù hợp vì [1-2 lý do cụ thể: kỹ năng, dự án, điểm số].\n\nEm xin đính kèm CV và [đề cương nghiên cứu/bảng điểm]. Không biết thầy/cô có nhận nghiên cứu sinh cho kỳ tới không ạ? Em rất mong có cơ hội trao đổi thêm.\n\nTrân trọng cảm ơn,\n[Tên của bạn] — [email] — [link CV/hồ sơ]"
+    "emailTpl": "Subject: Prospective {{level}} applicant interested in your research on {{kw}}\n\nDear {{name}},\n\nMy name is [Your name], currently [your background/major]. I am particularly interested in your research on {{kws}}, especially the work \"{{pub}}\" ({{pubYear}}).\n\nI plan to apply to {{uni}} and would be honored to be considered for your supervision. My background is a good fit because [1-2 specific reasons: skills, projects, grades].\n\nPlease find attached my CV and [research proposal/transcript]. May I ask whether you are accepting graduate students for the coming intake? I would greatly appreciate the opportunity to discuss further.\n\nSincerely,\n[Your name] — [email] — [CV/profile link]"
   },
   "board": {
     "emptyTitle": "Bảng theo dõi trống",
     "emptyDesc": "Hãy bấm \"Theo dõi\" ở một học bổng để bắt đầu quản lý tiến độ ứng tuyển.",
-    "findCta": "Tìm học bổng →",
+    "findCta": "Tìm học bổng",
     "title": "Bảng theo dõi ứng tuyển",
     "viewTable": "Bảng",
     "viewKanban": "Kanban",
@@ -473,7 +504,7 @@
     "back": "Chi tiết học bổng",
     "for": "Cho học bổng:",
     "langNote": "Bản nháp bằng <b>tiếng Anh</b> (ngôn ngữ nộp hồ sơ), đã cá nhân hóa theo hồ sơ của bạn. Điền phần trong [ngoặc] rồi sao chép/tải về để nộp.",
-    "fillProfilePre": "💡 Cập nhật",
+    "fillProfilePre": "Cập nhật",
     "fillProfileLink": "hồ sơ cá nhân",
     "fillProfilePost": "(tên, GPA, ngành, quốc gia…) để bản nháp chính xác hơn.",
     "generatedBadge": "Bản nháp tự tạo",
@@ -485,8 +516,8 @@
     "edited": "Đã chỉnh sửa",
     "copyAll": "Sao chép tất cả",
     "advisorPre": "Cần người xem lại trước khi nộp?",
-    "advisorLink": "Đặt lịch với cố vấn viết luận →",
-    "openCta": "✍️ Mở trợ lý viết hồ sơ",
+    "advisorLink": "Đặt lịch với cố vấn viết luận",
+    "openCta": "Mở trợ lý viết hồ sơ",
     "openCtaShort": "Viết hồ sơ",
     "empty": "Học bổng này chưa có danh sách giấy tờ để soạn nháp.",
     "disclaimer": "Bản nháp mang tính hỗ trợ — hãy tự viết bằng trải nghiệm thật của bạn; tuyệt đối không sao chép nguyên văn cho hội đồng."
@@ -523,12 +554,12 @@
     "overallDocs": "Tổng giấy tờ đã hoàn thành",
     "urgentTitle": "Cần xử lý gấp",
     "urgentDesc": "Hồ sơ chưa xong & hạn ≤30 ngày",
-    "urgentEmpty": "Không có mục nào gấp 🎉",
+    "urgentEmpty": "Không có mục nào gấp",
     "deadlinesTitle": "Deadline sắp tới",
     "deadlinesEmpty": "Không có deadline nào sắp tới trong danh sách theo dõi.",
     "emptyTitle": "Chưa theo dõi học bổng nào",
     "emptyDesc": "Thêm học bổng vào danh sách theo dõi để xem thống kê và quản lý tiến trình.",
-    "goFind": "Tìm học bổng →",
+    "goFind": "Tìm học bổng",
     "listTitle": "Quản lý tiến độ ứng tuyển",
     "expandHint": "Bấm vào một hàng để xem hồ sơ cần nộp, link đăng ký & các mốc thời gian.",
     "linksSection": "Link đăng ký & nguồn",
@@ -542,7 +573,7 @@
     },
     "itemProgress": "Hồ sơ",
     "hasNote": "Ghi chú",
-    "openBoard": "Mở bảng Kanban →",
+    "openBoard": "Mở bảng Kanban",
     "academicTitle": "Thông tin học tập",
     "academicHint": "Dùng để chấm mức phù hợp trên toàn bộ học bổng.",
     "name": "Họ và tên",
@@ -587,11 +618,11 @@
   "notif": {
     "title": "Thông báo",
     "aria": "Thông báo",
-    "empty": "Không có gì cần chú ý 🎉",
+    "empty": "Không có gì cần chú ý",
     "deadline": "{{type}} · {{left}}",
     "docsLow": "Hồ sơ mới xong {{p}}% — hạn {{left}}",
     "overdueTag": "Quá hạn",
-    "viewProfile": "Mở trang cá nhân →"
+    "viewProfile": "Mở trang cá nhân"
   },
   "advisorRole": {
     "government": "Cố vấn học bổng chính phủ",
@@ -600,7 +631,9 @@
     "essay": "Cố vấn viết luận / SOP"
   },
   "language": {
-    "label": "Ngôn ngữ"
+    "label": "Ngôn ngữ",
+    "search": "Tìm ngôn ngữ…",
+    "noMatch": "Không có ngôn ngữ phù hợp"
   },
   "landing": {
     "badge": "Nền tảng tìm học bổng du học",

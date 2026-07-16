@@ -16,7 +16,8 @@ import HeroSky from "@/components/HeroSky";
 export default function LandingPage() {
   const { t } = useTranslation();
 
-  const countryCount = new Set(scholarships.map((s) => s.countryCode)).size;
+  // COUNTRIES đã được suy ra từ scholarships (lib/data.ts) — dùng lại, khỏi đếm hai lần.
+  const countryCount = COUNTRIES.length;
   const stats = [
     { icon: <GraduationCap className="h-5 w-5" />, value: `${scholarships.length}+`, label: t("landing.statScholarships") },
     { icon: <Globe2 className="h-5 w-5" />, value: `${countryCount}`, label: t("landing.statCountries") },
